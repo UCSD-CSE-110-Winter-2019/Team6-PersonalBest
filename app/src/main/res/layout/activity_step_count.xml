@@ -22,4 +22,16 @@
         android:layout_height="wrap_content"
         android:text="steps will be shown here" />
 
+    <TextView
+        android:id="@+id/textDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/distance_default" />
+
+    <TextView
+        android:id="@+id/textSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/speed_default" />
+
 </LinearLayout>

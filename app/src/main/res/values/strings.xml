@@ -3,4 +3,6 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="distance_default">Distance: 0 Miles</string>
+    <string name="speed_default">Speed: 0 MPH</string>
 </resources>

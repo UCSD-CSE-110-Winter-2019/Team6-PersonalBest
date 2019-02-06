@@ -42,6 +42,8 @@ public class StepCountActivity extends AppCompatActivity {
     private int currSubGoal;
     private int oldSubGoal;
     private int goal;
+    private long distance;
+    private long speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,8 @@ public class StepCountActivity extends AppCompatActivity {
         currSubGoal = myPrefs.getInt("currSubGoal", 500);
         oldSubGoal = myPrefs.getInt("oldSubGoal", 0);
         goal = myPrefs.getInt("goal", 5000);
+        distance = myPrefs.getLong("distance", 0);
+        speed = myPrefs.getLong("speed", 0);
 
 
         //Log.i( "TAG","hello+test " + myPrefs.getString("height_feet",""));
@@ -75,9 +79,6 @@ public class StepCountActivity extends AppCompatActivity {
             DialogFragment nameFrag = new HeightPickerFragment();
             nameFrag.show(getSupportFragmentManager(), "Height");
         }
-
-
-
     }
 
 
