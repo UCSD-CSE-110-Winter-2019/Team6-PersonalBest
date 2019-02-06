@@ -13,15 +13,15 @@ public class calc {
         return distance/time;
     }
 
-    private double calcDistance(int steps){
+    private long calcDistance(int steps){
         int height = inches + (feet*12);
-        double strideLength = calcStrideLength(height);
-        double stepsPerMile = 5280/strideLength;
+        long strideLength = calcStrideLength(height);
+        long stepsPerMile = 5280/strideLength;
 
         return steps/stepsPerMile;
     }
 
-    private double calcStrideLength(long height){
-        return (height*0.413)/12;
+    private long calcStrideLength(long height){
+        return (long)(height*0.413)/12;
     }
 }
