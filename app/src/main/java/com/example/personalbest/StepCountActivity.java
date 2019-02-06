@@ -26,6 +26,8 @@ import com.google.android.gms.fitness.request.DataReadRequest;
 
 import java.sql.Time;
 import java.util.concurrent.TimeUnit;
+import java.util.Calendar;
+
 
 public class StepCountActivity extends AppCompatActivity {
 
@@ -37,6 +39,9 @@ public class StepCountActivity extends AppCompatActivity {
     private long numSteps;
     private FitnessService fitnessService;
     private EncourageTask runner;
+    private int currSubGoal;
+    private int oldSubGoal;
+    private int goal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,11 @@ public class StepCountActivity extends AppCompatActivity {
         fitnessService.setup();
 
         SharedPreferences myPrefs = getSharedPreferences("height", MODE_PRIVATE);
+
+        currSubGoal = myPrefs.getInt("currSubGoal", 500);
+        oldSubGoal = myPrefs.getInt("oldSubGoal", 0);
+        goal = myPrefs.getInt("goal", 5000);
+
 
         //Log.i( "TAG","hello+test " + myPrefs.getString("height_feet",""));
         if(!myPrefs.contains("height_feet")) {
@@ -92,14 +102,23 @@ public class StepCountActivity extends AppCompatActivity {
 
     public void showEncouragement(){
        // int x = Integer.parseInt(textSteps.getText().toString()) / 100;
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast t = Toast.makeText(StepCountActivity.this,"Good job! You're already at " + (numSteps/100) + "% of the daily recommended number of steps.", Toast.LENGTH_LONG);
-                t.show();
-            }
-        });
+        if(numSteps > currSubGoal) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int newSubGoal = ((int)numSteps/500)*500;
+                    Toast t = Toast.makeText(StepCountActivity.this, "You've increased your daily steps by over " + (newSubGoal - oldSubGoal) + " steps. Keep up the good work!", Toast.LENGTH_LONG);
+                    t.show();
+                    oldSubGoal = newSubGoal;
+                    currSubGoal = oldSubGoal+500;
+                    SharedPreferences pref = getSharedPreferences("height", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putInt("oldSubGoal", oldSubGoal);
+                    editor.putInt("currSubGoal", currSubGoal);
+                    editor.apply();
+                }
+            });
+        }
 
     }
 
@@ -125,8 +144,10 @@ public class StepCountActivity extends AppCompatActivity {
                     break;
                 }
             }*/
+            Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
 
-            if(numSteps>=1000)
+            if(hour>=20)
                 publishProgress();
             return "ALL GOOD";
         }
