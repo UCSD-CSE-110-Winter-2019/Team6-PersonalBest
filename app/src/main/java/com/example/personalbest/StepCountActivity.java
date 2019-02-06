@@ -51,15 +51,10 @@ public class StepCountActivity extends AppCompatActivity {
 
         String fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
-        Button btnUpdateSteps = findViewById(R.id.buttonUpdateSteps);
-        btnUpdateSteps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 fitnessService.updateStepCount();
                 runner = new EncourageTask();
                 runner.execute();
-            }
-        });
+
 
         fitnessService.setup();
 
