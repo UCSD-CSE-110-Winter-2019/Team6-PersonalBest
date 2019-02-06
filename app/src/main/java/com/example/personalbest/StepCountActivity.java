@@ -27,6 +27,8 @@ import com.google.android.gms.fitness.request.DataReadRequest;
 import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
+
+
 public class StepCountActivity extends AppCompatActivity {
 
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";

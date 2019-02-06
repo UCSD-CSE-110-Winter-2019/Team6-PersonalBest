@@ -39,7 +39,6 @@ public class GoogleFitAdapter implements FitnessService {
                     GoogleSignIn.getLastSignedInAccount(activity),
                     fitnessOptions);
 
-            Toast.makeText(activity.getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
         } else {
             updateStepCount();
             startRecording();
