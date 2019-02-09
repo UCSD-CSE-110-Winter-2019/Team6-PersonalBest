@@ -24,12 +24,21 @@ public class Exercise {
         saveLocal.saveStartSessionStepCount(dailyStepCount);
 
     }
-    public void stopExercise(){
+    //Returns the step count of this exercise
+    public long stopExercise(){
         saveLocal.setStopSession();
         long stepDifference=fitnessService.getDailyStepCount()-saveLocal.getStartSessionStepCount();
         saveLocal.setExerciseStepCount(saveLocal.getExerciseStepCount(0)+stepDifference,0);
         Log.d(TAG,"This Exercise Step Count: "+stepDifference);
         Log.d(TAG,"Daily Exercise Step Count: "+saveLocal.getExerciseStepCount(0));
+        return stepDifference;
+    }
+    //Gets the step count of the current exercise
+    public long getCurrentExerciseStepCount(){
+        if(isActive()){
+            return fitnessService.getDailyStepCount()-saveLocal.getStartSessionStepCount();
+        }
+        else return 0;
     }
 
     public boolean isActive(){
