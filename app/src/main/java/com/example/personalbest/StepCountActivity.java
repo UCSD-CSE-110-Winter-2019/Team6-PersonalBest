@@ -115,7 +115,7 @@ public class StepCountActivity extends AppCompatActivity{
         SharedPreferences myPrefs = getSharedPreferences("height", MODE_PRIVATE);
 
         //Log.i( "TAG","hello+test " + myPrefs.getString("height_feet",""));
-        if(!myPrefs.contains("height_feet")) {
+        if(!saveLocal.containsHeight()) {
             DialogFragment nameFrag = new HeightPickerFragment();
             nameFrag.show(getSupportFragmentManager(), "Height");
         }
