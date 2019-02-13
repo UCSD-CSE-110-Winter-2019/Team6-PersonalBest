@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -22,7 +23,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiSelector;
+
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static org.junit.Assert.*;
 
 
@@ -40,6 +48,8 @@ public class HeightSavingTest {
     Intent intent;
     SharedPreferences exercisePreferences;
     SharedPreferences.Editor editor;
+    private UiDevice mDevice;
+
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(
@@ -52,7 +62,7 @@ public class HeightSavingTest {
         Context targetContext = getInstrumentation().getTargetContext();
         exercisePreferences = targetContext.getSharedPreferences("exercise", Context.MODE_PRIVATE);;
         editor = exercisePreferences.edit();
-        Log.d("TAG", "setUp: " + exercisePreferences.getAll());
+        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     }
 
     @Test
@@ -64,6 +74,16 @@ public class HeightSavingTest {
         mActivityRule.launchActivity(new Intent());
 
         assertEquals(exercisePreferences.contains("height_feet"), false);
+
+        UiObject appItem = mDevice.findObject(new UiSelector()
+                .resourceId("com.google.android.gms:id/account_profile_picture"));
+
+        try {
+            appItem.click();
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+
 
         ViewInteraction appCompatButton = onView(
                 allOf(withId(android.R.id.button1), withText("Accept"),
