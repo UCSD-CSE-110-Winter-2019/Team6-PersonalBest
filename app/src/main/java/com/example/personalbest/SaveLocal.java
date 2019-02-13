@@ -37,6 +37,12 @@ public class SaveLocal {
         return exercisePreferences.contains("height_feet");
     }
 
+    public void clearHeight() {
+        editor.remove("height_feet");
+        editor.remove("height_inches");
+        editor.commit();
+    }
+
     public long getStartSessionStepCount(){
         return exercisePreferences.getLong("startSessionStepCount",0);
     }
