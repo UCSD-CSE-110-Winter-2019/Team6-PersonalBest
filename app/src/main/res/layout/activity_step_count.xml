@@ -19,43 +19,45 @@
         android:textSize="36sp" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/goal"
+        android:layout_width="103dp"
+        android:layout_height="88dp"
+        android:text="Goal: "
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/walk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="100dp"
-        android:text="Last Walk/Run:"
+        android:text="Walk/Run Stats:"
         android:textSize="24sp" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0 mi"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/walkSteps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0 mph"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="30sp" />
-
-
-
-
-
-    <TextView
-        android:id="@+id/textDistance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/distance_default" />
+        android:text="Steps:"
+        android:textSize="14sp"
+        tools:textSize="14sp" />
 
     <TextView
         android:id="@+id/textSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/speed_default" />
+
+    <TextView
+        android:id="@+id/walkTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time Elapsed:" />
+
+    <Button
+        android:id="@+id/startExerciseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Exercise" />
 
 </LinearLayout>

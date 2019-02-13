@@ -1,7 +1,6 @@
 package com.example.personalbest;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -9,41 +8,35 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.NumberPicker;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
 import com.example.personalbest.fitness.HeightPickerFragment;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.request.DataReadRequest;
+import com.example.personalbest.fitness.WalkStats;
 
-import java.sql.Time;
-import java.util.concurrent.TimeUnit;
 import java.util.Calendar;
 
 
-public class StepCountActivity extends AppCompatActivity {
+public class StepCountActivity extends AppCompatActivity{
 
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
 
     private static final String TAG = "StepCountActivity";
 
+
     private TextView textSteps;
-    private long numSteps;
+    public long numSteps;
     private FitnessService fitnessService;
-    private EncourageTask runner;
-    private int currSubGoal;
-    private int oldSubGoal;
-    private int goal;
-    private long distance;
-    private long speed;
+    private Background runner;
+    Exercise exercise;
+
+    SaveLocal saveLocal;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,23 +44,47 @@ public class StepCountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
 
+        //Object to save values
+        saveLocal = new SaveLocal(StepCountActivity.this);
+
         String fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
-                fitnessService.updateStepCount();
-                runner = new EncourageTask();
-                runner.execute();
 
-
+        fitnessService.updateStepCount();
+        int goalSteps = saveLocal.getGoal();
+        TextView goalText = findViewById(R.id.goal);
+        goalText.setText("Goal: "+goalSteps);
+        runner = new Background();
+        runner.execute();
         fitnessService.setup();
 
+        //Button to start and stop exercises
+        final Button startExerciseButton = findViewById(R.id.startExerciseButton);
+        exercise=new Exercise(StepCountActivity.this, fitnessService);
+        //While initializing, if an exercise was left active, set the button accordingly
+        if(exercise.isActive()){
+            startExerciseButton.setText("Stop Exercise");
+        }
+
+        startExerciseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(exercise.isActive()){
+                    //STOP EXERCISING
+                    startExerciseButton.setText("Start Exercise");
+
+                    exercise.stopExercise();
+                }
+                else{
+                    //START EXERCISING
+                    startExerciseButton.setText("Stop Exercise");
+                    Calendar calendar=Calendar.getInstance();
+                    exercise.startExercise(calendar);
+                }
+            }
+        });
+
         SharedPreferences myPrefs = getSharedPreferences("height", MODE_PRIVATE);
-
-        currSubGoal = myPrefs.getInt("currSubGoal", 500);
-        oldSubGoal = myPrefs.getInt("oldSubGoal", 0);
-        goal = myPrefs.getInt("goal", 5000);
-        distance = myPrefs.getLong("distance", 0);
-        speed = myPrefs.getLong("speed", 0);
-
 
         //Log.i( "TAG","hello+test " + myPrefs.getString("height_feet",""));
         if(!myPrefs.contains("height_feet")) {
@@ -75,8 +92,6 @@ public class StepCountActivity extends AppCompatActivity {
             nameFrag.show(getSupportFragmentManager(), "Height");
         }
     }
-
-
 
 
     @Override
@@ -92,40 +107,32 @@ public class StepCountActivity extends AppCompatActivity {
     }
 
     public void setStepCount(long stepCount) {
-        textSteps.setText(String.valueOf(stepCount));
+        textSteps.setText(stepCount+" steps");
         numSteps = stepCount;
     }
 
-    public void showEncouragement(){
-       // int x = Integer.parseInt(textSteps.getText().toString()) / 100;
-        if(numSteps > currSubGoal) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    int newSubGoal = ((int)numSteps/500)*500;
-                    Toast t = Toast.makeText(StepCountActivity.this, "You've increased your daily steps by over " + (newSubGoal - oldSubGoal) + " steps. Keep up the good work!", Toast.LENGTH_LONG);
-                    t.show();
-                    oldSubGoal = newSubGoal;
-                    currSubGoal = oldSubGoal+500;
-                    SharedPreferences pref = getSharedPreferences("height", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putInt("oldSubGoal", oldSubGoal);
-                    editor.putInt("currSubGoal", currSubGoal);
-                    editor.apply();
-                }
-            });
-        }
 
-    }
 
-    private class EncourageTask extends AsyncTask<String, String, String> {
+
+    private class Background extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... text) {
-            showEncouragement();
+
+            Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            Encouragement encourage;
+            encourage = new Encouragement(StepCountActivity.this);
+            fitnessService.updateStepCount();
+            if(exercise.isActive()){
+                WalkStats stats = new WalkStats(StepCountActivity.this);
+                stats.update();
+            }
+            if(hour>=20)
+                encourage.showEncouragement();
 
         }
 
@@ -140,12 +147,9 @@ public class StepCountActivity extends AppCompatActivity {
                     break;
                 }
             }*/
-            Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-
-            if(hour>=20)
+            while(true) {
                 publishProgress();
-            return "ALL GOOD";
+            }
         }
 
         @Override

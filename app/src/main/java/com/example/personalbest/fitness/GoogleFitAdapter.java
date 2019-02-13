@@ -19,7 +19,9 @@ public class GoogleFitAdapter implements FitnessService {
     private final int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = System.identityHashCode(this) & 0xFFFF;
     private final String TAG = "GoogleFitAdapter";
 
+    private long dailyStepCount;
     private StepCountActivity activity;
+
 
     public GoogleFitAdapter(StepCountActivity activity) {
         this.activity = activity;
@@ -39,7 +41,6 @@ public class GoogleFitAdapter implements FitnessService {
                     GoogleSignIn.getLastSignedInAccount(activity),
                     fitnessOptions);
 
-            Toast.makeText(activity.getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
         } else {
             updateStepCount();
             startRecording();
@@ -54,6 +55,34 @@ public class GoogleFitAdapter implements FitnessService {
 
         Fitness.getRecordingClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
                 .subscribe(DataType.TYPE_STEP_COUNT_CUMULATIVE)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG, "Successfully subscribed!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i(TAG, "There was a problem subscribing.");
+                    }
+                });
+        Fitness.getRecordingClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+                .subscribe(DataType.TYPE_STEP_COUNT_DELTA)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG, "Successfully subscribed!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i(TAG, "There was a problem subscribing.");
+                    }
+                });
+        Fitness.getRecordingClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+                .subscribe(DataType.AGGREGATE_STEP_COUNT_DELTA)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -92,6 +121,7 @@ public class GoogleFitAdapter implements FitnessService {
                                                 : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
 
                                 activity.setStepCount(total);
+                                dailyStepCount=total;
                                 Log.d(TAG, "Total steps: " + total);
                             }
                         })
@@ -102,11 +132,17 @@ public class GoogleFitAdapter implements FitnessService {
                                 Log.d(TAG, "There was a problem getting the step count.", e);
                             }
                         });
+
     }
 
 
     @Override
     public int getRequestCode() {
         return GOOGLE_FIT_PERMISSIONS_REQUEST_CODE;
+    }
+
+    public long getDailyStepCount(){
+        updateStepCount();
+        return dailyStepCount;
     }
 }
