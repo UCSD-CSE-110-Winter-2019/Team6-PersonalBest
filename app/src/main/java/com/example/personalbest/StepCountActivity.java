@@ -31,6 +31,12 @@ public class StepCountActivity extends AppCompatActivity{
 
     private TextView textSteps;
     private TextView goalView;
+
+    private TextView exerciseSteps;
+    private TextView speed;
+    private TextView timeElapsed;
+
+
     public long numSteps;
     public long goalSteps;
     private FitnessService fitnessService;
@@ -59,6 +65,15 @@ public class StepCountActivity extends AppCompatActivity{
         runner = new Background();
         runner.execute();
         fitnessService.setup();
+
+        exerciseSteps = findViewById(R.id.walkSteps);
+        speed = findViewById(R.id.textSpeed);
+        timeElapsed = findViewById(R.id.walkTime);
+
+        exerciseSteps.setText("Steps: " + saveLocal.getLastExerciseSteps());
+        speed.setText("MPH: " + saveLocal.getLastExerciseSpeed());
+        timeElapsed.setText("Time Elapsed: " + saveLocal.getLastExerciseTime());
+
 
         //Button to start and stop exercises
         final Button startExerciseButton = findViewById(R.id.startExerciseButton);
