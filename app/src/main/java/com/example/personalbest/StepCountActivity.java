@@ -55,8 +55,7 @@ public class StepCountActivity extends AppCompatActivity{
 
         fitnessService.updateStepCount();
         goalSteps = saveLocal.getGoal();
-        TextView goalText = findViewById(R.id.goal);
-        goalText.setText("Goal: "+goalSteps);
+        goalView.setText("Goal: "+goalSteps);
         runner = new Background();
         runner.execute();
         fitnessService.setup();
@@ -175,14 +174,15 @@ public class StepCountActivity extends AppCompatActivity{
                     break;
                 }
             }*/
-            while(true) {
+            /*while(true) {
                 try{
                     Thread.sleep(500);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                publishProgress();
-            }
+                //publishProgress();
+            }*/
+            return "";
         }
 
         @Override
