@@ -174,15 +174,14 @@ public class StepCountActivity extends AppCompatActivity{
                     break;
                 }
             }*/
-            /*while(true) {
+            while(true) {
                 try{
                     Thread.sleep(500);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
                 //publishProgress();
-            }*/
-            return "";
+            }
         }
 
         @Override
