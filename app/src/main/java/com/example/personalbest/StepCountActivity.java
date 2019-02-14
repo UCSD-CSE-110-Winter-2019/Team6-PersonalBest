@@ -5,7 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+
+import android.support.v4.app.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +30,9 @@ public class StepCountActivity extends AppCompatActivity{
 
 
     private TextView textSteps;
+    private TextView goalView;
     public long numSteps;
+    public long goalSteps;
     private FitnessService fitnessService;
     private Background runner;
     Exercise exercise;
@@ -43,7 +46,7 @@ public class StepCountActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
-
+        goalView = findViewById(R.id.goal);
         //Object to save values
         saveLocal = new SaveLocal(StepCountActivity.this);
 
@@ -51,9 +54,8 @@ public class StepCountActivity extends AppCompatActivity{
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
 
         fitnessService.updateStepCount();
-        int goalSteps = saveLocal.getGoal();
-        TextView goalText = findViewById(R.id.goal);
-        goalText.setText("Goal: "+goalSteps);
+        goalSteps = saveLocal.getGoal();
+        goalView.setText("Goal: "+goalSteps);
         runner = new Background();
         runner.execute();
         fitnessService.setup();
@@ -84,6 +86,16 @@ public class StepCountActivity extends AppCompatActivity{
             }
         });
 
+        goalView.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                DialogFragment goalFrag = new SetGoalFragment();
+                goalFrag.show(getSupportFragmentManager(), "Set Goal");
+
+            }
+        });
+
         SharedPreferences myPrefs = getSharedPreferences("height", MODE_PRIVATE);
 
         //Log.i( "TAG","hello+test " + myPrefs.getString("height_feet",""));
@@ -107,7 +119,8 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void setStepCount(long stepCount) {
-        textSteps.setText(stepCount+" steps");
+        textSteps.setText(Long.toString(stepCount)+" steps");
+        goalView.setText("Goal: " + saveLocal.getGoal());
         numSteps = stepCount;
     }
 
@@ -115,21 +128,35 @@ public class StepCountActivity extends AppCompatActivity{
 
 
     private class Background extends AsyncTask<String, String, String> {
+        DialogFragment goalFrag;
+        Encouragement encourage;
+        Calendar c;
+        int hour;
         @Override
         protected void onPreExecute() {
+
+            c = Calendar.getInstance();
+            hour = c.get(Calendar.HOUR_OF_DAY);
+
+            encourage = new Encouragement(StepCountActivity.this);
         }
 
         @Override
         protected void onProgressUpdate(String... text) {
+            hour = c.get(Calendar.HOUR_OF_DAY);
 
-            Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            Encouragement encourage;
-            encourage = new Encouragement(StepCountActivity.this);
             fitnessService.updateStepCount();
             if(exercise.isActive()){
                 WalkStats stats = new WalkStats(StepCountActivity.this);
                 stats.update();
+            }
+
+            if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
+                saveLocal.setAchieved(true);
+                goalFrag = new GoalFragment();
+                goalFrag.show(getSupportFragmentManager(), "Goal");
+
+
             }
             if(hour>=20)
                 encourage.showEncouragement();
@@ -147,9 +174,15 @@ public class StepCountActivity extends AppCompatActivity{
                     break;
                 }
             }*/
-            while(true) {
-                publishProgress();
-            }
+            /*while(true) {
+                try{
+                    Thread.sleep(500);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                //publishProgress();
+            }*/
+            return "";
         }
 
         @Override

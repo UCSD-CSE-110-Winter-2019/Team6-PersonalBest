@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -49,6 +51,7 @@ public class HeightSavingTest {
     SharedPreferences exercisePreferences;
     SharedPreferences.Editor editor;
     private UiDevice mDevice;
+    Context targetContext;
 
 
     @Rule
@@ -59,7 +62,7 @@ public class HeightSavingTest {
 
     @Before
     public void setUp() {
-        Context targetContext = getInstrumentation().getTargetContext();
+        targetContext = getInstrumentation().getTargetContext();
         exercisePreferences = targetContext.getSharedPreferences("exercise", Context.MODE_PRIVATE);;
         editor = exercisePreferences.edit();
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -67,6 +70,7 @@ public class HeightSavingTest {
 
     @Test
     public void mainActivityTest2() {
+
         editor.remove("height_feet");
         editor.remove("height_inches");
         editor.commit();
@@ -75,24 +79,24 @@ public class HeightSavingTest {
 
         assertEquals(exercisePreferences.contains("height_feet"), false);
 
-        UiObject appItem = mDevice.findObject(new UiSelector()
-                .resourceId("com.google.android.gms:id/account_profile_picture"));
+        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(targetContext))) {
+            UiObject appItem = mDevice.findObject(new UiSelector()
+                    .resourceId("com.google.android.gms:id/account_profile_picture"));
+
+            try {
+                appItem.click();
+            } catch (UiObjectNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
 
         try {
-            appItem.click();
+            UiObject acceptButton = mDevice.findObject(new UiSelector().resourceId("android:id/button1"));
+            acceptButton.click();
         } catch (UiObjectNotFoundException e) {
             e.printStackTrace();
         }
 
-
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(android.R.id.button1), withText("Accept"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.buttonPanel),
-                                        0),
-                                3)));
-        appCompatButton.perform(scrollTo(), click());
         exercisePreferences.getAll();
 
         assertEquals(exercisePreferences.contains("height_feet"), true);
