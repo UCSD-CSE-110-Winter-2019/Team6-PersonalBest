@@ -1,4 +1,4 @@
-package com.example.personalbest.fitness;
+package com.example.personalbest;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -44,8 +44,6 @@ public class HeightPickerFragment extends DialogFragment {
         np2.setMaxValue(11);
         builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("height", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
 
                 int height_feet =  np.getValue();
                 int height_inches = np2.getValue();
