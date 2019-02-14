@@ -14,7 +14,7 @@ public class SaveLocal {
     private SharedPreferences exercisePreferences;
     private SharedPreferences.Editor editor;
 
-    public SaveLocal(StepCountActivity activity){
+    public SaveLocal(Activity activity){
         exercisePreferences= activity.getSharedPreferences("exercise", Context.MODE_PRIVATE);
         editor=exercisePreferences.edit();
     }
@@ -25,6 +25,22 @@ public class SaveLocal {
     public void saveStartSessionStepCount(long stepCount){
         editor.putLong("startSessionStepCount",stepCount);
         editor.apply();
+    }
+
+    public void saveHeight(int feet, int inches) {
+        editor.putInt("height_feet", feet);
+        editor.putInt("height_inches", inches);
+        editor.apply();
+    }
+
+    public boolean containsHeight() {
+        return exercisePreferences.contains("height_feet");
+    }
+
+    public void clearHeight() {
+        editor.remove("height_feet");
+        editor.remove("height_inches");
+        editor.commit();
     }
 
     public long getStartSessionStepCount(){
