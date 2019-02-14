@@ -30,6 +30,7 @@ public class StepCountActivity extends AppCompatActivity{
 
 
     private TextView textSteps;
+    private TextView goalView;
     public long numSteps;
     public long goalSteps;
     private FitnessService fitnessService;
@@ -45,7 +46,7 @@ public class StepCountActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
-
+        goalView = findViewById(R.id.goal);
         //Object to save values
         saveLocal = new SaveLocal(StepCountActivity.this);
 
@@ -86,6 +87,16 @@ public class StepCountActivity extends AppCompatActivity{
             }
         });
 
+        goalView.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                DialogFragment goalFrag = new SetGoalFragment();
+                goalFrag.show(getSupportFragmentManager(), "Set Goal");
+
+            }
+        });
+
         SharedPreferences myPrefs = getSharedPreferences("height", MODE_PRIVATE);
 
         //Log.i( "TAG","hello+test " + myPrefs.getString("height_feet",""));
@@ -110,6 +121,7 @@ public class StepCountActivity extends AppCompatActivity{
 
     public void setStepCount(long stepCount) {
         textSteps.setText(Long.toString(stepCount)+" steps");
+        goalView.setText("Goal: " + saveLocal.getGoal());
         numSteps = stepCount;
     }
 
@@ -147,8 +159,8 @@ public class StepCountActivity extends AppCompatActivity{
 
 
             }
-            /*if(hour>=20)
-                encourage.showEncouragement();*/
+            if(hour>=20)
+                encourage.showEncouragement();
 
         }
 

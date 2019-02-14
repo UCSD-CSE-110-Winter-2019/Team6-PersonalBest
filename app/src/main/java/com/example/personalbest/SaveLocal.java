@@ -133,7 +133,7 @@ public class SaveLocal {
         setAchieved(false);
     }
     public int getGoal(){
-        return exercisePreferences.getInt("goal", 5000);
+        return exercisePreferences.getInt("goal", 500);
     }
 
     public  boolean isAchieved(){

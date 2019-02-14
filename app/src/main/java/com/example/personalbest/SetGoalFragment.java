@@ -10,6 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
 
+import com.google.android.gms.common.util.ArrayUtils;
+
+import java.util.Arrays;
+
 public class SetGoalFragment extends DialogFragment {
     SaveLocal saveLocal;
 
@@ -24,11 +28,12 @@ public class SetGoalFragment extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         saveLocal = new SaveLocal(this.getActivity());
-        final String [] values = getArrayWithSteps(saveLocal.getGoal(), saveLocal.getGoal() * 10, 500);
+        final String [] values = getArrayWithSteps(500, saveLocal.getGoal() * 10, 500);
         final NumberPicker np = v.findViewById(R.id.numberPicker3);
         np.setMinValue(0);
-        np.setMaxValue(saveLocal.getGoal()*9/500);
+        np.setMaxValue(values.length-1);
         np.setDisplayedValues(values);
+        np.setValue(Arrays.asList(values).indexOf(""+saveLocal.getGoal()));
         builder.setMessage("Enter New Goal").setView(v);
 
         builder.setPositiveButton("Save New Goal", new DialogInterface.OnClickListener() {

@@ -43,8 +43,8 @@ public class GoalFragment extends DialogFragment {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
-                DialogFragment nameFrag = new SetGoalFragment();
-                nameFrag.show(getActivity().getSupportFragmentManager(), "Height");
+                DialogFragment goalFrag = new SetGoalFragment();
+                goalFrag.show(getActivity().getSupportFragmentManager(), "Set Goal");
 
             }
         });
