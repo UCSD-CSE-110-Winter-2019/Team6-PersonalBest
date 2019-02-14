@@ -180,7 +180,7 @@ public class StepCountActivity extends AppCompatActivity{
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                //publishProgress();
+                publishProgress();
             }
         }
 
