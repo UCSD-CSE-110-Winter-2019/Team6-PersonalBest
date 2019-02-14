@@ -90,4 +90,50 @@ public class SaveLocal {
         setBackgroundStepCount(0,0);
 
     }
+    public void setCurrSubGoal(int subGoal){
+        editor.putInt("currsubGoal", subGoal);
+        editor.apply();
+
+    }
+    public void setOldSubGoal(int old){
+        editor.putInt("oldSubGoal", old);
+        editor.apply();
+    }
+    public void setSpeed(long speed){
+        editor.putLong("speed", speed);
+        editor.apply();
+    }
+    public void setSteps(int steps){
+        editor.putInt("steps", steps);
+        editor.apply();
+    }
+    public void setTime(long time){
+        editor.putLong("time", time);
+        editor.apply();
+    }
+    public int getCurrSubGoal(){
+        return exercisePreferences.getInt("currsubGoal", 500);
+
+    }
+    public int getOldSubGoal(){
+        return exercisePreferences.getInt("oldSubGoal", 0);
+    }
+    public long getSpeed(){
+        return exercisePreferences.getLong("speed", 0);
+    }
+    public int getSteps(){
+        return exercisePreferences.getInt("steps", 0);
+    }
+    public long getTime(long time){
+        return exercisePreferences.getLong("time", 0);
+    }
+    public void setGoal(int goal) {
+        editor.putInt("goal", goal);
+        editor.apply();
+    }
+    public int getGoal(){
+        return exercisePreferences.getInt("goal", 5000);
+    }
+
+
 }

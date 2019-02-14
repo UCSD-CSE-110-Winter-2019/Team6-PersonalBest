@@ -14,7 +14,7 @@ public class Exercise {
     FitnessService fitnessService;
 
     public Exercise(StepCountActivity activity, FitnessService fitnessService){
-        this.saveLocal=new SaveLocal(activity);
+            this.saveLocal=new SaveLocal(activity);
         this.fitnessService=fitnessService;
     }
 

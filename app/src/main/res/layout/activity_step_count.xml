@@ -9,18 +9,50 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/buttonUpdateSteps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="update steps" />
 
     <TextView
         android:id="@+id/textSteps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="steps will be shown here" />
+        android:text="STEPS"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/goal"
+        android:layout_width="103dp"
+        android:layout_height="88dp"
+        android:text="Goal: "
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/walk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="100dp"
+        android:text="Walk/Run Stats:"
+        android:textSize="24sp" />
+
+
+    <TextView
+        android:id="@+id/walkSteps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Steps:"
+        android:textSize="14sp"
+        tools:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/speed_default" />
+
+    <TextView
+        android:id="@+id/walkTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time Elapsed:" />
 
     <Button
         android:id="@+id/startExerciseButton"

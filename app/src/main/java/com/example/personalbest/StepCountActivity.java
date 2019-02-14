@@ -1,52 +1,24 @@
 package com.example.personalbest;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.NumberPicker;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
 import com.example.personalbest.fitness.HeightPickerFragment;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.result.DataReadResponse;
-import com.google.android.gms.fitness.result.DataReadResult;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.example.personalbest.fitness.WalkStats;
 
-import java.sql.Time;
 import java.util.Calendar;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 
 
 public class StepCountActivity extends AppCompatActivity{
@@ -55,10 +27,11 @@ public class StepCountActivity extends AppCompatActivity{
 
     private static final String TAG = "StepCountActivity";
 
+
     private TextView textSteps;
-    private long numSteps;
+    public long numSteps;
     private FitnessService fitnessService;
-    private EncourageTask runner;
+    private Background runner;
     Exercise exercise;
 
     SaveLocal saveLocal;
@@ -71,24 +44,22 @@ public class StepCountActivity extends AppCompatActivity{
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
 
+        //Object to save values
+        saveLocal = new SaveLocal(StepCountActivity.this);
 
         String fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
-        Button btnUpdateSteps = findViewById(R.id.buttonUpdateSteps);
-        btnUpdateSteps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fitnessService.updateStepCount();
-                runner = new EncourageTask();
-                runner.execute();
-            }
-        });
+
+        fitnessService.updateStepCount();
+        int goalSteps = saveLocal.getGoal();
+        TextView goalText = findViewById(R.id.goal);
+        goalText.setText("Goal: "+goalSteps);
+        runner = new Background();
+        runner.execute();
         fitnessService.setup();
 
         //Button to start and stop exercises
         final Button startExerciseButton = findViewById(R.id.startExerciseButton);
-        //Object to save values
-        saveLocal = new SaveLocal(this);
         exercise=new Exercise(StepCountActivity.this, fitnessService);
         //While initializing, if an exercise was left active, set the button accordingly
         if(exercise.isActive()){
@@ -101,6 +72,7 @@ public class StepCountActivity extends AppCompatActivity{
                 if(exercise.isActive()){
                     //STOP EXERCISING
                     startExerciseButton.setText("Start Exercise");
+
                     exercise.stopExercise();
                 }
                 else{
@@ -135,32 +107,32 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void setStepCount(long stepCount) {
-        textSteps.setText(String.valueOf(stepCount));
+        textSteps.setText(stepCount+" steps");
         numSteps = stepCount;
     }
 
-    public void showEncouragement(){
-       // int x = Integer.parseInt(textSteps.getText().toString()) / 100;
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast t = Toast.makeText(StepCountActivity.this,"Good job! You're already at " + (numSteps/100) + "% of the daily recommended number of steps.", Toast.LENGTH_LONG);
-                t.show();
-            }
-        });
-
-    }
 
 
-    private class EncourageTask extends AsyncTask<String, String, String> {
+
+    private class Background extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... text) {
-            showEncouragement();
+
+            Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            Encouragement encourage;
+            encourage = new Encouragement(StepCountActivity.this);
+            fitnessService.updateStepCount();
+            if(exercise.isActive()){
+                WalkStats stats = new WalkStats(StepCountActivity.this);
+                stats.update();
+            }
+            if(hour>=20)
+                encourage.showEncouragement();
 
         }
 
@@ -175,10 +147,9 @@ public class StepCountActivity extends AppCompatActivity{
                     break;
                 }
             }*/
-
-            if(numSteps>=1000)
+            while(true) {
                 publishProgress();
-            return "ALL GOOD";
+            }
         }
 
         @Override
