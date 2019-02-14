@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
-import com.example.personalbest.fitness.HeightPickerFragment;
+import com.example.personalbest.HeightPickerFragment;
 import com.example.personalbest.fitness.WalkStats;
 
 import java.util.Calendar;
