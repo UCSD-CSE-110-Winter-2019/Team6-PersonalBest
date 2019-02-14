@@ -130,9 +130,19 @@ public class SaveLocal {
     public void setGoal(int goal) {
         editor.putInt("goal", goal);
         editor.apply();
+        setAchieved(false);
     }
     public int getGoal(){
         return exercisePreferences.getInt("goal", 5000);
+    }
+
+    public  boolean isAchieved(){
+        return exercisePreferences.getBoolean("goalAchieved", false);
+    }
+
+    public void setAchieved(boolean isAchieved){
+        editor.putBoolean("goalAchieved", isAchieved);
+        editor.apply();
     }
 
 
