@@ -15,8 +15,8 @@ public class Calc {
         Calendar c = Calendar.getInstance();
         long current = c.getTimeInMillis();
         long totalTime = current-time;
-        float minutes = totalTime/60000;
-        float hours = minutes/60;
+        float minutes = totalTime/60000f;
+        float hours = minutes/60f;
         if (hours == 0) {
             hours =  1;
         }
