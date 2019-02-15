@@ -120,15 +120,16 @@ public class SaveLocal {
     }
 
     //Method that shifts the last 7 days data when a new day begins
-    public void newDayShift(){
-        for(int i=7; i>0;i--){
-            Log.d("Save Local", "Shifting " + i + " and " + (i - 1));
-            setExerciseStepCount(getExerciseStepCount(i-1),i);
-            setBackgroundStepCount(getBackgroundStepCount(i-1),i);
+    public void newDayShift(int dayCount){
+        for(int j=0;j<dayCount;j++) {
+            for (int i = 7; i > 0; i--) {
+                Log.d("Save Local", "Shifting " + i + " and " + (i - 1));
+                setExerciseStepCount(getExerciseStepCount(i - 1), i);
+                setBackgroundStepCount(getBackgroundStepCount(i - 1), i);
+            }
+            setExerciseStepCount(0, 0);
+            setBackgroundStepCount(0, 0);
         }
-        setExerciseStepCount(0,0);
-        setBackgroundStepCount(0,0);
-
     }
     public void setCurrSubGoal(int subGoal){
         editor.putInt("currsubGoal", subGoal);

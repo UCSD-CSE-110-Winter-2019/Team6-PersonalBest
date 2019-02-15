@@ -9,11 +9,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
+import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class GoogleFitAdapter implements FitnessService {
     private final int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = System.identityHashCode(this) & 0xFFFF;
@@ -144,5 +150,41 @@ public class GoogleFitAdapter implements FitnessService {
     public long getDailyStepCount(){
         updateStepCount();
         return dailyStepCount;
+    }
+    public void printStepCount(long startMillis, long endMillis){
+        GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
+        if (lastSignedInAccount == null) {
+            return;
+        }
+
+
+        DataReadRequest readRequest =
+                new DataReadRequest.Builder()
+                        .read(DataType.TYPE_STEP_COUNT_DELTA)
+                        .setTimeRange(startMillis, endMillis, TimeUnit.MILLISECONDS)
+                        .build();
+
+        Fitness.getHistoryClient(activity, lastSignedInAccount)
+                .readData(readRequest)
+                .addOnSuccessListener(
+                        new OnSuccessListener<DataReadResponse>() {
+                            @Override
+                            public void onSuccess(DataReadResponse dataReadResponse) {
+                                List<DataSet> dataSets = dataReadResponse.getDataSets();
+
+                                DataSet dataSet =dataSets.get(0);
+
+                                int stepCount=0;
+                                for (DataPoint dp : dataSet.getDataPoints()) {
+                                    for (Field field : dp.getDataType().getFields()) {
+                                        stepCount+= dp.getValue(field).asInt();
+                                    }
+                                }
+                                System.out.println("STEP COUNT= "+stepCount);
+                                return;
+                            }
+
+                        });
+        return;
     }
 }

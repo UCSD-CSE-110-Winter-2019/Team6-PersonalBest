@@ -20,6 +20,7 @@ import com.example.personalbest.HeightPickerFragment;
 import com.example.personalbest.fitness.WalkStats;
 
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class StepCountActivity extends AppCompatActivity{
@@ -139,7 +140,15 @@ public class StepCountActivity extends AppCompatActivity{
         numSteps = stepCount;
     }
 
-
+    public void printSteps(View view) {
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date();
+        cal.setTime(now);
+        long endTime = cal.getTimeInMillis();
+        cal.add(Calendar.DAY_OF_WEEK, -1);
+        long startTime = cal.getTimeInMillis();
+        fitnessService.printStepCount(startTime,endTime);
+    }
 
 
     private class Background extends AsyncTask<String, String, String> {
@@ -198,6 +207,7 @@ public class StepCountActivity extends AppCompatActivity{
                 publishProgress();
             }
         }
+
 
         @Override
         protected void onPostExecute(String result) {

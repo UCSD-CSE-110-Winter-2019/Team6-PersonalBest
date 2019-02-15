@@ -12,35 +12,45 @@ import java.util.Calendar;
 
 public class EndDay {
 
-    private AlarmManager alarmManager;
-    private PendingIntent pendingIntent;
     private StepCountActivity activity;
+    private Calendar calendar;
+    SaveLocal saveLocal;
+    StepArr steps;
 
-    public EndDay(StepCountActivity activity, int hourOfDay, int minuteOfDay, int secondOfDay){
-        alarmManager = (AlarmManager)activity.getSystemService(Context.ALARM_SERVICE);
+    public class StepArr implements Observable{
 
-        IntentFilter intentFilter = new IntentFilter("com.example.personalbest.EndDay.Receiver");
-        Receiver receiver = new Receiver();
-        activity.registerReceiver(receiver, intentFilter);
-        this.activity = activity;
-
-        Intent intent = new Intent(activity, Receiver.class);
-        pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, 0);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minuteOfDay);
-        calendar.set(Calendar.SECOND, secondOfDay);
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-    public class Receiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent){
-            SaveLocal saveLocal=new SaveLocal(activity);
-            saveLocal.newDayShift();
-        }
+
+    public EndDay(StepCountActivity activity, Calendar calendar){
+        this.activity=activity;
+        this.saveLocal=new SaveLocal(activity);
+        this.calendar=calendar;
+        steps.setListener(new listener....
+        {
+
+        })
     }
+    public int isNewDay(Calendar calendar){
+        return calendar.get(Calendar.DAY_OF_YEAR)-this.calendar.get(Calendar.DAY_OF_YEAR);
+    }
+    public void updateDate(Calendar calendar){
+        this.calendar=calendar;
+    }
+    public void newDayActions(int numDays){
+        saveLocal.newDayShift(numDays);
+
+    }
+
+    public void updateLastActiveDayBackgroundSteps(Calendar recordStopTime){
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        int daysBefore=Calendar.getInstance().get(Calendar.DAY_OF_YEAR)-recordStopTime.get(Calendar.DAY_OF_YEAR);
+
+
+        saveLocal.setBackgroundStepCount(,daysBefore);
+    }
+
 }

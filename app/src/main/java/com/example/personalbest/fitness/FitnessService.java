@@ -5,6 +5,6 @@ public interface FitnessService {
     void setup();
     void updateStepCount();
     long getDailyStepCount();
-
+    void printStepCount(long startMillis, long endMillis);
 
 }
