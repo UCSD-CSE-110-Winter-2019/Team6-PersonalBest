@@ -27,11 +27,16 @@ public class EndDay {
     }
 
     public int isNewDay(Calendar calendar){
-        return calendar.get(Calendar.DAY_OF_YEAR)-this.calendar.get(Calendar.DAY_OF_YEAR);
+        int difference=calendar.get(Calendar.DAY_OF_YEAR)-this.calendar.get(Calendar.DAY_OF_YEAR);
+        if(difference<0){
+            difference+=365;
+        }
+        return difference;
     }
 
     public void updateDate(Calendar calendar){
         this.calendar=calendar;
+        saveLocal.setLastLogin(calendar);
     }
 
     public void newDayActions(int numDays, FitnessService fitnessService){
@@ -41,16 +46,4 @@ public class EndDay {
             fitnessService.updateBackgroundCount(i);
         }
     }
-
-//    public void updateLastActiveDayBackgroundSteps(Calendar recordStopTime){
-//        calendar.set(Calendar.HOUR_OF_DAY, 23);
-//        calendar.set(Calendar.MINUTE, 59);
-//        calendar.set(Calendar.SECOND, 59);
-//        calendar.set(Calendar.MILLISECOND, 999);
-//        int daysBefore=Calendar.getInstance().get(Calendar.DAY_OF_YEAR)-recordStopTime.get(Calendar.DAY_OF_YEAR);
-//
-//
-//        //saveLocal.setBackgroundStepCount(,daysBefore);
-//    }
-
 }

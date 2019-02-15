@@ -196,6 +196,7 @@ public class SaveLocal {
 
     public void setLastLogin(Calendar cal){
         editor.putLong("lastLoginTime",cal.getTimeInMillis());
+        editor.apply();
     }
     public Calendar getLastLogin(){
         Calendar cal = Calendar.getInstance();

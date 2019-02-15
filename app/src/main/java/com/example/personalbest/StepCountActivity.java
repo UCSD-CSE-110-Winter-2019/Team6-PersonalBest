@@ -143,14 +143,20 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void printSteps(View view) {
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
-        long startTime = cal.getTimeInMillis();
+        //endDay.newDayActions(1,fitnessService);
+        //endDay.updateDate(Calendar.getInstance());
+        for(int i=0;i<7; i++){
+            Log.d(TAG,""+i+" days before Background count: "+saveLocal.getBackgroundStepCount(i));
+            Log.d(TAG,""+i+" days before Exercise count: "+saveLocal.getExerciseStepCount(i));
+        }
 
         //fitnessService.listenStepCount(startTime,endTime,new UpdateBackgroundListener(this,));
+    }
+
+    public void resetLogin(View view) {
+        Calendar cal=Calendar.getInstance();
+        cal.setTimeInMillis(0);
+        saveLocal.setLastLogin(cal);
     }
 
 
