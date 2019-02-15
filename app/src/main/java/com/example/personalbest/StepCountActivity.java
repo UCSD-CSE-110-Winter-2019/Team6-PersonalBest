@@ -171,8 +171,9 @@ public class StepCountActivity extends AppCompatActivity{
         @Override
         protected void onProgressUpdate(String... text) {
             Calendar cal=Calendar.getInstance();
-            if(endDay.isNewDay(cal)>0){
-                endDay.newDayActions(endDay.isNewDay(cal),fitnessService);
+            int daySkip=endDay.isNewDay(cal);
+            if(daySkip>0){
+                endDay.newDayActions(daySkip,fitnessService);
                 endDay.updateDate(cal);
             }
 
