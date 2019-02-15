@@ -22,6 +22,7 @@
         android:id="@+id/goal"
         android:layout_width="103dp"
         android:layout_height="88dp"
+        android:clickable="true"
         android:text="Goal: "
         android:textSize="18sp" />
 

@@ -29,6 +29,12 @@ public class Exercise {
         saveLocal.setStopSession();
         long stepDifference=fitnessService.getDailyStepCount()-saveLocal.getStartSessionStepCount();
         saveLocal.setExerciseStepCount(saveLocal.getExerciseStepCount(0)+stepDifference,0);
+
+        saveLocal.setLastExerciseSteps(stepDifference);
+        saveLocal.setLastExerciseSpeed(saveLocal.getSpeed());
+        saveLocal.setLastExerciseTimeStart(saveLocal.getLastSessionStartTime());
+        saveLocal.setLastExerciseTimeEnd((Calendar.getInstance().getTimeInMillis()));
+
         Log.d(TAG,"This Exercise Step Count: "+stepDifference);
         Log.d(TAG,"Daily Exercise Step Count: "+saveLocal.getExerciseStepCount(0));
         return stepDifference;

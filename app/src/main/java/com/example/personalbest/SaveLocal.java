@@ -13,9 +13,11 @@ public class SaveLocal {
 
     private SharedPreferences exercisePreferences;
     private SharedPreferences.Editor editor;
+    Activity activity;
 
-    public SaveLocal(StepCountActivity activity){
-        exercisePreferences= activity.getSharedPreferences("exercise", Context.MODE_PRIVATE);
+    public SaveLocal(Activity activity){
+        this.activity = activity;
+        exercisePreferences= this.activity.getSharedPreferences("exercise", Context.MODE_PRIVATE);
         editor=exercisePreferences.edit();
     }
 
@@ -25,6 +27,30 @@ public class SaveLocal {
     public void saveStartSessionStepCount(long stepCount){
         editor.putLong("startSessionStepCount",stepCount);
         editor.apply();
+    }
+
+    public void saveHeight(int feet, int inches) {
+        editor.putInt("height_feet", feet);
+        editor.putInt("height_inches", inches);
+        editor.apply();
+    }
+
+    public int getHeightFeet() {
+        return exercisePreferences.getInt("height_feet", 5);
+    }
+
+    public int getHeightInches() {
+        return exercisePreferences.getInt("height_inches", 8);
+    }
+
+    public boolean containsHeight() {
+        return exercisePreferences.contains("height_feet");
+    }
+
+    public void clearHeight() {
+        editor.remove("height_feet");
+        editor.remove("height_inches");
+        editor.commit();
     }
 
     public long getStartSessionStepCount(){
@@ -63,6 +89,36 @@ public class SaveLocal {
     public long getExerciseStepCount(int daysBefore){
         return exercisePreferences.getLong(""+daysBefore+"DaysBeforeExerciseStepCount",0);
     }
+
+    //methods to set and get last exercise times
+    public long getLastExerciseSteps() {
+        return exercisePreferences.getLong("LastExerciseStep",0);
+    }
+    public float getLastExerciseSpeed() {
+        return exercisePreferences.getFloat("LastExerciseSpeed",0);
+    }
+    public String getLastExerciseTime() {
+        long startTime = exercisePreferences.getLong("LastExerciseTimeStart", 0);
+        long endTime = exercisePreferences.getLong("LastExerciseTimeEnd", 0);
+        return (new Calc(getHeightInches(), getHeightFeet())).calcTime(startTime, endTime);
+    }
+    public void setLastExerciseSteps(long steps) {
+        editor.putLong("LastExerciseStep",steps);
+        editor.apply();
+    }
+    public void setLastExerciseSpeed(float speed) {
+        editor.putFloat("LastExerciseSpeed", speed);
+        editor.apply();
+    }
+    public void setLastExerciseTimeStart(Long time) {
+        editor.putLong("LastExerciseTimeStart", time);
+        editor.apply();
+    }
+    public void setLastExerciseTimeEnd(Long time) {
+        editor.putLong("LastExerciseTimeEnd", time);
+        editor.apply();
+    }
+
     //Method that shifts the last 7 days data when a new day begins
     public void newDayShift(){
         for(int i=7; i>0;i--){
@@ -83,8 +139,8 @@ public class SaveLocal {
         editor.putInt("oldSubGoal", old);
         editor.apply();
     }
-    public void setSpeed(long speed){
-        editor.putLong("speed", speed);
+    public void setSpeed(float speed){
+        editor.putFloat("speed", speed);
         editor.apply();
     }
     public void setSteps(int steps){
@@ -102,8 +158,8 @@ public class SaveLocal {
     public int getOldSubGoal(){
         return exercisePreferences.getInt("oldSubGoal", 0);
     }
-    public long getSpeed(){
-        return exercisePreferences.getLong("speed", 0);
+    public float getSpeed(){
+        return exercisePreferences.getFloat("speed", 0);
     }
     public int getSteps(){
         return exercisePreferences.getInt("steps", 0);
@@ -114,9 +170,19 @@ public class SaveLocal {
     public void setGoal(int goal) {
         editor.putInt("goal", goal);
         editor.apply();
+        setAchieved(false);
     }
     public int getGoal(){
-        return exercisePreferences.getInt("goal", 5000);
+        return exercisePreferences.getInt("goal", 500);
+    }
+
+    public  boolean isAchieved(){
+        return exercisePreferences.getBoolean("goalAchieved", false);
+    }
+
+    public void setAchieved(boolean isAchieved){
+        editor.putBoolean("goalAchieved", isAchieved);
+        editor.apply();
     }
 
 
