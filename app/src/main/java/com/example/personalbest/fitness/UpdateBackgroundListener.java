@@ -7,17 +7,28 @@ import com.example.personalbest.StepCountActivity;
 import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class GoogleListener implements OnSuccessListener<DataReadResponse> {
+import java.util.Calendar;
+import java.util.Date;
+
+public class UpdateBackgroundListener implements OnSuccessListener<DataReadResponse> {
     SaveLocal saveLocal;
+    int daysBefore;
     Activity activity;
-    public GoogleListener(Activity activity){
+    public UpdateBackgroundListener(Activity activity, int daysBefore){
         super();
         this.activity=activity;
+        this.daysBefore=daysBefore;
+        saveLocal=new SaveLocal(activity);
+
     }
+    public void setDay(int daysBefore){
+        this.daysBefore=daysBefore;
+    }
+
     @Override
     public void onSuccess(DataReadResponse dataReadResponse) {
-        saveLocal=new SaveLocal(activity);
         int stepCount=GoogleFitAdapter.getSteps(dataReadResponse);
+        saveLocal.setBackgroundStepCount(stepCount-saveLocal.getExerciseStepCount(daysBefore),daysBefore);
         System.out.println("NUMBER OF STEPS: "+stepCount);
         //Update data
     }

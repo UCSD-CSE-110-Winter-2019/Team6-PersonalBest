@@ -18,6 +18,8 @@ import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -151,13 +153,45 @@ public class GoogleFitAdapter implements FitnessService {
         updateStepCount();
         return dailyStepCount;
     }
-    public void printStepCount(long startMillis, long endMillis){
+
+    public static int getSteps(DataReadResponse dataReadResponse){
+        List<DataSet> dataSets = dataReadResponse.getDataSets();
+
+        DataSet dataSet =dataSets.get(0);
+
+        int stepCount=0;
+        for (DataPoint dp : dataSet.getDataPoints()) {
+            for (Field field : dp.getDataType().getFields()) {
+                stepCount+= dp.getValue(field).asInt();
+            }
+        }
+        return stepCount;
+    }
+    public void updateBackgroundCount(int daysBefore){
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date();
+        cal.setTime(now);
+
+        cal.add(Calendar.DAY_OF_YEAR, -daysBefore);
+        cal.set(Calendar.HOUR_OF_DAY,23);
+        cal.set(Calendar.MINUTE,59);
+        cal.set(Calendar.SECOND,59);
+        cal.set(Calendar.MILLISECOND,59);
+        long endTime = cal.getTimeInMillis();
+
+        cal.set(Calendar.HOUR_OF_DAY,0);
+        cal.set(Calendar.MINUTE,0);
+        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.MILLISECOND,0);
+        long startTime = cal.getTimeInMillis();
+
+        listenStepCount(startTime,endTime,new UpdateBackgroundListener(activity,daysBefore));
+    }
+    public void listenStepCount(long startMillis, long endMillis, OnSuccessListener<DataReadResponse> listener){
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
             return;
         }
-
-
         DataReadRequest readRequest =
                 new DataReadRequest.Builder()
                         .read(DataType.TYPE_STEP_COUNT_DELTA)
@@ -166,25 +200,7 @@ public class GoogleFitAdapter implements FitnessService {
 
         Fitness.getHistoryClient(activity, lastSignedInAccount)
                 .readData(readRequest)
-                .addOnSuccessListener(
-                        new OnSuccessListener<DataReadResponse>() {
-                            @Override
-                            public void onSuccess(DataReadResponse dataReadResponse) {
-                                List<DataSet> dataSets = dataReadResponse.getDataSets();
-
-                                DataSet dataSet =dataSets.get(0);
-
-                                int stepCount=0;
-                                for (DataPoint dp : dataSet.getDataPoints()) {
-                                    for (Field field : dp.getDataType().getFields()) {
-                                        stepCount+= dp.getValue(field).asInt();
-                                    }
-                                }
-                                System.out.println("STEP COUNT= "+stepCount);
-                                return;
-                            }
-
-                        });
+                .addOnSuccessListener(listener);
         return;
     }
 }

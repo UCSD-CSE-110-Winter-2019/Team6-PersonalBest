@@ -8,8 +8,8 @@ import android.util.Log;
 
 import java.util.Calendar;
 
-
 public class SaveLocal {
+    final int DAYS_TO_KEEP_TRACK_OF=7;
 
     private SharedPreferences exercisePreferences;
     private SharedPreferences.Editor editor;
@@ -73,21 +73,29 @@ public class SaveLocal {
 
     //Sets the background step count of the day (dayBefore) before current day
     public void setBackgroundStepCount(long stepCount, int daysBefore){
-        editor.putLong(""+daysBefore+"DaysBeforeBackgroundStepCount",stepCount);
-        editor.apply();
+        if(daysBefore<DAYS_TO_KEEP_TRACK_OF) {
+            editor.putLong("" + daysBefore + "DaysBeforeBackgroundStepCount", stepCount);
+            editor.apply();
+        }
     }
     //Returns the background step count of the day (dayBefore) before current day
     public long getBackgroundStepCount(int daysBefore){
-        return exercisePreferences.getLong(""+daysBefore+"DaysBeforeBackgroundStepCount",0);
+        if(daysBefore<DAYS_TO_KEEP_TRACK_OF) {
+            return exercisePreferences.getLong("" + daysBefore + "DaysBeforeBackgroundStepCount", 0);
+        }else return -1;
     }
     //Sets the exercise step count of the day (dayBefore) before current day
     public void setExerciseStepCount(long stepCount, int daysBefore){
-        editor.putLong(""+daysBefore+"DaysBeforeExerciseStepCount",stepCount);
-        editor.apply();
+        if(daysBefore<DAYS_TO_KEEP_TRACK_OF) {
+            editor.putLong("" + daysBefore + "DaysBeforeExerciseStepCount", stepCount);
+            editor.apply();
+        }
     }
     //Returns the exercise step count of the day (dayBefore) before current day
     public long getExerciseStepCount(int daysBefore){
-        return exercisePreferences.getLong(""+daysBefore+"DaysBeforeExerciseStepCount",0);
+        if(daysBefore<DAYS_TO_KEEP_TRACK_OF) {
+            return exercisePreferences.getLong("" + daysBefore + "DaysBeforeExerciseStepCount", 0);
+        }else return -1;
     }
 
     //methods to set and get last exercise times
@@ -122,7 +130,7 @@ public class SaveLocal {
     //Method that shifts the last 7 days data when a new day begins
     public void newDayShift(int dayCount){
         for(int j=0;j<dayCount;j++) {
-            for (int i = 7; i > 0; i--) {
+            for (int i = DAYS_TO_KEEP_TRACK_OF-1; i > 0; i--) {
                 Log.d("Save Local", "Shifting " + i + " and " + (i - 1));
                 setExerciseStepCount(getExerciseStepCount(i - 1), i);
                 setBackgroundStepCount(getBackgroundStepCount(i - 1), i);
@@ -184,6 +192,22 @@ public class SaveLocal {
     public void setAchieved(boolean isAchieved){
         editor.putBoolean("goalAchieved", isAchieved);
         editor.apply();
+    }
+
+    public void setLastLogin(Calendar cal){
+        editor.putLong("lastLoginTime",cal.getTimeInMillis());
+    }
+    public Calendar getLastLogin(){
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(exercisePreferences.getLong("lastLoginTime",0));
+        return cal;
+    }
+
+    public void clearStepData(){
+        for (int i = 0; i < DAYS_TO_KEEP_TRACK_OF; i++) {
+            setExerciseStepCount(0, i);
+            setBackgroundStepCount(0, i);
+        }
     }
 
 

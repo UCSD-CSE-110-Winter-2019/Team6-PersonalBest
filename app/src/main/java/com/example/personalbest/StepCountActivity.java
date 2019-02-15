@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
-import com.example.personalbest.HeightPickerFragment;
+import com.example.personalbest.fitness.UpdateBackgroundListener;
 import com.example.personalbest.fitness.WalkStats;
 
 import java.util.Calendar;
@@ -45,6 +45,7 @@ public class StepCountActivity extends AppCompatActivity{
     Exercise exercise;
 
     SaveLocal saveLocal;
+    EndDay endDay;
 
 
 
@@ -112,13 +113,14 @@ public class StepCountActivity extends AppCompatActivity{
             }
         });
 
-        SharedPreferences myPrefs = getSharedPreferences("height", MODE_PRIVATE);
 
         //Log.i( "TAG","hello+test " + myPrefs.getString("height_feet",""));
         if(!saveLocal.containsHeight()) {
             DialogFragment nameFrag = new HeightPickerFragment();
             nameFrag.show(getSupportFragmentManager(), "Height");
         }
+
+        endDay=new EndDay(this,saveLocal.getLastLogin());
     }
 
 
@@ -145,9 +147,10 @@ public class StepCountActivity extends AppCompatActivity{
         Date now = new Date();
         cal.setTime(now);
         long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.DAY_OF_WEEK, -1);
+        cal.add(Calendar.WEEK_OF_YEAR, -1);
         long startTime = cal.getTimeInMillis();
-        fitnessService.printStepCount(startTime,endTime);
+
+        //fitnessService.listenStepCount(startTime,endTime,new UpdateBackgroundListener(this,));
     }
 
 
@@ -167,6 +170,12 @@ public class StepCountActivity extends AppCompatActivity{
 
         @Override
         protected void onProgressUpdate(String... text) {
+            Calendar cal=Calendar.getInstance();
+            if(endDay.isNewDay(cal)>0){
+                endDay.newDayActions(endDay.isNewDay(cal),fitnessService);
+                endDay.updateDate(cal);
+            }
+
             hour = c.get(Calendar.HOUR_OF_DAY);
 
             fitnessService.updateStepCount();
