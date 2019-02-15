@@ -89,8 +89,8 @@ public class StepCountActivity extends AppCompatActivity{
                 if(exercise.isActive()){
                     //STOP EXERCISING
                     startExerciseButton.setText("Start Exercise");
-
-                    exercise.stopExercise();
+                    Calendar calendar=Calendar.getInstance();
+                    exercise.stopExercise(calendar);
                 }
                 else{
                     //START EXERCISING
@@ -148,15 +148,17 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
-    private class Background extends AsyncTask<String, String, String> {
+    public class Background extends AsyncTask<String, String, String> {
         DialogFragment goalFrag;
         Encouragement encourage;
         Calendar c;
         int hour;
+
         @Override
         protected void onPreExecute() {
-
-            c = Calendar.getInstance();
+            if(c == null) {
+                c = Calendar.getInstance();
+            }
             hour = c.get(Calendar.HOUR_OF_DAY);
 
             encourage = new Encouragement(StepCountActivity.this);
@@ -167,10 +169,10 @@ public class StepCountActivity extends AppCompatActivity{
             hour = c.get(Calendar.HOUR_OF_DAY);
 
             fitnessService.updateStepCount();
-            if(exercise.isActive()){
+            //if(exercise.isActive()){
                 WalkStats stats = new WalkStats(StepCountActivity.this);
                 stats.update();
-            }
+            //}
 
             if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);
@@ -180,29 +182,14 @@ public class StepCountActivity extends AppCompatActivity{
 
             }
             if(hour>=20)
+                System.out.println("In if statement");
                 encourage.showEncouragement();
 
         }
 
         @Override
         protected String doInBackground(String... strings) {
-          /*  while (true) {
-                if (isCancelled()) {
-                    break;
-                }
-                if(numSteps >= 1000){
-                    publishProgress();
-                    break;
-                }
-            }*/
-            /*while(true) {
-                try{
-                    Thread.sleep(500);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }*/
-                publishProgress();
-            //}
+            publishProgress();
             return null;
         }
 

@@ -11,12 +11,10 @@ public class Calc {
         feet = ft;
     }
 
-    public float calcSpeed(long time, float distance){
-        Calendar c = Calendar.getInstance();
-        long current = c.getTimeInMillis();
-        long totalTime = current-time;
-        float minutes = totalTime/60000;
-        float hours = minutes/60;
+    public float calcSpeed(long startTime, long endTime, float distance){
+        long totalTime = endTime-startTime;
+        float minutes = totalTime/60000f;
+        float hours = minutes/60f;
         if (hours == 0) {
             hours =  1;
         }
@@ -35,9 +33,12 @@ public class Calc {
         return (float)((height*0.413)/12.0);
     }
 
-    public String calcTime(long StartTime, long currentTime){
-        int minutes = (int)(currentTime-StartTime)/60000;
-        int seconds = (int)(((currentTime-StartTime)%60000)/1000);
+    public String calcTime(long startTime, long endTime){
+        int minutes = (int)(endTime-startTime)/60000;
+        int seconds = (int)(((endTime-startTime)%60000)/1000);
+        if(seconds < 10){
+            return minutes+":0"+seconds;
+        }
         return minutes+":"+seconds;
     }
 }

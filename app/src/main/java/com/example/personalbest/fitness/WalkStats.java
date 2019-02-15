@@ -15,6 +15,7 @@ public class WalkStats {
     SaveLocal save;
     StepCountActivity act;
     Long startTime;
+    Long endTime;
     long steps;
     Calc calc;
 
@@ -27,17 +28,21 @@ public class WalkStats {
 
     public void update(){
         startTime = save.getLastSessionStartTime();
+        endTime = save.getLastExerciseTimeEnd();
         steps = save.getStartSessionStepCount();
+
         float distance = calc.calcDistance(act.numSteps-steps);
-        float speed = calc.calcSpeed(startTime, distance);
+        float speed = calc.calcSpeed(startTime, endTime, distance);
         save.setSpeed(speed);
+
         Calendar c = Calendar.getInstance();
-        long currentTime = c.getTimeInMillis();
         TextView speedText = act.findViewById(R.id.textSpeed);
         speedText.setText("MPH: "+speed);
+
         TextView timeText = act.findViewById(R.id.walkTime);
-        String time = calc.calcTime(startTime, currentTime);
+        String time = calc.calcTime(startTime, endTime);
         timeText.setText("Time Elapsed: "+time);
+
         TextView walkSteps = act.findViewById(R.id.walkSteps);
         walkSteps.setText("Steps: "+(act.numSteps-steps));
 
