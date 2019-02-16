@@ -11,6 +11,7 @@ public interface FitnessService {
     //void listenStepCount(long startMillis, long endMillis, OnSuccessListener<DataReadResponse> listener);
     void updateBackgroundCount(int daysBefore);
     boolean isSetupComplete();
-    void startRecording();
+    boolean startRecording();
+
 
 }

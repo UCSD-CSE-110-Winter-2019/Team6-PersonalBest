@@ -43,7 +43,7 @@ public class StepCountActivity extends AppCompatActivity{
     private FitnessService fitnessService;
     private Background runner;
     Exercise exercise;
-
+    private boolean isRecording;
     SaveLocal saveLocal;
     EndDay endDay;
     boolean daysUpdated;
@@ -56,18 +56,24 @@ public class StepCountActivity extends AppCompatActivity{
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
         //Object to save values
+        isRecording=false;
         saveLocal = new SaveLocal(StepCountActivity.this);
 
         String fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
 
-        fitnessService.updateStepCount();
+
+
         goalSteps = saveLocal.getGoal();
         goalView.setText("Goal: "+goalSteps);
+
+
         runner = new Background();
         runner.execute();
         fitnessService.setup();
 
+        //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
+        fitnessService.updateStepCount();
         exerciseSteps = findViewById(R.id.walkSteps);
         speed = findViewById(R.id.textSpeed);
         timeElapsed = findViewById(R.id.walkTime);
@@ -177,7 +183,9 @@ public class StepCountActivity extends AppCompatActivity{
 
         @Override
         protected void onProgressUpdate(String... text) {
-            if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
+            if(!isRecording){
+                isRecording=fitnessService.startRecording();
+            }
 
             Calendar cal=Calendar.getInstance();
             int daySkip=endDay.isNewDay(cal);
