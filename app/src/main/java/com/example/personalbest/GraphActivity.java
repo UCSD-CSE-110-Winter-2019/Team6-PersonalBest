@@ -111,7 +111,7 @@ public class GraphActivity extends AppCompatActivity {
     public long[] getBackground(SaveLocal saveLocal){
         long[] background = new long[7];
         for(int i = 1; i < 7; i++){
-            background[6-i] = saveLocal.getBackgroundStepCount(i + 1);
+            background[6-i] = saveLocal.getBackgroundStepCount(i);
         }
         background[6] = numSteps;
         return background;
@@ -119,7 +119,7 @@ public class GraphActivity extends AppCompatActivity {
     public long[] getExercise(SaveLocal saveLocal){
         long[] exercise = new long[7];
         for(int i = 0; i < 7; i++){
-            exercise[6-i] = saveLocal.getExerciseStepCount(i + 1);
+            exercise[6-i] = saveLocal.getExerciseStepCount(i );
         }
         return exercise;
     }
