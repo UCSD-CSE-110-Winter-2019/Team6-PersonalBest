@@ -1,16 +1,19 @@
 package com.example.personalbest.fitness;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.personalbest.SaveLocal;
 import com.example.personalbest.StepCountActivity;
 import com.google.android.gms.fitness.result.DataReadResponse;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Calendar;
 import java.util.Date;
 
-public class UpdateBackgroundListener implements OnSuccessListener<DataReadResponse> {
+public class UpdateBackgroundListener implements OnSuccessListener<DataReadResponse>, OnFailureListener{
     SaveLocal saveLocal;
     int daysBefore;
     Activity activity;
@@ -33,4 +36,8 @@ public class UpdateBackgroundListener implements OnSuccessListener<DataReadRespo
         //Update data
     }
 
+    @Override
+    public void onFailure(@NonNull Exception e) {
+        Log.d("ONFAILURE","IT FAILED" );
+    }
 }
