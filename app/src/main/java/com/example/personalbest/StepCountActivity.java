@@ -213,8 +213,8 @@ public class StepCountActivity extends AppCompatActivity{
 
     public void launchGrapActivity(View view) {
         Intent intent = new Intent(this, GraphActivity.class);
-
-        intent.putExtra("numSteps", fitnessService.getDailyStepCount());
+        int dailySteps=(int)fitnessService.getDailyStepCount();
+        intent.putExtra("numSteps", dailySteps);
         startActivity(intent);
     }
 
