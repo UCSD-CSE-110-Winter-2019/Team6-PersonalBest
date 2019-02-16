@@ -146,13 +146,16 @@ public class SaveLocal {
         else if(dayCount<0){
             for (int j = 0; j < -dayCount; j++) {
                 for (int i = 0; i < DAYS_TO_KEEP_TRACK_OF-1; i++) {
-                    Log.d("Save Local", "Shifting " + i + " and " + (i - 1));
+                    System.out.println( "Shifting " + (i+1) + " and " + (i));
                     setExerciseStepCount(getExerciseStepCount(i +1), i);
                     setBackgroundStepCount(getBackgroundStepCount(i + 1), i);
+                    setPreviousDayGoal(getGoals(i+1),i);
                 }
-                setExerciseStepCount(0, 6);
-                setBackgroundStepCount(0, 6);
+                setExerciseStepCount(0, 0);
+                setBackgroundStepCount(0, 0);
+
             }
+
         }
 
 

@@ -88,7 +88,7 @@ public class StepCountActivity extends AppCompatActivity{
         fitnessService.setup();
 
         //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
-        fitnessService.updateStepCount();
+        fitnessService.updateStepCount(Calendar.getInstance());
         exerciseSteps = findViewById(R.id.walkSteps);
         speed = findViewById(R.id.textSpeed);
         timeElapsed = findViewById(R.id.walkTime);
@@ -150,7 +150,7 @@ public class StepCountActivity extends AppCompatActivity{
 //       If authentication was required during google fit setup, this will be called after the user authenticates
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == fitnessService.getRequestCode()) {
-                fitnessService.updateStepCount();
+                fitnessService.updateStepCount(Calendar.getInstance());
             }
         } else {
             Log.e(TAG, "ERROR, google fit result code: " + resultCode);
@@ -173,13 +173,13 @@ public class StepCountActivity extends AppCompatActivity{
 
     }
 
-    public void putData(){
+    public void putData(View view){
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
         cal.setTime(now);
         //cal.add(Calendar.DAY_OF_YEAR, -1);
         long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.HOUR_OF_DAY, -1);
+        cal.add(Calendar.SECOND, -50);
         long startTime = cal.getTimeInMillis();
 
 // Create a data source
@@ -192,7 +192,7 @@ public class StepCountActivity extends AppCompatActivity{
                         .build();
 
 // Create a data set
-        int stepCountDelta = 950;
+        int stepCountDelta = 500;
         DataSet dataSet = DataSet.create(dataSource);
 // For each data point, specify a start time, end time, and the data value -- in this case,
 // the number of new steps.
@@ -204,15 +204,9 @@ public class StepCountActivity extends AppCompatActivity{
         Task<Void> response = Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this)).insertData(dataSet);
     }
 
-    public void resetLogin(View view) {
-        Calendar cal=Calendar.getInstance();
-        cal.setTimeInMillis(0);
-        endDay.updateDate(cal);
-    }
-
     public void launchGrapActivity(View view) {
         Intent intent = new Intent(this, GraphActivity.class);
-        int dailySteps=(int)fitnessService.getDailyStepCount();
+        int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
         intent.putExtra("numSteps", dailySteps);
         startActivity(intent);
     }
@@ -240,14 +234,14 @@ public class StepCountActivity extends AppCompatActivity{
 
             Calendar cal=Calendar.getInstance();
             int daySkip=endDay.dayDifference(cal);
-            if(daySkip>0 && isRecording){
+            if(daySkip != 0 && isRecording){
                 endDay.newDayActions(daySkip,fitnessService,cal);
                 endDay.updateDate(cal);
             }
 
             hour = c.get(Calendar.HOUR_OF_DAY);
 
-            fitnessService.updateStepCount();
+            fitnessService.updateStepCount(Calendar.getInstance());
             if(exercise.isActive()){
                 WalkStats stats = new WalkStats(StepCountActivity.this);
                 stats.update();

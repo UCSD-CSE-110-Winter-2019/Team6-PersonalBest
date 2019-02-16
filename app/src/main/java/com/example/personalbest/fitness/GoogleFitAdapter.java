@@ -33,12 +33,12 @@ public class GoogleFitAdapter implements FitnessService {
     private boolean isDeltaSet;
     private boolean isAggregateSet;
 
-
     public GoogleFitAdapter(StepCountActivity activity) {
         this.activity = activity;
         isCumulativeSet=false;
         isAggregateSet=false;
         isDeltaSet=false;
+
     }
 
 
@@ -58,7 +58,7 @@ public class GoogleFitAdapter implements FitnessService {
 
 
         } else {
-            updateStepCount();
+            //updateStepCount(cal);
             //startRecording();
         }
 
@@ -123,27 +123,44 @@ public class GoogleFitAdapter implements FitnessService {
      * Reads the current daily step total, computed from midnight of the current day on the device's
      * current timezone.
      */
-    public void updateStepCount() {
+    public void updateStepCount(Calendar currentTime) {
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
             return;
         }
+        Calendar cal=Calendar.getInstance();
+        cal.setTimeInMillis(currentTime.getTimeInMillis());
+        cal.set(Calendar.HOUR_OF_DAY,23);
+        cal.set(Calendar.MINUTE,59);
+        cal.set(Calendar.SECOND,59);
+        cal.set(Calendar.MILLISECOND,59);
+        long endTime = cal.getTimeInMillis();
+
+        cal.set(Calendar.HOUR_OF_DAY,0);
+        cal.set(Calendar.MINUTE,0);
+        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.MILLISECOND,0);
+        long startTime = cal.getTimeInMillis();
+
+        DataReadRequest readRequest =
+                new DataReadRequest.Builder()
+                        .read(DataType.TYPE_STEP_COUNT_DELTA)
+                        .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                        .build();
+
 
         Fitness.getHistoryClient(activity, lastSignedInAccount)
-                .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
+                .readData(readRequest)
                 .addOnSuccessListener(
-                        new OnSuccessListener<DataSet>() {
+                        new OnSuccessListener<DataReadResponse>() {
                             @Override
-                            public void onSuccess(DataSet dataSet) {
-                                Log.d(TAG, dataSet.toString());
-                                long total =
-                                        dataSet.isEmpty()
-                                                ? 0
-                                                : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
+                            public void onSuccess(DataReadResponse dataReadResponse) {
+                                int stepCount=GoogleFitAdapter.getSteps(dataReadResponse);
 
-                                activity.setStepCount(total);
-                                dailyStepCount=total;
-                                Log.d(TAG, "Total steps: " + total);
+                                activity.setStepCount(stepCount);
+                                dailyStepCount=stepCount;
+                                Log.d(TAG, "Total steps: " + stepCount);
+                                //Update data
                             }
                         })
                 .addOnFailureListener(
@@ -154,6 +171,8 @@ public class GoogleFitAdapter implements FitnessService {
                             }
                         });
 
+
+
     }
 
 
@@ -162,14 +181,11 @@ public class GoogleFitAdapter implements FitnessService {
         return GOOGLE_FIT_PERMISSIONS_REQUEST_CODE;
     }
 
-    public long getDailyStepCount(){
-        updateStepCount();
+    public long getDailyStepCount(Calendar cal){
+        updateStepCount(cal);
         return dailyStepCount;
     }
 
-    public void putInSteps(){
-
-    }
 
     public static int getSteps(DataReadResponse dataReadResponse){
         List<DataSet> dataSets = dataReadResponse.getDataSets();
@@ -207,7 +223,7 @@ public class GoogleFitAdapter implements FitnessService {
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
             return;
-        }
+    }
         DataReadRequest readRequest =
                 new DataReadRequest.Builder()
                         .read(DataType.TYPE_STEP_COUNT_DELTA)

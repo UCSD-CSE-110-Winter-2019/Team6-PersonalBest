@@ -26,11 +26,14 @@ public class EndDay {
 
     public int dayDifference(Calendar calendar){
         Calendar newCal=Calendar.getInstance();
+        newCal.setTimeInMillis(calendar.getTimeInMillis());
         newCal.set(Calendar.HOUR_OF_DAY,0);
         newCal.set(Calendar.MINUTE,0);
         newCal.set(Calendar.SECOND,0);
         newCal.set(Calendar.MILLISECOND,0);
-        float differenceMillis=calendar.getTimeInMillis()-saveLocal.getLastLogin().getTimeInMillis();
+        long savedDate=saveLocal.getLastLogin().getTimeInMillis();
+        long nowDate=newCal.getTimeInMillis();
+        long differenceMillis=nowDate-savedDate;
         int differenceDays=(int)(differenceMillis/MILLISECONDS_IN_DAY);
         return differenceDays;
     }
@@ -40,13 +43,23 @@ public class EndDay {
     }
 
     public void newDayActions(int numDays, FitnessService fitnessService, Calendar currDay){
-        if(numDays>=7){
-            saveLocal.clearStepData();
-            numDays=6;
+        if(numDays>0) {
+            if (numDays >= 7) {
+                saveLocal.clearStepData();
+                numDays = 6;
+            } else saveLocal.newDayShift(numDays);
+            for (int i = 1; i <= numDays; i++) {
+                fitnessService.updateBackgroundCount(currDay, i);
+            }
         }
-        else saveLocal.newDayShift(numDays);
-        for(int i=1; i<=numDays;i++) {
-            fitnessService.updateBackgroundCount(currDay,i);
+        else if (numDays<0){
+            if (numDays <= -7) {
+                saveLocal.clearStepData();
+                numDays = 6;
+            } else saveLocal.newDayShift(numDays);
+            for (int i = 6; i >= 7-numDays; i++) {
+                fitnessService.updateBackgroundCount(currDay, i);
+            }
         }
     }
 }
