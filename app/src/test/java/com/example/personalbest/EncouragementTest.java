@@ -53,13 +53,12 @@ public class EncouragementTest {
         activity = Robolectric.buildActivity(StepCountActivity.class, intent).create().get();
         fitnessService = FitnessServiceFactory.create(TEST_SERVICE, activity);
         exercise = new Exercise(activity, fitnessService);
-        testTask = activity.new Background();
-        nextStepCount = 1000;
+        nextStepCount = 0;
     }
 
     // Test that toast appears after 8pm
     @Test
-    public void toastTimeTest() {
+    public void toastTest1() {
         Calendar cal = Calendar.getInstance();
         // Wed, February 13, 2019 02:16:40
         Date dummyStartTime = new Date(1550053000000L);
@@ -67,17 +66,88 @@ public class EncouragementTest {
         Date dummyEndTime = new Date(1550116800000L);
         cal.setTime(dummyStartTime);
 
-        testTask.c = cal;
-        testTask.execute();
+        testTask = activity.new Background(cal);
+        activity.onResume(cal);
 
-        nextStepCount = 1500;
+        nextStepCount = 2000;
         cal.setTime(dummyEndTime);
 
-        testTask.c = cal;
-        testTask.execute();
+        activity.onResume(cal);
 
         String toastText = shadowToast.getTextOfLatestToast();
-        assertEquals("You've increased your daily steps by over 1000 steps. Keep up the good work!", toastText);
+        assertEquals("You've increased your daily steps by over 2000 steps. Keep up the good work!", toastText);
+    }
+
+    // Test that no toast appears when a subgoal has not been met
+    @Test
+    public void toastTest2() {
+        Calendar cal = Calendar.getInstance();
+        // Wed, February 13, 2019 02:16:40
+        Date dummyStartTime = new Date(1550053000000L);
+        // Wed, February 13, 2019 20:00:00
+        Date dummyEndTime = new Date(1550116800000L);
+        cal.setTime(dummyStartTime);
+
+        testTask = activity.new Background(cal);
+        activity.onResume(cal);
+
+        nextStepCount = 250;
+        cal.setTime(dummyEndTime);
+
+        activity.onResume(cal);
+
+        String toastText = shadowToast.getTextOfLatestToast();
+        assertEquals(null, toastText);
+
+    }
+
+    // Test toast after walking past midnight and meeting subgoal
+    @Test
+    public void toastTest3() {
+        Calendar cal = Calendar.getInstance();
+        // Wed, February 13, 2019 23:55:00
+        Date dummyStartTime = new Date(1550053000000L);
+        // Wed, February 14, 2019 00:10:00
+        Date dummyEndTime = new Date(1550131800000L);
+        //Wed, February 14, 2019 20:00:00
+        Date dummyNotifTime = new Date(1550203200000L);
+
+        cal.setTime(dummyStartTime);
+
+        testTask = activity.new Background(cal);
+        activity.onResume(cal);
+
+        nextStepCount = 1000;
+        cal.setTime(dummyEndTime);
+
+        nextStepCount = 2000;
+
+        cal.setTime(dummyNotifTime);
+
+        activity.onResume(cal);
+
+        String toastText = shadowToast.getTextOfLatestToast();
+        assertEquals("You've increased your daily steps by over 2000 steps. Keep up the good work!", toastText);
+    }
+
+    // Test no toast appears before 8pm
+    @Test
+    public void toastTest4() {
+        Calendar cal = Calendar.getInstance();
+        // Wed, February 13, 2019 02:16:40
+        Date dummyStartTime = new Date(1550053000000L);
+
+        cal.setTime(dummyStartTime);
+
+        testTask = activity.new Background(cal);
+        activity.onResume(cal);
+
+        nextStepCount = 2000;
+
+        activity.onResume(cal);
+
+        String toastText = shadowToast.getTextOfLatestToast();
+        assertEquals(null, toastText);
     }
 
     private class TestFitnessService2 implements FitnessService {

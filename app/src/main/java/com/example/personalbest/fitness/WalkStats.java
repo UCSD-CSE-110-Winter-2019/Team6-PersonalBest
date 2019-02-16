@@ -28,7 +28,12 @@ public class WalkStats {
 
     public void update(){
         startTime = save.getLastSessionStartTime();
-        endTime = save.getLastExerciseTimeEnd();
+        if(save.isLastSessionActive()){
+            endTime = Calendar.getInstance().getTimeInMillis();
+        }
+        else {
+            endTime = save.getLastExerciseTimeEnd();
+        }
         steps = save.getStartSessionStepCount();
 
         float distance = calc.calcDistance(act.numSteps-steps);

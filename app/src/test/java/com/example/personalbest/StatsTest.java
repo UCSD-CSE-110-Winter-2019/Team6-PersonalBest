@@ -65,6 +65,7 @@ public class StatsTest {
         nextStepCount = 1000;
     }
 
+    // test for correct time after stopping exercise
     @Test
     public void timeTest() {
         Calendar cal = Calendar.getInstance();
@@ -77,10 +78,9 @@ public class StatsTest {
         exercise.startExercise(cal);
         cal.setTime(dummyEndTime);
         exercise.stopExercise(cal);
-        activity.onResume();
+        activity.onResume(cal);
 
         assertEquals("Time Elapsed: 15:00", textTime.getText());
-
     }
 
     @Test
@@ -96,7 +96,7 @@ public class StatsTest {
         cal.setTime(dummyEndTime);
         nextStepCount = 2000;
         exercise.stopExercise(cal);
-        activity.onResume();
+        activity.onResume(cal);
 
         assertEquals("MPH: 1.7729799", textSpeed.getText());
 
@@ -104,9 +104,10 @@ public class StatsTest {
 
     @Test
     public void stepsTest() {
+        Calendar cal = Calendar.getInstance();
         walkBtn.performClick();
         nextStepCount = 2000;
-        activity.onResume();
+        activity.onResume(cal);
         walkBtn.performClick();
 
         assertEquals("Steps: 1000", textSteps.getText());

@@ -62,7 +62,9 @@ public class StepCountActivity extends AppCompatActivity{
         fitnessService.updateStepCount();
         goalSteps = saveLocal.getGoal();
         goalView.setText("Goal: "+goalSteps);
-        runner = new Background();
+        saveLocal.setCurrSubGoal(500);
+        Calendar cal = Calendar.getInstance();
+        runner = new Background(cal);
         runner.execute();
         fitnessService.setup();
 
@@ -139,9 +141,17 @@ public class StepCountActivity extends AppCompatActivity{
         numSteps = stepCount;
     }
 
+    // for unit tests
+    public void onResume(Calendar cal) {
+        super.onResume();
+        runner = new Background(cal);
+        runner.execute();
+    }
+
     public void onResume() {
         super.onResume();
-        runner = new Background();
+        Calendar c = Calendar.getInstance();
+        runner = new Background(c);
         runner.execute();
     }
 
@@ -154,11 +164,12 @@ public class StepCountActivity extends AppCompatActivity{
         Calendar c;
         int hour;
 
+        public Background(Calendar cal){
+            c = cal;
+        }
+
         @Override
         protected void onPreExecute() {
-            if(c == null) {
-                c = Calendar.getInstance();
-            }
             hour = c.get(Calendar.HOUR_OF_DAY);
 
             encourage = new Encouragement(StepCountActivity.this);
@@ -167,7 +178,6 @@ public class StepCountActivity extends AppCompatActivity{
         @Override
         protected void onProgressUpdate(String... text) {
             hour = c.get(Calendar.HOUR_OF_DAY);
-
             fitnessService.updateStepCount();
             //if(exercise.isActive()){
                 WalkStats stats = new WalkStats(StepCountActivity.this);
@@ -178,12 +188,10 @@ public class StepCountActivity extends AppCompatActivity{
                 saveLocal.setAchieved(true);
                 goalFrag = new GoalFragment();
                 goalFrag.show(getSupportFragmentManager(), "Goal");
-
-
             }
-            if(hour>=20)
-                System.out.println("In if statement");
+            if(hour>=20) {
                 encourage.showEncouragement();
+            }
 
         }
 
