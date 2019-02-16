@@ -46,7 +46,7 @@ public class StepCountActivity extends AppCompatActivity{
 
     SaveLocal saveLocal;
     EndDay endDay;
-
+    boolean daysUpdated;
 
 
     @Override
@@ -157,6 +157,7 @@ public class StepCountActivity extends AppCompatActivity{
         Calendar cal=Calendar.getInstance();
         cal.setTimeInMillis(0);
         saveLocal.setLastLogin(cal);
+        endDay.updateDate(saveLocal.getLastLogin());
     }
 
 
@@ -176,9 +177,11 @@ public class StepCountActivity extends AppCompatActivity{
 
         @Override
         protected void onProgressUpdate(String... text) {
+            if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
+
             Calendar cal=Calendar.getInstance();
             int daySkip=endDay.isNewDay(cal);
-            if(daySkip>0){
+            if(daySkip>0 && fitnessService.isSetupComplete()){
                 endDay.newDayActions(daySkip,fitnessService);
                 endDay.updateDate(cal);
             }
@@ -216,7 +219,7 @@ public class StepCountActivity extends AppCompatActivity{
             }*/
             while(true) {
                 try{
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 }catch(Exception e){
                     e.printStackTrace();
                 }

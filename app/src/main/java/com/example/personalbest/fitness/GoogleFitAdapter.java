@@ -29,10 +29,16 @@ public class GoogleFitAdapter implements FitnessService {
 
     private long dailyStepCount;
     private StepCountActivity activity;
+    private boolean isCumulativeSet;
+    private boolean isDeltaSet;
+    private boolean isAggregateSet;
 
 
     public GoogleFitAdapter(StepCountActivity activity) {
         this.activity = activity;
+        isCumulativeSet=false;
+        isAggregateSet=false;
+        isDeltaSet=false;
     }
 
 
@@ -49,13 +55,15 @@ public class GoogleFitAdapter implements FitnessService {
                     GoogleSignIn.getLastSignedInAccount(activity),
                     fitnessOptions);
 
+
         } else {
             updateStepCount();
             startRecording();
         }
+
     }
 
-    private void startRecording() {
+    public void startRecording() {
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
             return;
@@ -67,6 +75,7 @@ public class GoogleFitAdapter implements FitnessService {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.i(TAG, "Successfully subscribed!");
+                        isCumulativeSet=true;
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -81,6 +90,7 @@ public class GoogleFitAdapter implements FitnessService {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.i(TAG, "Successfully subscribed!");
+                        isDeltaSet=true;
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -94,6 +104,7 @@ public class GoogleFitAdapter implements FitnessService {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        isAggregateSet=true;
                         Log.i(TAG, "Successfully subscribed!");
                     }
                 })
@@ -185,9 +196,9 @@ public class GoogleFitAdapter implements FitnessService {
         cal.set(Calendar.MILLISECOND,0);
         long startTime = cal.getTimeInMillis();
 
-        listenStepCount(startTime,endTime,new UpdateBackgroundListener(activity,daysBefore));
+        listenStepCount(startTime,endTime,new UpdateBackgroundListener(activity,daysBefore),new UpdateBackgroundListener(activity,daysBefore));
     }
-    public void listenStepCount(long startMillis, long endMillis, OnSuccessListener<DataReadResponse> listener){
+    private void listenStepCount(long startMillis, long endMillis, OnSuccessListener<DataReadResponse> listener, OnFailureListener failureListener){
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
             return;
@@ -200,7 +211,12 @@ public class GoogleFitAdapter implements FitnessService {
 
         Fitness.getHistoryClient(activity, lastSignedInAccount)
                 .readData(readRequest)
-                .addOnSuccessListener(listener);
+                .addOnSuccessListener(listener)
+                .addOnFailureListener(failureListener);
         return;
+    }
+
+    public boolean isSetupComplete(){
+        return (isAggregateSet&&isDeltaSet&&isCumulativeSet);
     }
 }

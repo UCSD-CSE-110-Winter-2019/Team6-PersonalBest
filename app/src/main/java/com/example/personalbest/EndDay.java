@@ -40,7 +40,10 @@ public class EndDay {
     }
 
     public void newDayActions(int numDays, FitnessService fitnessService){
-        if(numDays>=7) saveLocal.clearStepData();
+        if(numDays>=7){
+            saveLocal.clearStepData();
+            numDays=6;
+        }
         else saveLocal.newDayShift(numDays);
         for(int i=1; i<=numDays;i++) {
             fitnessService.updateBackgroundCount(i);

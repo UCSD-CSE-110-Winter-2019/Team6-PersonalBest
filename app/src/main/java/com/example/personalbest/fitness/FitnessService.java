@@ -8,7 +8,9 @@ public interface FitnessService {
     void setup();
     void updateStepCount();
     long getDailyStepCount();
-    void listenStepCount(long startMillis, long endMillis, OnSuccessListener<DataReadResponse> listener);
+    //void listenStepCount(long startMillis, long endMillis, OnSuccessListener<DataReadResponse> listener);
     void updateBackgroundCount(int daysBefore);
+    boolean isSetupComplete();
+    void startRecording();
 
 }
