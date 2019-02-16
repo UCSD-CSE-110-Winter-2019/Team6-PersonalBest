@@ -13,40 +13,40 @@ import com.example.personalbest.fitness.FitnessService;
 import java.util.Calendar;
 
 public class EndDay {
-
+    private final int MILLISECONDS_IN_DAY=86400000;
     private StepCountActivity activity;
-    private Calendar calendar;
+    //private Calendar calendar;
     SaveLocal saveLocal;
 
 
 
-    public EndDay(StepCountActivity activity, Calendar calendar){
-        this.activity=activity;
-        this.saveLocal=new SaveLocal(activity);
-        this.calendar=calendar;
+    public EndDay(SaveLocal saveLocal){
+        this.saveLocal=saveLocal;
     }
 
-    public int isNewDay(Calendar calendar){
-        int difference=calendar.get(Calendar.DAY_OF_YEAR)-this.calendar.get(Calendar.DAY_OF_YEAR);
-        if(difference<0){
-            difference+=365;
-        }
-        return difference;
+    public int dayDifference(Calendar calendar){
+        Calendar newCal=Calendar.getInstance();
+        newCal.set(Calendar.HOUR_OF_DAY,0);
+        newCal.set(Calendar.MINUTE,0);
+        newCal.set(Calendar.SECOND,0);
+        newCal.set(Calendar.MILLISECOND,0);
+        float differenceMillis=calendar.getTimeInMillis()-saveLocal.getLastLogin().getTimeInMillis();
+        int differenceDays=(int)(differenceMillis/MILLISECONDS_IN_DAY);
+        return differenceDays;
     }
 
     public void updateDate(Calendar calendar){
-        this.calendar=calendar;
         saveLocal.setLastLogin(calendar);
     }
 
-    public void newDayActions(int numDays, FitnessService fitnessService){
+    public void newDayActions(int numDays, FitnessService fitnessService, Calendar currDay){
         if(numDays>=7){
             saveLocal.clearStepData();
             numDays=6;
         }
         else saveLocal.newDayShift(numDays);
         for(int i=1; i<=numDays;i++) {
-            fitnessService.updateBackgroundCount(i);
+            fitnessService.updateBackgroundCount(currDay,i);
         }
     }
 }

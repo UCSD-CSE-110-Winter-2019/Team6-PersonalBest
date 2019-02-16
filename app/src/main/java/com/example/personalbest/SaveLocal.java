@@ -129,15 +129,34 @@ public class SaveLocal {
 
     //Method that shifts the last 7 days data when a new day begins
     public void newDayShift(int dayCount){
-        for(int j=0;j<dayCount;j++) {
-            for (int i = DAYS_TO_KEEP_TRACK_OF-1; i > 0; i--) {
-                Log.d("Save Local", "Shifting " + i + " and " + (i - 1));
-                setExerciseStepCount(getExerciseStepCount(i - 1), i);
-                setBackgroundStepCount(getBackgroundStepCount(i - 1), i);
+        if(dayCount>0) {
+            for (int j = 0; j < dayCount; j++) {
+                for (int i = DAYS_TO_KEEP_TRACK_OF - 1; i > 0; i--) {
+                    Log.d("Save Local", "Shifting " + i + " and " + (i - 1));
+                    setExerciseStepCount(getExerciseStepCount(i - 1), i);
+                    setBackgroundStepCount(getBackgroundStepCount(i - 1), i);
+                    setPreviousDayGoal(getGoals(i-1),i);
+                }
+                setExerciseStepCount(0, 0);
+                setBackgroundStepCount(0, 0);
+                int goal=getGoal();
+                setPreviousDayGoal(goal,1);
             }
-            setExerciseStepCount(0, 0);
-            setBackgroundStepCount(0, 0);
         }
+        else if(dayCount<0){
+            for (int j = 0; j < -dayCount; j++) {
+                for (int i = 0; i < DAYS_TO_KEEP_TRACK_OF-1; i++) {
+                    Log.d("Save Local", "Shifting " + i + " and " + (i - 1));
+                    setExerciseStepCount(getExerciseStepCount(i +1), i);
+                    setBackgroundStepCount(getBackgroundStepCount(i + 1), i);
+                }
+                setExerciseStepCount(0, 6);
+                setBackgroundStepCount(0, 6);
+            }
+        }
+
+
+
     }
     public void setCurrSubGoal(int subGoal){
         editor.putInt("currsubGoal", subGoal);
@@ -195,7 +214,13 @@ public class SaveLocal {
     }
 
     public void setLastLogin(Calendar cal){
-        editor.putLong("lastLoginTime",cal.getTimeInMillis());
+        Calendar newCal=Calendar.getInstance();
+        newCal.setTimeInMillis(cal.getTimeInMillis());
+        newCal.set(Calendar.HOUR_OF_DAY,0);
+        newCal.set(Calendar.MINUTE,0);
+        newCal.set(Calendar.SECOND,0);
+        newCal.set(Calendar.MILLISECOND,0);
+        editor.putLong("lastLoginTime",newCal.getTimeInMillis());
         editor.apply();
     }
     public Calendar getLastLogin(){
@@ -208,6 +233,18 @@ public class SaveLocal {
         for (int i = 0; i < DAYS_TO_KEEP_TRACK_OF; i++) {
             setExerciseStepCount(0, i);
             setBackgroundStepCount(0, i);
+        }
+    }
+    public long getGoals(int daysBefore){
+        if(daysBefore < DAYS_TO_KEEP_TRACK_OF){
+            return exercisePreferences.getLong("" + daysBefore + "DaysBeforeGoal", 0);
+        }else return -1;
+    }
+
+    public void setPreviousDayGoal(long goal, int daysBefore){
+        if(daysBefore < DAYS_TO_KEEP_TRACK_OF){
+            editor.putLong("" + daysBefore + "DaysBeforeGoal", goal);
+            editor.apply();
         }
     }
 

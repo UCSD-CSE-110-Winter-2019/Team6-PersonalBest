@@ -141,7 +141,7 @@ public class StepCountActivity extends AppCompatActivity{
             nameFrag.show(getSupportFragmentManager(), "Height");
         }
 
-        endDay=new EndDay(this,saveLocal.getLastLogin());
+        endDay=new EndDay(saveLocal);
     }
 
 
@@ -207,8 +207,7 @@ public class StepCountActivity extends AppCompatActivity{
     public void resetLogin(View view) {
         Calendar cal=Calendar.getInstance();
         cal.setTimeInMillis(0);
-        saveLocal.setLastLogin(cal);
-        endDay.updateDate(saveLocal.getLastLogin());
+        endDay.updateDate(cal);
     }
 
     public void launchGrapActivity(View view) {
@@ -240,9 +239,9 @@ public class StepCountActivity extends AppCompatActivity{
             }
 
             Calendar cal=Calendar.getInstance();
-            int daySkip=endDay.isNewDay(cal);
+            int daySkip=endDay.dayDifference(cal);
             if(daySkip>0 && isRecording){
-                endDay.newDayActions(daySkip,fitnessService);
+                endDay.newDayActions(daySkip,fitnessService,cal);
                 endDay.updateDate(cal);
             }
 

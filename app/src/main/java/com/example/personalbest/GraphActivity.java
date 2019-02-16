@@ -45,12 +45,12 @@ public class GraphActivity extends AppCompatActivity {
 
         long[] exercise = getExercise(saveLocal);
         long[] background = getBackground(saveLocal);
-        int[] goals = {300, 500, 700, 900, 1100, 1300, 1500};
+        long[] goals = getGoals(saveLocal);
 
         buildGraph(combinedChart, exercise, background, goals);
     }
 
-    public void buildGraph(CombinedChart combinedChart, long[] workout, long[] background, int[] goals){
+    public void buildGraph(CombinedChart combinedChart, long[] workout, long[] background, long[] goals){
         combinedChart.getDescription().setEnabled(false);
 
         List<BarEntry> barEntries = new ArrayList<>();
@@ -122,5 +122,13 @@ public class GraphActivity extends AppCompatActivity {
             exercise[6-i] = saveLocal.getExerciseStepCount(i );
         }
         return exercise;
+    }
+    public long[] getGoals(SaveLocal saveLocal){
+        long[] goals = new long[7];
+        for(int i = 1; i < 7; i++){
+            goals[6 - i] = saveLocal.getGoals(i);
+        }
+        goals[6] = saveLocal.getGoal();
+        return goals;
     }
 }

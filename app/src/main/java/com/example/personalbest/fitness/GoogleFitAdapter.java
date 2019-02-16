@@ -54,12 +54,12 @@ public class GoogleFitAdapter implements FitnessService {
                     GOOGLE_FIT_PERMISSIONS_REQUEST_CODE,
                     GoogleSignIn.getLastSignedInAccount(activity),
                     fitnessOptions);
-                    startRecording();
+                    //startRecording();
 
 
         } else {
             updateStepCount();
-            startRecording();
+            //startRecording();
         }
 
     }
@@ -184,11 +184,10 @@ public class GoogleFitAdapter implements FitnessService {
         }
         return stepCount;
     }
-    public void updateBackgroundCount(int daysBefore){
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
+    public void updateBackgroundCount(Calendar currentTime, int daysBefore){
 
+        Calendar cal=Calendar.getInstance();
+        cal.setTimeInMillis(currentTime.getTimeInMillis());
         cal.add(Calendar.DAY_OF_YEAR, -daysBefore);
         cal.set(Calendar.HOUR_OF_DAY,23);
         cal.set(Calendar.MINUTE,59);
