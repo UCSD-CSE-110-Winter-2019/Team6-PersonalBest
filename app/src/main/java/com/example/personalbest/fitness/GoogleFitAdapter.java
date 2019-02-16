@@ -54,6 +54,7 @@ public class GoogleFitAdapter implements FitnessService {
                     GOOGLE_FIT_PERMISSIONS_REQUEST_CODE,
                     GoogleSignIn.getLastSignedInAccount(activity),
                     fitnessOptions);
+                    startRecording();
 
 
         } else {
@@ -63,10 +64,10 @@ public class GoogleFitAdapter implements FitnessService {
 
     }
 
-    public void startRecording() {
+    public boolean startRecording() {
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
-            return;
+            return false;
         }
 
         Fitness.getRecordingClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
@@ -114,6 +115,7 @@ public class GoogleFitAdapter implements FitnessService {
                         Log.i(TAG, "There was a problem subscribing.");
                     }
                 });
+        return true;
     }
 
 
@@ -163,6 +165,10 @@ public class GoogleFitAdapter implements FitnessService {
     public long getDailyStepCount(){
         updateStepCount();
         return dailyStepCount;
+    }
+
+    public void putInSteps(){
+
     }
 
     public static int getSteps(DataReadResponse dataReadResponse){
