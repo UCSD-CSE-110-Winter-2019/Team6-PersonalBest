@@ -160,6 +160,13 @@ public class StepCountActivity extends AppCompatActivity{
         endDay.updateDate(saveLocal.getLastLogin());
     }
 
+    public void launchGrapActivity(View view) {
+        Intent intent = new Intent(this, GraphActivity.class);
+
+        intent.putExtra("numSteps", fitnessService.getDailyStepCount());
+        startActivity(intent);
+    }
+
 
     private class Background extends AsyncTask<String, String, String> {
         DialogFragment goalFrag;

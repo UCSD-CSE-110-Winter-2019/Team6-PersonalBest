@@ -22,11 +22,14 @@ import java.util.List;
 public class GraphActivity extends AppCompatActivity {
     private final String[] labels = {"Exercise Steps", "Background Steps"};
     private final int[] colors = {0xff0000ff, 0xff5B2C6F};
+    private int numSteps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
+
+        numSteps = getIntent().getIntExtra("numSteps", 0);
 
         Button returnButton = findViewById(R.id.returnButton);
         returnButton.setOnClickListener(new View.OnClickListener() {
@@ -38,16 +41,16 @@ public class GraphActivity extends AppCompatActivity {
 
         CombinedChart combinedChart = findViewById(R.id.combinedChart);
 
-        //SaveLocal saveLocal = new SaveLocal(this);
+        SaveLocal saveLocal = new SaveLocal(this);
 
-        int[] exercise = {100, 200, 300, 400, 500, 600, 700};
-        int[] background = {150, 250, 350, 450, 550, 650, 750};
+        long[] exercise = getExercise(saveLocal);
+        long[] background = getBackground(saveLocal);
         int[] goals = {300, 500, 700, 900, 1100, 1300, 1500};
 
         buildGraph(combinedChart, exercise, background, goals);
     }
 
-    public void buildGraph(CombinedChart combinedChart, int[] workout, int[] background, int[] goals){
+    public void buildGraph(CombinedChart combinedChart, long[] workout, long[] background, int[] goals){
         combinedChart.getDescription().setEnabled(false);
 
         List<BarEntry> barEntries = new ArrayList<>();
@@ -103,5 +106,21 @@ public class GraphActivity extends AppCompatActivity {
 
     public void returnMain(){
         this.finish();
+    }
+
+    public long[] getBackground(SaveLocal saveLocal){
+        long[] background = new long[7];
+        for(int i = 1; i < 7; i++){
+            background[i] = saveLocal.getBackgroundStepCount(i + 1);
+        }
+        background[0] = numSteps;
+        return background;
+    }
+    public long[] getExercise(SaveLocal saveLocal){
+        long[] exercise = new long[7];
+        for(int i = 0; i < 7; i++){
+            exercise[i] = saveLocal.getExerciseStepCount(i + 1);
+        }
+        return exercise;
     }
 }
