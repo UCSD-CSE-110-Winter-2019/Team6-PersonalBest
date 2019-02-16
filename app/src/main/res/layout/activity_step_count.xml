@@ -61,4 +61,24 @@
         android:layout_height="wrap_content"
         android:text="Start Exercise" />
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="printSteps"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="putData"
+        android:text="Put 500 Steps (Works every 50 seconds)" />
+    <Button
+        android:id="@+id/graphActivityButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="launchGrapActivity"
+        android:text="See Stats" />
+
 </LinearLayout>
