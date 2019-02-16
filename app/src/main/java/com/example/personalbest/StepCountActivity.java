@@ -18,9 +18,18 @@ import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
 import com.example.personalbest.fitness.UpdateBackgroundListener;
 import com.example.personalbest.fitness.WalkStats;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataSource;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.tasks.Task;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 public class StepCountActivity extends AppCompatActivity{
@@ -52,6 +61,12 @@ public class StepCountActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
+
+
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
@@ -156,7 +171,37 @@ public class StepCountActivity extends AppCompatActivity{
             Log.d(TAG,""+i+" days before Exercise count: "+saveLocal.getExerciseStepCount(i));
         }
 
-        //fitnessService.listenStepCount(startTime,endTime,new UpdateBackgroundListener(this,));
+    }
+
+    public void putData(){
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date();
+        cal.setTime(now);
+        //cal.add(Calendar.DAY_OF_YEAR, -1);
+        long endTime = cal.getTimeInMillis();
+        cal.add(Calendar.HOUR_OF_DAY, -1);
+        long startTime = cal.getTimeInMillis();
+
+// Create a data source
+        DataSource dataSource =
+                new DataSource.Builder()
+                        .setAppPackageName(this)
+                        .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                        .setStreamName(TAG + " - step count")
+                        .setType(DataSource.TYPE_RAW)
+                        .build();
+
+// Create a data set
+        int stepCountDelta = 950;
+        DataSet dataSet = DataSet.create(dataSource);
+// For each data point, specify a start time, end time, and the data value -- in this case,
+// the number of new steps.
+        DataPoint dataPoint =
+                dataSet.createDataPoint().setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
+        dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
+        dataSet.add(dataPoint);
+
+        Task<Void> response = Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this)).insertData(dataSet);
     }
 
     public void resetLogin(View view) {
@@ -189,7 +234,7 @@ public class StepCountActivity extends AppCompatActivity{
 
             Calendar cal=Calendar.getInstance();
             int daySkip=endDay.isNewDay(cal);
-            if(daySkip>0 && fitnessService.isSetupComplete()){
+            if(daySkip>0 && isRecording){
                 endDay.newDayActions(daySkip,fitnessService);
                 endDay.updateDate(cal);
             }

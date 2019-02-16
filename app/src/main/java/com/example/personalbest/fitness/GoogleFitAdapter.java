@@ -167,6 +167,10 @@ public class GoogleFitAdapter implements FitnessService {
         return dailyStepCount;
     }
 
+    public void putInSteps(){
+
+    }
+
     public static int getSteps(DataReadResponse dataReadResponse){
         List<DataSet> dataSets = dataReadResponse.getDataSets();
 
