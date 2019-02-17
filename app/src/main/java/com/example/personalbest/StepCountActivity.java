@@ -174,7 +174,12 @@ public class StepCountActivity extends AppCompatActivity{
         Calendar c = Calendar.getInstance();
         runner = new Background(c);
         runner.execute();
+<<<<<<< HEAD
     }
+=======
+      }
+
+>>>>>>> d6c9d6df5ed55eb5baae3cca7c588d1fcd00d858
     public void printSteps(View view) {
         //endDay.newDayActions(1,fitnessService);
         //endDay.updateDate(Calendar.getInstance());
@@ -260,11 +265,19 @@ public class StepCountActivity extends AppCompatActivity{
             }
 
             hour = c.get(Calendar.HOUR_OF_DAY);
+<<<<<<< HEAD
 
             fitnessService.updateStepCount(c);
 
             WalkStats stats = new WalkStats(StepCountActivity.this);
             stats.update();
+=======
+            fitnessService.updateStepCount();
+            //if(exercise.isActive()){
+                WalkStats stats = new WalkStats(StepCountActivity.this);
+                stats.update();
+            //}
+>>>>>>> d6c9d6df5ed55eb5baae3cca7c588d1fcd00d858
 
             if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);
