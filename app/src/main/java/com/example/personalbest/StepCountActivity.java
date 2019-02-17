@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -26,6 +27,8 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.Calendar;
@@ -221,7 +224,19 @@ public class StepCountActivity extends AppCompatActivity{
         dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
         dataSet.add(dataPoint);
 
-        Task<Void> response = Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this)).insertData(dataSet);
+        Task<Void> response = Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this)).insertData(dataSet)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i(TAG, "Successfully added 500 steps!");
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i(TAG, "There was a problem adding 500 steps.");
+                    }
+                });;
     }
 
     public void launchGrapActivity(View view) {

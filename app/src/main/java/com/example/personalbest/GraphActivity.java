@@ -113,7 +113,7 @@ public class GraphActivity extends AppCompatActivity {
         for(int i = 1; i < 7; i++){
             background[6-i] = saveLocal.getBackgroundStepCount(i);
         }
-        background[6] = numSteps;
+        background[6] = numSteps- saveLocal.getExerciseStepCount(0);
         return background;
     }
     public long[] getExercise(SaveLocal saveLocal){
