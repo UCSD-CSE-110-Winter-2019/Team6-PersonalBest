@@ -67,12 +67,10 @@ public class EncouragementTest {
         cal.setTime(dummyStartTime);
 
         testTask = activity.new Background(cal);
-        System.out.println("Start time: "+testTask.c);
         activity.onResume(cal);
 
         nextStepCount = 2000;
         cal.setTime(dummyEndTime);
-        System.out.println("End time: "+testTask.c);
 
 
         activity.onResume(cal);
