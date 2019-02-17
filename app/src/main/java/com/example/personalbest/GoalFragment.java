@@ -14,12 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.personalbest.MainActivity;
 import com.example.personalbest.R;
 import com.example.personalbest.SaveLocal;
 import com.example.personalbest.StepCountActivity;
+
+import org.w3c.dom.Text;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -61,6 +64,7 @@ public class GoalFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 saveLocal.setGoal(saveLocal.getGoal() + 500);
+                ((StepCountActivity) getActivity()).setGoal(saveLocal.getGoal());
             }
         });
         // Create the AlertDialog object and return it

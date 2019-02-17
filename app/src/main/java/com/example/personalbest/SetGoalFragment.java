@@ -39,6 +39,7 @@ public class SetGoalFragment extends DialogFragment {
         builder.setPositiveButton("Save New Goal", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 saveLocal.setGoal(Integer.parseInt(values[np.getValue()]));
+                ((StepCountActivity) getActivity()).setGoal(saveLocal.getGoal());
             }
         });
 

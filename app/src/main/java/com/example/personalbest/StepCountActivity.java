@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
@@ -50,6 +51,8 @@ public class StepCountActivity extends AppCompatActivity{
     private TextView speed;
     private TextView timeElapsed;
 
+    public WalkStats stats;
+
 
     public long numSteps;
     public long goalSteps;
@@ -66,11 +69,6 @@ public class StepCountActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
-
-
-
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
@@ -83,8 +81,9 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
+
         goalSteps = saveLocal.getGoal();
-        goalView.setText("Goal: "+goalSteps);
+        setGoal(goalSteps);
         saveLocal.setCurrSubGoal(500);
         Calendar cal = Calendar.getInstance();
         runner = new Background(cal);
@@ -97,9 +96,15 @@ public class StepCountActivity extends AppCompatActivity{
         speed = findViewById(R.id.textSpeed);
         timeElapsed = findViewById(R.id.walkTime);
 
+
+
         exerciseSteps.setText("Steps: " + saveLocal.getLastExerciseSteps());
         speed.setText("MPH: " + saveLocal.getLastExerciseSpeed());
         timeElapsed.setText("Time Elapsed: " + saveLocal.getLastExerciseTime());
+
+        stats = new WalkStats(StepCountActivity.this);
+
+
 
 
         //Button to start and stop exercises
@@ -118,12 +123,14 @@ public class StepCountActivity extends AppCompatActivity{
                     startExerciseButton.setText("Start Exercise");
                     Calendar calendar=Calendar.getInstance();
                     exercise.stopExercise(calendar);
+                    stats.update();
                 }
                 else{
                     //START EXERCISING
                     startExerciseButton.setText("Stop Exercise");
                     Calendar calendar=Calendar.getInstance();
                     exercise.startExercise(calendar);
+                    stats.update();
                 }
             }
         });
@@ -146,6 +153,10 @@ public class StepCountActivity extends AppCompatActivity{
         }
 
         endDay=new EndDay(saveLocal);
+    }
+
+    public void setGoal(long goalSteps) {
+        goalView.setText("Goal: "+goalSteps);
     }
 
 
@@ -280,9 +291,9 @@ public class StepCountActivity extends AppCompatActivity{
 
             hour = c.get(Calendar.HOUR_OF_DAY);
             fitnessService.updateStepCount(c);
-            //if(exercise.isActive()){
-                WalkStats stats = new WalkStats(StepCountActivity.this);
+           // if (exercise.isActive()) {
                 stats.update();
+                //onResume();
             //}
 
             if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
@@ -299,10 +310,12 @@ public class StepCountActivity extends AppCompatActivity{
 
         @Override
         protected String doInBackground(String... strings) {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             publishProgress();
-
-            //}
-
             return null;
         }
 
