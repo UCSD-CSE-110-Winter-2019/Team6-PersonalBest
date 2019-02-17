@@ -132,14 +132,28 @@ public class StatsTest {
         }
 
         @Override
-        public void updateStepCount() {
+        public void updateStepCount(Calendar cal) {
             System.out.println(TAG + "updateStepCount");
             stepCountActivity.setStepCount(nextStepCount);
         }
 
         @Override
-        public long getDailyStepCount() {
+        public long getDailyStepCount(Calendar cal) {
             return nextStepCount;
+        }
+
+        @Override
+        public boolean startRecording() {
+            return true;
+        }
+
+        @Override
+        public boolean isSetupComplete() {
+            return true;
+        }
+
+        @Override
+        public void updateBackgroundCount(Calendar currentTime, int daysBefore) {
         }
     }
 }

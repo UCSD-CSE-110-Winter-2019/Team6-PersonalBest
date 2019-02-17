@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.support.v4.app.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -86,7 +87,6 @@ public class StepCountActivity extends AppCompatActivity{
         runner = new Background(cal);
         runner.execute();
         fitnessService.setup();
-        runner.execute();
 
         //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
         fitnessService.updateStepCount(Calendar.getInstance());
@@ -188,6 +188,11 @@ public class StepCountActivity extends AppCompatActivity{
 
     }
 
+    public void updateSteps(View view) {
+        onResume();
+
+    }
+
     public void putData(View view){
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
@@ -252,15 +257,14 @@ public class StepCountActivity extends AppCompatActivity{
                 isRecording=fitnessService.startRecording();
             }
 
-            Calendar cal=Calendar.getInstance();
-            int daySkip=endDay.dayDifference(cal);
+            int daySkip=endDay.dayDifference(c);
             if(daySkip != 0 && isRecording){
-                endDay.newDayActions(daySkip,fitnessService,cal);
-                endDay.updateDate(cal);
+                endDay.newDayActions(daySkip,fitnessService,c);
+                endDay.updateDate(c);
             }
 
             hour = c.get(Calendar.HOUR_OF_DAY);
-            fitnessService.updateStepCount();
+            fitnessService.updateStepCount(c);
             //if(exercise.isActive()){
                 WalkStats stats = new WalkStats(StepCountActivity.this);
                 stats.update();
@@ -275,11 +279,15 @@ public class StepCountActivity extends AppCompatActivity{
                 encourage.showEncouragement();
             }
 
+            //onResume(c);
         }
 
         @Override
         protected String doInBackground(String... strings) {
             publishProgress();
+
+            //}
+
             return null;
         }
 
