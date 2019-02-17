@@ -62,11 +62,6 @@ public class StepCountActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
-
-
-
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
@@ -77,15 +72,13 @@ public class StepCountActivity extends AppCompatActivity{
         String fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
 
-
-
         goalSteps = saveLocal.getGoal();
         goalView.setText("Goal: "+goalSteps);
 
-
-        runner = new Background();
-        runner.execute();
         fitnessService.setup();
+
+        runner = new Background(Calendar.getInstance());
+        runner.execute();
 
         //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
         fitnessService.updateStepCount(Calendar.getInstance());
@@ -112,8 +105,8 @@ public class StepCountActivity extends AppCompatActivity{
                 if(exercise.isActive()){
                     //STOP EXERCISING
                     startExerciseButton.setText("Start Exercise");
-
-                    exercise.stopExercise();
+                    Calendar calendar=Calendar.getInstance();
+                    exercise.stopExercise(calendar);
                 }
                 else{
                     //START EXERCISING
@@ -210,6 +203,19 @@ public class StepCountActivity extends AppCompatActivity{
         intent.putExtra("numSteps", dailySteps);
         startActivity(intent);
     }
+    // for unit tests
+    public void onResume(Calendar cal) {
+        super.onResume();
+        runner = new Background(cal);
+        runner.execute();
+    }
+
+    public void onResume() {
+        super.onResume();
+        Calendar c = Calendar.getInstance();
+        runner = new Background(c);
+        runner.execute();
+    }
 
 
     private class Background extends AsyncTask<String, String, String> {
@@ -217,10 +223,13 @@ public class StepCountActivity extends AppCompatActivity{
         Encouragement encourage;
         Calendar c;
         int hour;
+        public Background(Calendar cal){
+            c = cal;
+        }
         @Override
         protected void onPreExecute() {
 
-            c = Calendar.getInstance();
+            //c = Calendar.getInstance();
             hour = c.get(Calendar.HOUR_OF_DAY);
 
             encourage = new Encouragement(StepCountActivity.this);
@@ -270,20 +279,23 @@ public class StepCountActivity extends AppCompatActivity{
                     break;
                 }
             }*/
-            while(true) {
-                try{
-                    Thread.sleep(1000);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-                publishProgress();
-            }
+//            while(true) {
+//                try{
+//                    Thread.sleep(1000);
+//                }catch(Exception e){
+//                    e.printStackTrace();
+//                }
+
+            publishProgress();
+            return null;
         }
-
-
         @Override
         protected void onPostExecute(String result) {
 
         }
     }
+
+
+
+
 }
