@@ -4,9 +4,10 @@ jobs:
     working_directory: ~/code
     docker:
       - image: circleci/android:api-27
+        environment:
+          TZ: "America/Los_Angeles"
     environment:
       JVM_OPTS: -Xmx3200m
-      TZ: "America/Los Angeles"
     steps:
       - checkout
       - restore_cache:
@@ -35,7 +36,7 @@ jobs:
       docker:
         - image: circleci/android:api-27  # gcloud is baked into this image
       environment:
-        TZ: "America/Los Angeles"
+        TZ: "America/Los_Angeles"
       steps:
         - checkout
         - restore_cache:
