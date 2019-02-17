@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -125,6 +126,9 @@ public class SaveLocal {
     public void setLastExerciseTimeEnd(Long time) {
         editor.putLong("LastExerciseTimeEnd", time);
         editor.apply();
+    }
+    public long getLastExerciseTimeEnd() {
+         return exercisePreferences.getLong("LastExerciseTimeEnd", 0);
     }
 
     //Method that shifts the last 7 days data when a new day begins
