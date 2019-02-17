@@ -66,8 +66,8 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="printSteps"
-        android:text="Button" />
+        android:onClick="updateSteps"
+        android:text="Update Steps" />
 
     <Button
         android:id="@+id/button2"

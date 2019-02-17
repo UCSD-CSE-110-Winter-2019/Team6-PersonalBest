@@ -7,12 +7,15 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
@@ -28,6 +31,8 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.Calendar;
@@ -48,6 +53,8 @@ public class StepCountActivity extends AppCompatActivity{
     private TextView exerciseSteps;
     private TextView speed;
     private TextView timeElapsed;
+
+    public WalkStats stats;
 
 
     public long numSteps;
@@ -76,8 +83,9 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
+
         goalSteps = saveLocal.getGoal();
-        goalView.setText("Goal: "+goalSteps);
+        setGoal(goalSteps);
         saveLocal.setCurrSubGoal(500);
         Calendar cal = Calendar.getInstance();
         runner = new Background(cal);
@@ -90,9 +98,15 @@ public class StepCountActivity extends AppCompatActivity{
         speed = findViewById(R.id.textSpeed);
         timeElapsed = findViewById(R.id.walkTime);
 
+
+
         exerciseSteps.setText("Steps: " + saveLocal.getLastExerciseSteps());
         speed.setText("MPH: " + saveLocal.getLastExerciseSpeed());
         timeElapsed.setText("Time Elapsed: " + saveLocal.getLastExerciseTime());
+
+        stats = new WalkStats(StepCountActivity.this);
+
+
 
 
         //Button to start and stop exercises
@@ -112,6 +126,7 @@ public class StepCountActivity extends AppCompatActivity{
                     startExerciseButton.setBackgroundColor(Color.parseColor("#06A62B"));
                     Calendar calendar=Calendar.getInstance();
                     exercise.stopExercise(calendar);
+                    stats.update();
                 }
                 else{
                     //START EXERCISING
@@ -119,6 +134,7 @@ public class StepCountActivity extends AppCompatActivity{
                     startExerciseButton.setBackgroundColor(Color.parseColor("#FF0000"));
                     Calendar calendar=Calendar.getInstance();
                     exercise.startExercise(calendar);
+                    stats.update();
                 }
             }
         });
@@ -141,6 +157,10 @@ public class StepCountActivity extends AppCompatActivity{
         }
 
         endDay=new EndDay(saveLocal);
+    }
+
+    public void setGoal(long goalSteps) {
+        goalView.setText("Goal: "+goalSteps);
     }
 
 
@@ -186,6 +206,11 @@ public class StepCountActivity extends AppCompatActivity{
 
     }
 
+    public void updateSteps(View view) {
+        onResume();
+
+    }
+
     public void putData(View view){
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
@@ -214,10 +239,19 @@ public class StepCountActivity extends AppCompatActivity{
         dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
         dataSet.add(dataPoint);
 
-        GoogleSignInAccount gsa = GoogleSignIn.getLastSignedInAccount(this);
-        System.out.println("Gsa: "+gsa);
-        HistoryClient response = Fitness.getHistoryClient(this, gsa);
-        response.insertData(dataSet);
+        Task<Void> response = Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this)).insertData(dataSet)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i(TAG, "Successfully added 500 steps!");
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i(TAG, "There was a problem adding 500 steps.");
+                    }
+                });;
     }
 
     public void launchGrapActivity(View view) {
@@ -253,18 +287,17 @@ public class StepCountActivity extends AppCompatActivity{
                 isRecording=fitnessService.startRecording();
             }
 
-            Calendar cal=Calendar.getInstance();
-            int daySkip=endDay.dayDifference(cal);
+            int daySkip=endDay.dayDifference(c);
             if(daySkip != 0 && isRecording){
-                endDay.newDayActions(daySkip,fitnessService,cal);
-                endDay.updateDate(cal);
+                endDay.newDayActions(daySkip,fitnessService,c);
+                endDay.updateDate(c);
             }
 
             hour = c.get(Calendar.HOUR_OF_DAY);
 
             fitnessService.updateStepCount(c);
 
-            WalkStats stats = new WalkStats(StepCountActivity.this);
+            stats = new WalkStats(StepCountActivity.this);
             stats.update();
 
             if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
@@ -276,10 +309,16 @@ public class StepCountActivity extends AppCompatActivity{
                 encourage.showEncouragement();
             }
 
+            //onResume(c);
         }
 
         @Override
         protected String doInBackground(String... strings) {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             publishProgress();
             return null;
         }

@@ -17,6 +17,7 @@ public class WalkStats {
     Long startTime;
     Long endTime;
     long steps;
+    long speed;
     Calc calc;
 
 
@@ -25,7 +26,6 @@ public class WalkStats {
         this.save=new SaveLocal(activity);
         this.calc = new Calc(save.getHeightInches(),save.getHeightFeet());
     }
-
     public void update(){
         startTime = save.getLastSessionStartTime();
         if(save.isLastSessionActive()){
@@ -36,22 +36,23 @@ public class WalkStats {
         }
         steps = save.getStartSessionStepCount();
 
-        float distance = calc.calcDistance(act.numSteps-steps);
+        long steps_temp = act.numSteps - steps;
+
+        float distance = calc.calcDistance(steps_temp);
         float speed = calc.calcSpeed(startTime, endTime, distance);
         save.setSpeed(speed);
 
         Calendar c = Calendar.getInstance();
         TextView speedText = act.findViewById(R.id.textSpeed);
-        speedText.setText("MPH: "+speed);
+        speedText.setText("MPH: " + speed);
 
         TextView timeText = act.findViewById(R.id.walkTime);
         String time = calc.calcTime(startTime, endTime);
-        timeText.setText("Time Elapsed: "+time);
+        timeText.setText("Time Elapsed: " + time);
 
         TextView walkSteps = act.findViewById(R.id.walkSteps);
-        walkSteps.setText("Steps: "+(act.numSteps-steps));
+        walkSteps.setText("Steps: " + steps_temp);
 
     }
-
 
 }

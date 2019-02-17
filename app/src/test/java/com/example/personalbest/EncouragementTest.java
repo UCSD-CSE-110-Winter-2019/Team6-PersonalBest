@@ -139,7 +139,6 @@ public class EncouragementTest {
         Date dummyStartTime = new Date(1550053000000L);
 
         cal.setTime(dummyStartTime);
-
         testTask = activity.new Background(cal);
         activity.onResume(cal);
 
@@ -187,12 +186,12 @@ public class EncouragementTest {
 
         @Override
         public boolean isSetupComplete() {
-            return false;
+            return true;
         }
 
         @Override
         public boolean startRecording() {
-            return false;
+            return true;
         }
     }
 }
