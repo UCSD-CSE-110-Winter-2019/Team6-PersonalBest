@@ -119,7 +119,7 @@ public class GraphActivity extends AppCompatActivity {
     public long[] getExercise(SaveLocal saveLocal){
         long[] exercise = new long[7];
         for(int i = 0; i < 7; i++){
-            exercise[6-i] = saveLocal.getExerciseStepCount(i );
+            exercise[6-i] = saveLocal.getExerciseStepCount(i);
         }
         return exercise;
     }

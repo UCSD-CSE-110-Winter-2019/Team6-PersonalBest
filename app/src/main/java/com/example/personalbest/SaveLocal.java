@@ -15,6 +15,10 @@ public class SaveLocal {
     private SharedPreferences.Editor editor;
     Activity activity;
 
+    public SaveLocal(){
+
+    }
+
     public SaveLocal(Activity activity){
         this.activity = activity;
         exercisePreferences= this.activity.getSharedPreferences("exercise", Context.MODE_PRIVATE);
