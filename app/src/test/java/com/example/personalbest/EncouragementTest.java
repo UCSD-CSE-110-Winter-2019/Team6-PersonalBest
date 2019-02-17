@@ -170,14 +170,29 @@ public class EncouragementTest {
         }
 
         @Override
-        public void updateStepCount() {
+        public void updateStepCount(Calendar currentTime) {
             System.out.println(TAG + "updateStepCount");
             stepCountActivity.setStepCount(nextStepCount);
         }
 
         @Override
-        public long getDailyStepCount() {
+        public long getDailyStepCount(Calendar currentTime) {
             return nextStepCount;
+        }
+
+        @Override
+        public void updateBackgroundCount(Calendar currentTime, int daysBefore){
+
+        }
+
+        @Override
+        public boolean isSetupComplete() {
+            return false;
+        }
+
+        @Override
+        public boolean startRecording() {
+            return false;
         }
     }
 }

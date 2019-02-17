@@ -3,6 +3,7 @@ package com.example.personalbest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -19,7 +20,9 @@ import com.example.personalbest.fitness.FitnessServiceFactory;
 import com.example.personalbest.fitness.UpdateBackgroundListener;
 import com.example.personalbest.fitness.WalkStats;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.HistoryClient;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
@@ -61,12 +64,6 @@ public class StepCountActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
-
-
-
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
@@ -81,18 +78,11 @@ public class StepCountActivity extends AppCompatActivity{
 
         goalSteps = saveLocal.getGoal();
         goalView.setText("Goal: "+goalSteps);
-<<<<<<< HEAD
         saveLocal.setCurrSubGoal(500);
         Calendar cal = Calendar.getInstance();
         runner = new Background(cal);
         runner.execute();
-=======
-
-
-        runner = new Background();
->>>>>>> 02e738c52fc783263cb6c49706fef09924e51212
         fitnessService.setup();
-        runner.execute();
 
         //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
         fitnessService.updateStepCount(Calendar.getInstance());
@@ -119,12 +109,14 @@ public class StepCountActivity extends AppCompatActivity{
                 if(exercise.isActive()){
                     //STOP EXERCISING
                     startExerciseButton.setText("Start Exercise");
+                    startExerciseButton.setBackgroundColor(Color.parseColor("#06A62B"));
                     Calendar calendar=Calendar.getInstance();
                     exercise.stopExercise(calendar);
                 }
                 else{
                     //START EXERCISING
                     startExerciseButton.setText("Stop Exercise");
+                    startExerciseButton.setBackgroundColor(Color.parseColor("#FF0000"));
                     Calendar calendar=Calendar.getInstance();
                     exercise.startExercise(calendar);
                 }
@@ -170,7 +162,6 @@ public class StepCountActivity extends AppCompatActivity{
         numSteps = stepCount;
     }
 
-<<<<<<< HEAD
     // for unit tests
     public void onResume(Calendar cal) {
         super.onResume();
@@ -183,7 +174,7 @@ public class StepCountActivity extends AppCompatActivity{
         Calendar c = Calendar.getInstance();
         runner = new Background(c);
         runner.execute();
-=======
+    }
     public void printSteps(View view) {
         //endDay.newDayActions(1,fitnessService);
         //endDay.updateDate(Calendar.getInstance());
@@ -222,7 +213,10 @@ public class StepCountActivity extends AppCompatActivity{
         dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
         dataSet.add(dataPoint);
 
-        Task<Void> response = Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this)).insertData(dataSet);
+        GoogleSignInAccount gsa = GoogleSignIn.getLastSignedInAccount(this);
+        System.out.println("Gsa: "+gsa);
+        HistoryClient response = Fitness.getHistoryClient(this, gsa);
+        response.insertData(dataSet);
     }
 
     public void launchGrapActivity(View view) {
@@ -230,7 +224,6 @@ public class StepCountActivity extends AppCompatActivity{
         int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
         intent.putExtra("numSteps", dailySteps);
         startActivity(intent);
->>>>>>> 02e738c52fc783263cb6c49706fef09924e51212
     }
 
 
@@ -267,17 +260,11 @@ public class StepCountActivity extends AppCompatActivity{
             }
 
             hour = c.get(Calendar.HOUR_OF_DAY);
-<<<<<<< HEAD
-            fitnessService.updateStepCount();
-            //if(exercise.isActive()){
-=======
 
-            fitnessService.updateStepCount(Calendar.getInstance());
-            if(exercise.isActive()){
->>>>>>> 02e738c52fc783263cb6c49706fef09924e51212
-                WalkStats stats = new WalkStats(StepCountActivity.this);
-                stats.update();
-            //}
+            fitnessService.updateStepCount(c);
+
+            WalkStats stats = new WalkStats(StepCountActivity.this);
+            stats.update();
 
             if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);
@@ -292,28 +279,8 @@ public class StepCountActivity extends AppCompatActivity{
 
         @Override
         protected String doInBackground(String... strings) {
-<<<<<<< HEAD
             publishProgress();
             return null;
-=======
-          /*  while (true) {
-                if (isCancelled()) {
-                    break;
-                }
-                if(numSteps >= 1000){
-                    publishProgress();
-                    break;
-                }
-            }*/
-            while(true) {
-                try{
-                    Thread.sleep(1000);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-                publishProgress();
-            }
->>>>>>> 02e738c52fc783263cb6c49706fef09924e51212
         }
 
 

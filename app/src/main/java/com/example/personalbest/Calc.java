@@ -11,15 +11,8 @@ public class Calc {
         feet = ft;
     }
 
-<<<<<<< HEAD
     public float calcSpeed(long startTime, long endTime, float distance){
         long totalTime = endTime-startTime;
-=======
-    public float calcSpeed(long time, float distance){
-        Calendar c = Calendar.getInstance();
-        long current = c.getTimeInMillis();
-        long totalTime = current-time;
->>>>>>> 02e738c52fc783263cb6c49706fef09924e51212
         float minutes = totalTime/60000f;
         float hours = minutes/60f;
         if (hours == 0) {
