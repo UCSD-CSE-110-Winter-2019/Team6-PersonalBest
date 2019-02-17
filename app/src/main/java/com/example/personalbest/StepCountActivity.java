@@ -3,6 +3,7 @@ package com.example.personalbest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -22,7 +23,9 @@ import com.example.personalbest.fitness.FitnessServiceFactory;
 import com.example.personalbest.fitness.UpdateBackgroundListener;
 import com.example.personalbest.fitness.WalkStats;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.HistoryClient;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
@@ -68,7 +71,6 @@ public class StepCountActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
@@ -121,6 +123,7 @@ public class StepCountActivity extends AppCompatActivity{
                 if(exercise.isActive()){
                     //STOP EXERCISING
                     startExerciseButton.setText("Start Exercise");
+                    startExerciseButton.setBackgroundColor(Color.parseColor("#06A62B"));
                     Calendar calendar=Calendar.getInstance();
                     exercise.stopExercise(calendar);
                     stats.update();
@@ -128,6 +131,7 @@ public class StepCountActivity extends AppCompatActivity{
                 else{
                     //START EXERCISING
                     startExerciseButton.setText("Stop Exercise");
+                    startExerciseButton.setBackgroundColor(Color.parseColor("#FF0000"));
                     Calendar calendar=Calendar.getInstance();
                     exercise.startExercise(calendar);
                     stats.update();
@@ -190,7 +194,7 @@ public class StepCountActivity extends AppCompatActivity{
         Calendar c = Calendar.getInstance();
         runner = new Background(c);
         runner.execute();
-      }
+    }
 
     public void printSteps(View view) {
         //endDay.newDayActions(1,fitnessService);
@@ -290,11 +294,11 @@ public class StepCountActivity extends AppCompatActivity{
             }
 
             hour = c.get(Calendar.HOUR_OF_DAY);
+
             fitnessService.updateStepCount(c);
-           // if (exercise.isActive()) {
-                stats.update();
-                //onResume();
-            //}
+
+            stats = new WalkStats(StepCountActivity.this);
+            stats.update();
 
             if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);

@@ -59,6 +59,7 @@
         android:id="@+id/startExerciseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#06A62B"
         android:text="Start Exercise" />
 
     <Button
