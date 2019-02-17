@@ -78,6 +78,7 @@ public class StepCountActivity extends AppCompatActivity{
         fitnessService.setup();
 
         runner = new Background(Calendar.getInstance());
+        fitnessService.setup();
         runner.execute();
 
         //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
