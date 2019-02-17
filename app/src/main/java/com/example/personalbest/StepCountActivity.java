@@ -115,6 +115,8 @@ public class StepCountActivity extends AppCompatActivity{
         //While initializing, if an exercise was left active, set the button accordingly
         if(exercise.isActive()){
             startExerciseButton.setText("Stop Exercise");
+            startExerciseButton.setBackgroundColor(Color.parseColor("#FF0000"));
+
         }
 
         startExerciseButton.setOnClickListener(new View.OnClickListener() {
