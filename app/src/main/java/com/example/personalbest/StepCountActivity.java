@@ -16,10 +16,20 @@ import android.widget.TextView;
 import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
-import com.example.personalbest.HeightPickerFragment;
+import com.example.personalbest.fitness.UpdateBackgroundListener;
 import com.example.personalbest.fitness.WalkStats;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataSource;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.tasks.Task;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 public class StepCountActivity extends AppCompatActivity{
@@ -42,24 +52,33 @@ public class StepCountActivity extends AppCompatActivity{
     private FitnessService fitnessService;
     private Background runner;
     Exercise exercise;
-
+    private boolean isRecording;
     SaveLocal saveLocal;
-
+    EndDay endDay;
+    boolean daysUpdated;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
+
+
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
         //Object to save values
+        isRecording=false;
         saveLocal = new SaveLocal(StepCountActivity.this);
 
         String fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
 
-        fitnessService.updateStepCount();
+
+
         goalSteps = saveLocal.getGoal();
         goalView.setText("Goal: "+goalSteps);
         saveLocal.setCurrSubGoal(500);
@@ -67,7 +86,10 @@ public class StepCountActivity extends AppCompatActivity{
         runner = new Background(cal);
         runner.execute();
         fitnessService.setup();
+        runner.execute();
 
+        //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
+        fitnessService.updateStepCount(Calendar.getInstance());
         exerciseSteps = findViewById(R.id.walkSteps);
         speed = findViewById(R.id.textSpeed);
         timeElapsed = findViewById(R.id.walkTime);
@@ -113,13 +135,14 @@ public class StepCountActivity extends AppCompatActivity{
             }
         });
 
-        SharedPreferences myPrefs = getSharedPreferences("height", MODE_PRIVATE);
 
         //Log.i( "TAG","hello+test " + myPrefs.getString("height_feet",""));
         if(!saveLocal.containsHeight()) {
             DialogFragment nameFrag = new HeightPickerFragment();
             nameFrag.show(getSupportFragmentManager(), "Height");
         }
+
+        endDay=new EndDay(saveLocal);
     }
 
 
@@ -128,7 +151,7 @@ public class StepCountActivity extends AppCompatActivity{
 //       If authentication was required during google fit setup, this will be called after the user authenticates
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == fitnessService.getRequestCode()) {
-                fitnessService.updateStepCount();
+                fitnessService.updateStepCount(Calendar.getInstance());
             }
         } else {
             Log.e(TAG, "ERROR, google fit result code: " + resultCode);
@@ -153,6 +176,54 @@ public class StepCountActivity extends AppCompatActivity{
         Calendar c = Calendar.getInstance();
         runner = new Background(c);
         runner.execute();
+      }
+
+    public void printSteps(View view) {
+        //endDay.newDayActions(1,fitnessService);
+        //endDay.updateDate(Calendar.getInstance());
+        for(int i=0;i<7; i++){
+            Log.d(TAG,""+i+" days before Background count: "+saveLocal.getBackgroundStepCount(i));
+            Log.d(TAG,""+i+" days before Exercise count: "+saveLocal.getExerciseStepCount(i));
+        }
+
+    }
+
+    public void putData(View view){
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date();
+        cal.setTime(now);
+        //cal.add(Calendar.DAY_OF_YEAR, -1);
+        long endTime = cal.getTimeInMillis();
+        cal.add(Calendar.SECOND, -50);
+        long startTime = cal.getTimeInMillis();
+
+// Create a data source
+        DataSource dataSource =
+                new DataSource.Builder()
+                        .setAppPackageName(this)
+                        .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                        .setStreamName(TAG + " - step count")
+                        .setType(DataSource.TYPE_RAW)
+                        .build();
+
+// Create a data set
+        int stepCountDelta = 500;
+        DataSet dataSet = DataSet.create(dataSource);
+// For each data point, specify a start time, end time, and the data value -- in this case,
+// the number of new steps.
+        DataPoint dataPoint =
+                dataSet.createDataPoint().setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
+        dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
+        dataSet.add(dataPoint);
+
+        Task<Void> response = Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this)).insertData(dataSet);
+    }
+
+    public void launchGrapActivity(View view) {
+        Intent intent = new Intent(this, GraphActivity.class);
+        int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
+        intent.putExtra("numSteps", dailySteps);
+        startActivity(intent);
     }
 
 
@@ -177,6 +248,17 @@ public class StepCountActivity extends AppCompatActivity{
 
         @Override
         protected void onProgressUpdate(String... text) {
+            if(!isRecording){
+                isRecording=fitnessService.startRecording();
+            }
+
+            Calendar cal=Calendar.getInstance();
+            int daySkip=endDay.dayDifference(cal);
+            if(daySkip != 0 && isRecording){
+                endDay.newDayActions(daySkip,fitnessService,cal);
+                endDay.updateDate(cal);
+            }
+
             hour = c.get(Calendar.HOUR_OF_DAY);
             fitnessService.updateStepCount();
             //if(exercise.isActive()){
@@ -200,6 +282,7 @@ public class StepCountActivity extends AppCompatActivity{
             publishProgress();
             return null;
         }
+
 
         @Override
         protected void onPostExecute(String result) {
