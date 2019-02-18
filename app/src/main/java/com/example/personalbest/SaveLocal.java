@@ -209,6 +209,15 @@ public class SaveLocal {
         return cal;
     }
 
+    public void setTimeDiff(long l) {
+        editor.putLong("time_diff", l);
+        editor.apply();
+    }
+
+    public long getTimeDiff() {
+        return exercisePreferences.getLong("time_diff", 0);
+    }
+
     public void clearStepData(){
         for (int i = 0; i < DAYS_TO_KEEP_TRACK_OF; i++) {
             setExerciseStepCount(0, i);

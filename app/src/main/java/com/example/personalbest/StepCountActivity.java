@@ -55,7 +55,7 @@ public class StepCountActivity extends AppCompatActivity{
     private TextView exerciseSteps;
     private TextView speed;
     private TextView timeElapsed;
-
+    private long time_diff;
     public WalkStats stats;
 
 
@@ -85,17 +85,18 @@ public class StepCountActivity extends AppCompatActivity{
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
         fitnessService.setup();
 
+        time_diff = saveLocal.getTimeDiff();
 
         goalSteps = saveLocal.getGoal();
         setGoal(goalSteps);
         saveLocal.setCurrSubGoal(500);
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = shiftTime();
         runner = new Background(cal);
 
         runner.execute();
 
         //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
-        fitnessService.updateStepCount(Calendar.getInstance());
+        fitnessService.updateStepCount(shiftTime());
         exerciseSteps = findViewById(R.id.walkSteps);
         speed = findViewById(R.id.textSpeed);
         timeElapsed = findViewById(R.id.walkTime);
@@ -128,7 +129,7 @@ public class StepCountActivity extends AppCompatActivity{
                     //STOP EXERCISING
                     startExerciseButton.setText("Start Exercise");
                     startExerciseButton.setBackgroundColor(Color.parseColor("#06A62B"));
-                    Calendar calendar=Calendar.getInstance();
+                    Calendar calendar=shiftTime();
                     exercise.stopExercise(calendar);
                     stats.update();
                 }
@@ -136,7 +137,7 @@ public class StepCountActivity extends AppCompatActivity{
                     //START EXERCISING
                     startExerciseButton.setText("Stop Exercise");
                     startExerciseButton.setBackgroundColor(Color.parseColor("#FF0000"));
-                    Calendar calendar=Calendar.getInstance();
+                    Calendar calendar=shiftTime();
                     exercise.startExercise(calendar);
                     stats.update();
                 }
@@ -167,13 +168,12 @@ public class StepCountActivity extends AppCompatActivity{
         goalView.setText("Goal: "+goalSteps);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //       If authentication was required during google fit setup, this will be called after the user authenticates
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == fitnessService.getRequestCode()) {
-                fitnessService.updateStepCount(Calendar.getInstance());
+                fitnessService.updateStepCount(shiftTime());
             }
         } else {
             Log.e(TAG, "ERROR, google fit result code: " + resultCode);
@@ -211,12 +211,12 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void updateSteps(View view) {
-        onResume();
+        onResume(shiftTime());
 
     }
 
     public void putData(View view){
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = shiftTime();
         Date now = new Date();
         cal.setTime(now);
         //cal.add(Calendar.DAY_OF_YEAR, -1);
@@ -260,13 +260,33 @@ public class StepCountActivity extends AppCompatActivity{
 
     public void launchGraphActivity(View view) {
         Intent intent = new Intent(this, GraphActivity.class);
-        int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
+        int dailySteps=(int)fitnessService.getDailyStepCount(shiftTime());
         intent.putExtra("numSteps", dailySteps);
         startActivity(intent);
     }
 
+    public void timeShiftMS(View view) {
+        TextView v = (TextView) findViewById(R.id.msTimeShift);
 
+        if (!v.getText().toString().equals("")) {
+            long ms = Long.parseLong(v.getText().toString());
+            time_diff = Calendar.getInstance().getTimeInMillis() - ms;
+            saveLocal.setTimeDiff(time_diff);
+            Calendar cal = shiftTime();
+            onResume(cal);
+        } else {
+            time_diff = 0;
+            saveLocal.setTimeDiff(time_diff);
+            Calendar cal = shiftTime();
+            onResume(cal);
+        }
+    }
 
+    public Calendar shiftTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(cal.getTimeInMillis() - time_diff);
+        return cal;
+    }
 
 
     public class Background extends AsyncTask<String, String, String> {
@@ -293,14 +313,14 @@ public class StepCountActivity extends AppCompatActivity{
                 isRecording=fitnessService.startRecording();
             }
 
-            int daySkip=endDay.dayDifference(c);
+            int daySkip=endDay.dayDifference(shiftTime());
             if(daySkip != 0 && isRecording){
-                endDay.newDayActions(daySkip,fitnessService,c);
-                endDay.updateDate(c);
+                endDay.newDayActions(daySkip,fitnessService,shiftTime());
+                endDay.updateDate(shiftTime());
             }
 
             hour = c.get(Calendar.HOUR_OF_DAY);
-            fitnessService.updateStepCount(c);
+            fitnessService.updateStepCount(shiftTime());
 
             stats = new WalkStats(StepCountActivity.this);
             stats.update();
@@ -314,7 +334,7 @@ public class StepCountActivity extends AppCompatActivity{
             stats = new WalkStats(StepCountActivity.this);
             stats.update();
 
-            if (fitnessService.getDailyStepCount(c) >= saveLocal.getGoal() && !saveLocal.isAchieved()){
+            if (fitnessService.getDailyStepCount(shiftTime()) >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);
                 goalFrag = new GoalFragment();
                 goalFrag.show(getSupportFragmentManager(), "Goal");

@@ -29,7 +29,7 @@ public class WalkStats {
     public void update(){
         startTime = save.getLastSessionStartTime();
         if(save.isLastSessionActive()){
-            endTime = Calendar.getInstance().getTimeInMillis();
+            endTime = shiftTime().getTimeInMillis();
         }
         else {
             endTime = save.getLastExerciseTimeEnd();
@@ -42,7 +42,7 @@ public class WalkStats {
         float speed = calc.calcSpeed(startTime, endTime, distance);
         save.setSpeed(speed);
 
-        Calendar c = Calendar.getInstance();
+        Calendar c = shiftTime();
         TextView speedText = act.findViewById(R.id.textSpeed);
         speedText.setText("MPH: " + speed);
 
@@ -53,6 +53,12 @@ public class WalkStats {
         TextView walkSteps = act.findViewById(R.id.walkSteps);
         walkSteps.setText("Steps: " + steps_temp);
 
+    }
+
+    public Calendar shiftTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(cal.getTimeInMillis() - save.getTimeDiff());
+        return cal;
     }
 
 }
