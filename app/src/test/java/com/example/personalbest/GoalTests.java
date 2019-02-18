@@ -149,7 +149,7 @@ public class GoalTests {
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
         assertFalse(alertDialog.isShowing());
 
-        assertEquals(5500, saveLocal.getGoal());
+        assertEquals(5005, saveLocal.getGoal());
     }
 
     // Testing cancelling setting a new goal.
