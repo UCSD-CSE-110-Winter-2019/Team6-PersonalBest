@@ -79,7 +79,7 @@
         android:id="@+id/graphActivityButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="launchGrapActivity"
+        android:onClick="launchGraphActivity"
         android:text="See Stats" />
 
 </LinearLayout>

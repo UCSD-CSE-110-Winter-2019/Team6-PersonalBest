@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
+
+import android.support.annotation.NonNull;
 import android.support.v4.app.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -71,6 +73,7 @@ public class StepCountActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
@@ -254,7 +257,7 @@ public class StepCountActivity extends AppCompatActivity{
                 });;
     }
 
-    public void launchGrapActivity(View view) {
+    public void launchGraphActivity(View view) {
         Intent intent = new Intent(this, GraphActivity.class);
         int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
         intent.putExtra("numSteps", dailySteps);
@@ -294,13 +297,21 @@ public class StepCountActivity extends AppCompatActivity{
             }
 
             hour = c.get(Calendar.HOUR_OF_DAY);
-
             fitnessService.updateStepCount(c);
 
             stats = new WalkStats(StepCountActivity.this);
             stats.update();
+            //if(exercise.isActive()){
+                WalkStats stats = new WalkStats(StepCountActivity.this);
+           // if (exercise.isActive()) {
+                stats.update();
+                //onResume();
+            //}
 
-            if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
+            stats = new WalkStats(StepCountActivity.this);
+            stats.update();
+
+            if (fitnessService.getDailyStepCount(c) >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);
                 goalFrag = new GoalFragment();
                 goalFrag.show(getSupportFragmentManager(), "Goal");
