@@ -308,6 +308,9 @@ public class StepCountActivity extends AppCompatActivity{
                 //onResume();
             //}
 
+            stats = new WalkStats(StepCountActivity.this);
+            stats.update();
+
             if (fitnessService.getDailyStepCount(c) >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);
                 goalFrag = new GoalFragment();
