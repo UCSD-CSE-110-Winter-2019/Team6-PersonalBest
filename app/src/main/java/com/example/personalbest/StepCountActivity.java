@@ -8,10 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.os.Handler;
-<<<<<<< HEAD
 import android.support.annotation.NonNull;
-=======
->>>>>>> merge fix
+
+import android.support.annotation.NonNull;
 import android.support.v4.app.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
