@@ -24,21 +24,22 @@ public class Exercise {
         saveLocal.saveStartSessionStepCount(dailyStepCount);
     }
     //Returns the step count of this exercise
+
     public long stopExercise(Calendar calendar){
-        Long time = calendar.getTimeInMillis();
-        saveLocal.setLastExerciseTimeEnd(time);
-        saveLocal.setStopSession();
-        long stepDifference=fitnessService.getDailyStepCount(Calendar.getInstance())-saveLocal.getStartSessionStepCount();
-        saveLocal.setExerciseStepCount(saveLocal.getExerciseStepCount(0)+stepDifference,0);
+            Long time = calendar.getTimeInMillis();
+            saveLocal.setLastExerciseTimeEnd(time);
+            saveLocal.setStopSession();
+            long stepDifference=fitnessService.getDailyStepCount(calendar)-saveLocal.getStartSessionStepCount();
+            saveLocal.setExerciseStepCount(saveLocal.getExerciseStepCount(0)+stepDifference,0);
 
-        saveLocal.setLastExerciseSteps(stepDifference);
-        saveLocal.setLastExerciseSpeed(saveLocal.getSpeed());
-        saveLocal.setLastExerciseTimeStart(saveLocal.getLastSessionStartTime());
-        //saveLocal.setLastExerciseTimeEnd((Calendar.getInstance().getTimeInMillis()));
+            saveLocal.setLastExerciseSteps(stepDifference);
+            saveLocal.setLastExerciseSpeed(saveLocal.getSpeed());
+            saveLocal.setLastExerciseTimeStart(saveLocal.getLastSessionStartTime());
+            //saveLocal.setLastExerciseTimeEnd((Calendar.getInstance().getTimeInMillis()));
 
-        Log.d(TAG,"This Exercise Step Count: "+stepDifference);
-        Log.d(TAG,"Daily Exercise Step Count: "+saveLocal.getExerciseStepCount(0));
-        return stepDifference;
+            Log.d(TAG,"This Exercise Step Count: "+stepDifference);
+            Log.d(TAG,"Daily Exercise Step Count: "+saveLocal.getExerciseStepCount(0));
+            return stepDifference;
     }
     //Gets the step count of the current exercise
     public long getCurrentExerciseStepCount(){
