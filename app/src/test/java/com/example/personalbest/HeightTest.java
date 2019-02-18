@@ -1,34 +1,42 @@
 package com.example.personalbest;
 
+import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v4.app.DialogFragment;
+import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
-import com.example.personalbest.fitness.GoogleFitAdapter;
-import com.example.personalbest.fitness.WalkStats;
 
-import org.hamcrest.Condition;
+import org.bouncycastle.asn1.crmf.POPOSigningKey;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowView;
 
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
-public class StatsTest {
+
+public class HeightTest {
     private static final String TEST_SERVICE = "TEST_SERVICE";
     private StepCountActivity activity;
     private Exercise exercise;
@@ -38,7 +46,9 @@ public class StatsTest {
     private TextView textSpeed;
     private Button walkBtn;
     private long nextStepCount;
-
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    SaveLocal saveLocal;
     //@Rule
     //public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<>(MainActivity.class);
 
@@ -53,65 +63,26 @@ public class StatsTest {
 
         Intent intent = new Intent(RuntimeEnvironment.application, StepCountActivity.class);
         intent.putExtra(StepCountActivity.FITNESS_SERVICE_KEY, TEST_SERVICE);
-        activity = Robolectric.buildActivity(StepCountActivity.class, intent).create().get();
-        fitnessService = FitnessServiceFactory.create(TEST_SERVICE, activity);
-        exercise = new Exercise(activity, fitnessService);
+        ActivityController<StepCountActivity> controller = Robolectric.buildActivity(StepCountActivity.class, intent);
+        saveLocal = new SaveLocal(controller.get());
+        saveLocal.saveHeight(5,6);
 
-        textSteps = activity.findViewById(R.id.walkSteps);
-        textTime = activity.findViewById(R.id.walkTime);
-        textSpeed = activity.findViewById(R.id.textSpeed);
-        walkBtn = activity.findViewById(R.id.startExerciseButton);
+        activity = controller.create().get();
 
-        nextStepCount = 1000;
+        activity.onResume();
+
+
+        //dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
     }
 
-    // test for correct time after stopping exercise
+
+    //Testing app opens without height data, prompts for height
     @Test
-    public void timeTest() {
-        Calendar cal = Calendar.getInstance();
-        // Wed, February 13, 2019 02:16:40
-        Date dummyStartTime = new Date(1550053000000L);
-        //Wed, February 13, 2019 02:31:40
-        Date dummyEndTime = new Date(1550053900000L);
-
-        cal.setTime(dummyStartTime);
-        exercise.startExercise(cal);
-        cal.setTime(dummyEndTime);
-        exercise.stopExercise(cal);
-        activity.onResume(cal);
-
-        assertEquals("Time Elapsed: 15:00", textTime.getText());
+    public void heightIsSet() {
+        AlertDialog alertDialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
+        assertNull(alertDialog);
     }
 
-    @Test
-    public void speedTest() {
-        Calendar cal = Calendar.getInstance();
-        // Wed, February 13, 2019 02:16:40
-        Date dummyStartTime = new Date(1550053000000L);
-        //Wed, February 13, 2019 02:31:40
-        Date dummyEndTime = new Date(1550053900000L);
-
-        cal.setTime(dummyStartTime);
-        exercise.startExercise(cal);
-        cal.setTime(dummyEndTime);
-        nextStepCount = 2000;
-        exercise.stopExercise(cal);
-        activity.onResume(cal);
-
-        assertEquals("MPH: 1.7729799", textSpeed.getText());
-
-    }
-
-    @Test
-    public void stepsTest() {
-        Calendar cal = Calendar.getInstance();
-        walkBtn.performClick();
-        nextStepCount = 2000;
-        activity.onResume(cal);
-        walkBtn.performClick();
-
-        assertEquals("Steps: 1000", textSteps.getText());
-    }
 
     private class TestFitnessService implements FitnessService {
         private static final String TAG = "[TestFitnessService]: ";
@@ -155,5 +126,6 @@ public class StatsTest {
         public boolean isSetupComplete() {
             return true;
         }
+
     }
 }

@@ -16,7 +16,7 @@
             android:layout_height="match_parent" >
 
             <NumberPicker
-                android:id="@+id/numberPicker3"
+                android:id="@+id/goalPicker"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="30dp"
