@@ -122,14 +122,15 @@ public class GoogleFitAdapter implements FitnessService {
 
 
     /**
-     * Reads the current daily step total, computed from midnight of the current day on the device's
-     * current timezone.
+     * Gets the number of steps of the currentTime's day and updates the variables
+     * in this class and in StepCountActivity.
      */
     public void updateStepCount(Calendar currentTime) {
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
             return;
         }
+        //Find the end of the day
         Calendar cal=Calendar.getInstance();
         cal.setTimeInMillis(currentTime.getTimeInMillis());
         cal.set(Calendar.HOUR_OF_DAY,23);
@@ -137,7 +138,7 @@ public class GoogleFitAdapter implements FitnessService {
         cal.set(Calendar.SECOND,59);
         cal.set(Calendar.MILLISECOND,59);
         long endTime = cal.getTimeInMillis();
-
+        //Find the start of the day
         cal.set(Calendar.HOUR_OF_DAY,0);
         cal.set(Calendar.MINUTE,0);
         cal.set(Calendar.SECOND,0);
@@ -188,7 +189,7 @@ public class GoogleFitAdapter implements FitnessService {
         return dailyStepCount;
     }
 
-
+    //Gets the number of steps from a given dataReadResponse.
     public static int getSteps(DataReadResponse dataReadResponse){
         List<DataSet> dataSets = dataReadResponse.getDataSets();
 
@@ -202,8 +203,10 @@ public class GoogleFitAdapter implements FitnessService {
         }
         return stepCount;
     }
+    //Updates the background steps of a day in the past from the current day.
     public void updateBackgroundCount(Calendar currentTime, int daysBefore){
 
+        //Find the end of the desired day
         Calendar cal=Calendar.getInstance();
         cal.setTimeInMillis(currentTime.getTimeInMillis());
         cal.add(Calendar.DAY_OF_YEAR, -daysBefore);
@@ -212,7 +215,7 @@ public class GoogleFitAdapter implements FitnessService {
         cal.set(Calendar.SECOND,59);
         cal.set(Calendar.MILLISECOND,59);
         long endTime = cal.getTimeInMillis();
-
+        //Find the start of the desired day
         cal.set(Calendar.HOUR_OF_DAY,0);
         cal.set(Calendar.MINUTE,0);
         cal.set(Calendar.SECOND,0);
@@ -221,6 +224,7 @@ public class GoogleFitAdapter implements FitnessService {
 
         listenStepCount(startTime,endTime,new UpdateBackgroundListener(activity,daysBefore),new UpdateBackgroundListener(activity,daysBefore));
     }
+    //Creates a read request and sends it to the listener to update variables.
     private void listenStepCount(long startMillis, long endMillis, OnSuccessListener<DataReadResponse> listener, OnFailureListener failureListener){
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
@@ -238,7 +242,7 @@ public class GoogleFitAdapter implements FitnessService {
                 .addOnFailureListener(failureListener);
         return;
     }
-
+    //Returns true if the google fit is tracking variables.
     public boolean isSetupComplete(){
         return (isAggregateSet&&isDeltaSet&&isCumulativeSet);
     }
