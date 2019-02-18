@@ -16,7 +16,7 @@ public class Calc {
         float minutes = totalTime/60000f;
         float hours = minutes/60f;
         if (hours == 0) {
-            hours =  1;
+            return 0;
         }
         return (distance/hours);
     }
