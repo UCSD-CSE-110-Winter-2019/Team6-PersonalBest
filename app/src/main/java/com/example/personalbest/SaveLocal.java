@@ -135,40 +135,7 @@ public class SaveLocal {
          return exercisePreferences.getLong("LastExerciseTimeEnd", 0);
     }
 
-    //Method that shifts the last 7 days data when a new day begins
-    public void newDayShift(int dayCount){
-        if(dayCount>0) {
-            for (int j = 0; j < dayCount; j++) {
-                for (int i = DAYS_TO_KEEP_TRACK_OF - 1; i > 0; i--) {
-                    Log.d("Save Local", "Shifting " + i + " and " + (i - 1));
-                    setExerciseStepCount(getExerciseStepCount(i - 1), i);
-                    setBackgroundStepCount(getBackgroundStepCount(i - 1), i);
-                    setPreviousDayGoal(getGoals(i-1),i);
-                }
-                setExerciseStepCount(0, 0);
-                setBackgroundStepCount(0, 0);
-                int goal=getGoal();
-                setPreviousDayGoal(goal,1);
-            }
-        }
-        else if(dayCount<0){
-            for (int j = 0; j < -dayCount; j++) {
-                for (int i = 0; i < DAYS_TO_KEEP_TRACK_OF-1; i++) {
-                    System.out.println( "Shifting " + (i+1) + " and " + (i));
-                    setExerciseStepCount(getExerciseStepCount(i +1), i);
-                    setBackgroundStepCount(getBackgroundStepCount(i + 1), i);
-                    setPreviousDayGoal(getGoals(i+1),i);
-                }
-                setExerciseStepCount(0, 0);
-                setBackgroundStepCount(0, 0);
 
-            }
-
-        }
-
-
-
-    }
     public void setCurrSubGoal(int subGoal){
         editor.putInt("currsubGoal", subGoal);
         editor.apply();
@@ -226,7 +193,9 @@ public class SaveLocal {
 
     public void setLastLogin(Calendar cal){
         Calendar newCal=Calendar.getInstance();
-        newCal.setTimeInMillis(cal.getTimeInMillis());
+        newCal.setTime(cal.getTime());
+        //newCal.setTimeInMillis(cal.getTimeInMillis());
+
         newCal.set(Calendar.HOUR_OF_DAY,0);
         newCal.set(Calendar.MINUTE,0);
         newCal.set(Calendar.SECOND,0);
@@ -256,6 +225,11 @@ public class SaveLocal {
         if(daysBefore < DAYS_TO_KEEP_TRACK_OF){
             editor.putLong("" + daysBefore + "DaysBeforeGoal", goal);
             editor.apply();
+        }
+    }
+    public void clearGoalData() {
+        for (int i = 0; i < DAYS_TO_KEEP_TRACK_OF; i++) {
+            setPreviousDayGoal(0, i);
         }
     }
 

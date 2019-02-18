@@ -71,6 +71,7 @@ public class StepCountActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
@@ -80,8 +81,7 @@ public class StepCountActivity extends AppCompatActivity{
 
         String fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
-
-
+        fitnessService.setup();
 
 
         goalSteps = saveLocal.getGoal();
@@ -89,8 +89,8 @@ public class StepCountActivity extends AppCompatActivity{
         saveLocal.setCurrSubGoal(500);
         Calendar cal = Calendar.getInstance();
         runner = new Background(cal);
+
         runner.execute();
-        fitnessService.setup();
 
         //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
         fitnessService.updateStepCount(Calendar.getInstance());
@@ -115,6 +115,8 @@ public class StepCountActivity extends AppCompatActivity{
         //While initializing, if an exercise was left active, set the button accordingly
         if(exercise.isActive()){
             startExerciseButton.setText("Stop Exercise");
+            startExerciseButton.setBackgroundColor(Color.parseColor("#FF0000"));
+
         }
 
         startExerciseButton.setOnClickListener(new View.OnClickListener() {
@@ -264,6 +266,7 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
+
     public class Background extends AsyncTask<String, String, String> {
         DialogFragment goalFrag;
         Encouragement encourage;
@@ -276,6 +279,7 @@ public class StepCountActivity extends AppCompatActivity{
 
         @Override
         protected void onPreExecute() {
+
             hour = c.get(Calendar.HOUR_OF_DAY);
 
             encourage = new Encouragement(StepCountActivity.this);
@@ -319,14 +323,17 @@ public class StepCountActivity extends AppCompatActivity{
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             publishProgress();
             return null;
         }
-
-
         @Override
         protected void onPostExecute(String result) {
 
         }
     }
+
+
+
+
 }
