@@ -73,6 +73,7 @@ public class StepCountActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
@@ -302,7 +303,9 @@ public class StepCountActivity extends AppCompatActivity{
             stats.update();
             //if(exercise.isActive()){
                 WalkStats stats = new WalkStats(StepCountActivity.this);
+           // if (exercise.isActive()) {
                 stats.update();
+                //onResume();
             //}
 
             if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
@@ -325,9 +328,6 @@ public class StepCountActivity extends AppCompatActivity{
                 e.printStackTrace();
             }
             publishProgress();
-
-            //}
-
             return null;
         }
 
