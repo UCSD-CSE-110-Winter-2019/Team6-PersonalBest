@@ -141,7 +141,6 @@ public class StatsTest {
         public long getDailyStepCount(Calendar cal) {
             return nextStepCount;
         }
-<<<<<<< HEAD
 
         @Override
         public boolean startRecording() {
@@ -149,24 +148,12 @@ public class StatsTest {
         }
         @Override
         public void updateBackgroundCount(Calendar currentTime, int daysBefore){
-=======
->>>>>>> merge fix
 
-        @Override
-        public boolean startRecording() {
-            return true;
         }
 
         @Override
         public boolean isSetupComplete() {
             return true;
         }
-
-<<<<<<< HEAD
-=======
-        @Override
-        public void updateBackgroundCount(Calendar currentTime, int daysBefore) {
-        }
->>>>>>> merge fix
     }
 }
