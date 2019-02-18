@@ -48,7 +48,6 @@ public class Exercise {
         }
         else return 0;
     }
-
     public boolean isActive(){
         return saveLocal.isLastSessionActive();
     }
