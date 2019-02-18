@@ -159,7 +159,6 @@ public class EndDayTest {
 
         @Override
         public void updateStepCount(Calendar calendar) {
-            System.out.println(TAG + "updateStepCount");
             stepCountActivity.setStepCount(0);//nextStepCount);
         }
 

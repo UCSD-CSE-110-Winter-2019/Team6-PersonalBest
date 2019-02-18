@@ -14,13 +14,13 @@ public class Exercise {
     FitnessService fitnessService;
 
     public Exercise(StepCountActivity activity, FitnessService fitnessService){
-            this.saveLocal=new SaveLocal(activity);
+        this.saveLocal=new SaveLocal(activity);
         this.fitnessService=fitnessService;
     }
 
     public void startExercise(Calendar calendar){
         saveLocal.setStartSession(calendar);
-        long dailyStepCount= fitnessService.getDailyStepCount(Calendar.getInstance());
+        long dailyStepCount= fitnessService.getDailyStepCount(calendar.getInstance());
         saveLocal.saveStartSessionStepCount(dailyStepCount);
     }
     //Returns the step count of this exercise
