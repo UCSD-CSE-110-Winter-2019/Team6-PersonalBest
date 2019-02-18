@@ -67,7 +67,6 @@ public class StepCountActivity extends AppCompatActivity{
     private boolean isRecording;
     SaveLocal saveLocal;
     EndDay endDay;
-    boolean daysUpdated;
 
 
     @Override
@@ -77,24 +76,26 @@ public class StepCountActivity extends AppCompatActivity{
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
         goalView = findViewById(R.id.goal);
-        //Object to save values
+        //Variable that turns true if FitnessService starts recording.
         isRecording=false;
+        //Object to save values
         saveLocal = new SaveLocal(StepCountActivity.this);
-
+        //Set up the fitness service
         String fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
         fitnessService.setup();
 
-
+        //Set the goal and subgoal.
         goalSteps = saveLocal.getGoal();
         setGoal(goalSteps);
         saveLocal.setCurrSubGoal(500);
         Calendar cal = Calendar.getInstance();
-        runner = new Background(cal);
 
+        //Create and start the background activity
+        runner = new Background(cal);
         runner.execute();
 
-        //if(!fitnessService.isSetupComplete()) fitnessService.startRecording();
+        //Update the step count and set the screen variables
         fitnessService.updateStepCount(Calendar.getInstance());
         exerciseSteps = findViewById(R.id.walkSteps);
         speed = findViewById(R.id.textSpeed);
@@ -214,17 +215,15 @@ public class StepCountActivity extends AppCompatActivity{
         onResume();
 
     }
-
-    public void putData(View view){
+    private void insert500Steps(Calendar currTime){
         Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        //cal.add(Calendar.DAY_OF_YEAR, -1);
+        cal.setTimeInMillis(currTime.getTimeInMillis());
+
         long endTime = cal.getTimeInMillis();
         cal.add(Calendar.SECOND, -50);
         long startTime = cal.getTimeInMillis();
 
-// Create a data source
+        // Create a data source
         DataSource dataSource =
                 new DataSource.Builder()
                         .setAppPackageName(this)
@@ -233,11 +232,11 @@ public class StepCountActivity extends AppCompatActivity{
                         .setType(DataSource.TYPE_RAW)
                         .build();
 
-// Create a data set
+        // Create a data set
         int stepCountDelta = 500;
         DataSet dataSet = DataSet.create(dataSource);
-// For each data point, specify a start time, end time, and the data value -- in this case,
-// the number of new steps.
+        // For each data point, specify a start time, end time, and the data value -- in this case,
+        // the number of new steps.
         DataPoint dataPoint =
                 dataSet.createDataPoint().setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
         dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
@@ -245,17 +244,23 @@ public class StepCountActivity extends AppCompatActivity{
 
         Task<Void> response = Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this)).insertData(dataSet)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.i(TAG, "Successfully added 500 steps!");
-            }
-        })
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG, "Successfully added 500 steps!");
+                    }
+                })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.i(TAG, "There was a problem adding 500 steps.");
                     }
-                });;
+                });
+    }
+
+    public void putData(View view){
+        insert500Steps(Calendar.getInstance());
+
+
     }
 
     public void launchGraphActivity(View view) {
