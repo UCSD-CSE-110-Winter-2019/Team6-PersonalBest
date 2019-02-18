@@ -2,15 +2,12 @@ package com.example.personalbest;
 
 import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
-
-import com.google.android.gms.common.util.ArrayUtils;
 
 import java.util.Arrays;
 
@@ -29,7 +26,7 @@ public class SetGoalFragment extends DialogFragment {
         // Pass null as the parent view because its going in the dialog layout
         saveLocal = new SaveLocal(this.getActivity());
         final String [] values = getArrayWithSteps(500, saveLocal.getGoal() * 10, 500);
-        final NumberPicker np = v.findViewById(R.id.numberPicker3);
+        final NumberPicker np = v.findViewById(R.id.goalPicker);
         np.setMinValue(0);
         np.setMaxValue(values.length-1);
         np.setDisplayedValues(values);

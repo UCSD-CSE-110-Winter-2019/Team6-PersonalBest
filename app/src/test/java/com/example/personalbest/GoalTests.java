@@ -1,24 +1,17 @@
 package com.example.personalbest;
 
         import android.app.Dialog;
-        import android.content.Context;
         import android.content.Intent;
         import android.content.SharedPreferences;
-        import android.os.AsyncTask;
-        import android.support.v4.app.DialogFragment;
         import android.support.v7.app.AlertDialog;
         import android.widget.Button;
+        import android.widget.NumberPicker;
         import android.widget.TextView;
 
-        import com.example.personalbest.fitness.Encouragement;
         import com.example.personalbest.fitness.FitnessService;
         import com.example.personalbest.fitness.FitnessServiceFactory;
-        import com.example.personalbest.fitness.GoogleFitAdapter;
-        import com.example.personalbest.fitness.WalkStats;
 
-        import org.hamcrest.Condition;
         import org.junit.Before;
-        import org.junit.Rule;
         import org.junit.Test;
         import org.junit.runner.RunWith;
         import org.robolectric.Robolectric;
@@ -27,13 +20,15 @@ package com.example.personalbest;
         import org.robolectric.shadows.ShadowAlertDialog;
         import org.robolectric.shadows.ShadowView;
 
-        import java.time.LocalDateTime;
         import java.util.Calendar;
         import java.util.Date;
         import java.util.List;
 
+        import static junit.framework.Assert.assertFalse;
+        import static junit.framework.Assert.assertNotNull;
         import static org.junit.Assert.assertEquals;
         import static org.junit.Assert.assertNotEquals;
+        import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
 
@@ -49,7 +44,7 @@ public class GoalTests {
     private long nextStepCount;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-
+    SaveLocal saveLocal;
     //@Rule
     //public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<>(MainActivity.class);
 
@@ -68,7 +63,7 @@ public class GoalTests {
         fitnessService = FitnessServiceFactory.create(TEST_SERVICE, activity);
         exercise = new Exercise(activity, fitnessService);
 
-        SaveLocal saveLocal = new SaveLocal(activity);
+        saveLocal = new SaveLocal(activity);
         saveLocal.setGoal(5000);
         saveLocal.setAchieved(false);
 
@@ -79,6 +74,7 @@ public class GoalTests {
 
         AlertDialog dialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
         ShadowView.clickOn(dialog.getButton(AlertDialog.BUTTON_POSITIVE));
+
         //dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
     }
 
@@ -92,12 +88,10 @@ public class GoalTests {
         cal.setTime(dummyStartTime);
         activity.onResume(cal);
 
-     //AlertDialog alertDialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
-     //Dialog dialog1 = ShadowAlertDialog.getShownDialogs().get(1);
-     //assertEquals(null, alertDialog);
+        assertEquals(false, ShadowAlertDialog.getLatestDialog().isShowing());
     }
 
-    // test for no goal prompts since goal has not been met.
+    // test for goal prompts since goal has been met.
     @Test
     public void metGoal() {
         Calendar cal = Calendar.getInstance();
@@ -114,10 +108,84 @@ public class GoalTests {
         fitnessService.getDailyStepCount(cal);
         activity.onResume();
 
-        Dialog dialog1 = ShadowAlertDialog.getShownDialogs().get(1);
-        alertDialog = (AlertDialog) dialog1;
-        assertNotEquals(null, alertDialog);
+        List<Dialog> lDialog = ShadowAlertDialog.getShownDialogs();
+        alertDialog = (AlertDialog) lDialog.get(1);
+        String s = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).getText().toString();
+        assertEquals("Add 500 steps", s );
+        assertTrue(alertDialog.isShowing());
     }
+
+    // test for goal prompts since goal has been met.
+    @Test
+    public void add500StepsTest() {
+        metGoal();
+
+        List<Dialog> lDialog = ShadowAlertDialog.getShownDialogs();
+        AlertDialog alertDialog = (AlertDialog) lDialog.get(1);
+        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).performClick();
+        assertFalse(alertDialog.isShowing());
+        assertEquals(5500, saveLocal.getGoal());
+    }
+
+
+    // Testing setting new goal.
+    @Test
+    public void newGoal() {
+        metGoal();
+
+        List<Dialog> lDialog = ShadowAlertDialog.getShownDialogs();
+        AlertDialog alertDialog = (AlertDialog) lDialog.get(1);
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+        assertFalse(alertDialog.isShowing());
+        alertDialog = (AlertDialog) lDialog.get(2);
+
+        String s = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).getText().toString();
+        assertEquals("Save New Goal", s );
+        assertTrue(alertDialog.isShowing());
+
+        NumberPicker np = alertDialog.findViewById(R.id.goalPicker);
+
+        np.setValue(1+ np.getValue());
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+        assertFalse(alertDialog.isShowing());
+
+        assertEquals(5500, saveLocal.getGoal());
+    }
+
+    // Testing cancelling setting a new goal.
+    @Test
+    public void newGoalCancel() {
+        metGoal();
+
+        List<Dialog> lDialog = ShadowAlertDialog.getShownDialogs();
+        AlertDialog alertDialog = (AlertDialog) lDialog.get(1);
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+        assertFalse(alertDialog.isShowing());
+        alertDialog = (AlertDialog) lDialog.get(2);
+
+        String s = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).getText().toString();
+        assertEquals("Save New Goal", s );
+        assertTrue(alertDialog.isShowing());
+
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+        assertFalse(alertDialog.isShowing());
+
+        assertEquals(5000, saveLocal.getGoal());
+    }
+
+
+    // Testing cancel button on initial goal achieved prompt.
+    @Test
+    public void cancelGoal() {
+        metGoal();
+
+        List<Dialog> lDialog = ShadowAlertDialog.getShownDialogs();
+        AlertDialog alertDialog = (AlertDialog) lDialog.get(1);
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+        assertFalse(alertDialog.isShowing());
+        assertEquals(5000, saveLocal.getGoal());
+    }
+
 
     private class TestFitnessService implements FitnessService {
         private static final String TAG = "[TestFitnessService]: ";
