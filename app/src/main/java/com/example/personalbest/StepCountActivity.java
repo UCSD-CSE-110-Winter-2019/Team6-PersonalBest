@@ -8,7 +8,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.os.Handler;
+<<<<<<< HEAD
 import android.support.annotation.NonNull;
+=======
+>>>>>>> merge fix
 import android.support.v4.app.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -294,11 +297,14 @@ public class StepCountActivity extends AppCompatActivity{
             }
 
             hour = c.get(Calendar.HOUR_OF_DAY);
-
             fitnessService.updateStepCount(c);
 
             stats = new WalkStats(StepCountActivity.this);
             stats.update();
+            //if(exercise.isActive()){
+                WalkStats stats = new WalkStats(StepCountActivity.this);
+                stats.update();
+            //}
 
             if (numSteps >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);
@@ -320,6 +326,9 @@ public class StepCountActivity extends AppCompatActivity{
                 e.printStackTrace();
             }
             publishProgress();
+
+            //}
+
             return null;
         }
 
