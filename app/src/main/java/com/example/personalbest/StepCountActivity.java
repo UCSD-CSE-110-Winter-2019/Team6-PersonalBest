@@ -272,6 +272,10 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
+    public void launchFriendsList(View v){
+        Intent intent = new Intent(this, FriendsListActivity.class);
+        startActivity(intent);
+    }
 
 
     public class Background extends AsyncTask<String, String, String> {

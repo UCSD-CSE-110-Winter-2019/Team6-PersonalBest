@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".StepCountActivity">
 
 
     <TextView
@@ -81,5 +81,12 @@
         android:layout_height="wrap_content"
         android:onClick="launchGraphActivity"
         android:text="See Stats" />
+
+    <Button
+        android:id="@+id/friendButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Friends"
+        android:onClick="launchFriendsList"/>
 
 </LinearLayout>
