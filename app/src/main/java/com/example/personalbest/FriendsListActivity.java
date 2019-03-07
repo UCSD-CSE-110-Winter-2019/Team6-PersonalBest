@@ -1,5 +1,6 @@
 package com.example.personalbest;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -53,7 +54,14 @@ public class FriendsListActivity extends AppCompatActivity {
 
     void fillArray(ArrayList <String> arr){
         //Put values into the arraylist
+
         arr.add("Hello");
         arr.add("World");
+    }
+
+    public void addFriend(View v){
+        DialogFragment addFriendFragment = new AddFriendFragment();
+        addFriendFragment.show(getSupportFragmentManager(), "Add Friend");
+
     }
 }

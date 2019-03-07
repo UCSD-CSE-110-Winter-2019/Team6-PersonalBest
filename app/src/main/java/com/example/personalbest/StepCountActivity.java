@@ -49,6 +49,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,8 +91,9 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
-        FirebaseAdapter firebaseAdapter=new FirebaseAdapter(StepCountActivity.this);
-        //firebaseAdapter.addUser("Ani Lermi");
+        firebaseAdapter=new FirebaseAdapter(StepCountActivity.this);
+        //firebaseAdapter.addUser("Ani Lermi")
+
 
 
         setContentView(R.layout.activity_step_count);
@@ -237,6 +239,14 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void updateSteps(View view) {
+        firebaseAdapter.addUser("Orr Toledano", "otoledan@ucsd.edu");
+        firebaseAdapter.getUsers();
+        firebaseAdapter.addFriend("otoledan@ucsd.edu", "elerner@ucsd.edu");
+        firebaseAdapter.addFriend("otoledan@ucsd.edu", "alermi@ucsd.edu");
+        ArrayList<String> arr = firebaseAdapter.getFriends("otoledan@ucsd.edu");
+        for (String s: arr) {
+            Log.d("TAGTAG", s);
+        }
         onResume();
         //printSteps();
 
