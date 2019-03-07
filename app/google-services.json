@@ -1,0 +1,71 @@
+{
+  "project_info": {
+    "project_number": "629223737879",
+    "firebase_url": "https://infinite-mantra-230923.firebaseio.com",
+    "project_id": "infinite-mantra-230923",
+    "storage_bucket": "infinite-mantra-230923.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629223737879:android:2561f4ae35575927",
+        "android_client_info": {
+          "package_name": "com.example.personalbest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "629223737879-79gk5rsli7d3cptqe3nu3v1akg1j6041.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.personalbest",
+            "certificate_hash": "16b9c2a63d2dfce20ee7b82e762bd0b38661296c"
+          }
+        },
+        {
+          "client_id": "629223737879-bmb6j1kr7g0sirr3ob320f17hv9idn8b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.personalbest",
+            "certificate_hash": "148f20ff26aff8c3d0ee78e8c27d8cf057a0a60a"
+          }
+        },
+        {
+          "client_id": "629223737879-nkdb5fg1dtom2pvmit6p1jed1cpnsf3k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.personalbest",
+            "certificate_hash": "ff28d496feb6dad7485c088d5d800585929e8444"
+          }
+        },
+        {
+          "client_id": "629223737879-3l5248hgqad0asogmkvr30oj3tle7vo7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLRRX273eSidNQUPf0bh93tH-o87-4MdM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629223737879-3l5248hgqad0asogmkvr30oj3tle7vo7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
