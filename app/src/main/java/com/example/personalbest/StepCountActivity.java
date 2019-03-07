@@ -62,7 +62,7 @@ public class StepCountActivity extends AppCompatActivity{
 
     private static final String TAG = "StepCountActivity";
 
-
+    private FirebaseAdapter firebaseAdapter;
     private TextView textSteps;
     private TextView goalView;
 
@@ -131,6 +131,7 @@ public class StepCountActivity extends AppCompatActivity{
         stats = new WalkStats(StepCountActivity.this);
 
 
+        firebaseAdapter=new FirebaseAdapter(this);
 
 
         //Button to start and stop exercises
@@ -239,6 +240,7 @@ public class StepCountActivity extends AppCompatActivity{
         onResume();
         //printSteps();
 
+
     }
     private void insert500Steps(Calendar currTime){
         Calendar cal = Calendar.getInstance();
@@ -287,6 +289,7 @@ public class StepCountActivity extends AppCompatActivity{
                         Log.i(TAG, "There was a problem adding 500 steps.");
                     }
                 });
+        firebaseAdapter.getUsers();
     }
 
     public void putData(View view){

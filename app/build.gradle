@@ -22,6 +22,10 @@ android {
             includeAndroidResources = true
         }
     }
+    lintOptions {
+        abortOnError false
+    }
+
 }
 
 repositories {
@@ -38,17 +42,12 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
-
     implementation 'com.google.firebase:firebase-database:16.0.6'
+    implementation 'com.google.firebase:firebase-firestore:18.1.0'
     implementation 'com.google.firebase:firebase-core:16.0.7'
-    //implementation 'com.google.firebase:firebase-admin:6.7.0'
-
-    implementation 'com.google.firebase:firebase-firestore:18.0.1'
-
-
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.1'
-    testImplementation 'androidx.test:core:1.0.0'
+    testImplementation 'androidx.test:core:1.1.0'
 
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
@@ -58,3 +57,4 @@ dependencies {
     //implementation files("${System.properties['java.home']}/../lib/tools.jar")
 }
 
+apply plugin: 'com.google.gms.google-services'
