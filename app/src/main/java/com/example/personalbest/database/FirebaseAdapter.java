@@ -23,8 +23,8 @@ public class FirebaseAdapter {
     final String TAG="FirebaseAdapter";
     FirebaseFirestore db;
     public FirebaseAdapter(Context context) {
-        FirebaseApp.initializeApp(context);
-         db = FirebaseFirestore.getInstance();
+//        FirebaseApp.initializeApp(context);
+//         db = FirebaseFirestore.getInstance();
         // Create a new user with a first and last name
 
     }
