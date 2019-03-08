@@ -47,6 +47,23 @@
           }
         },
         {
+          "client_id": "629223737879-o51qbr2ejmrvtk5agecetufp1f6gk4om.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.personalbest",
+            "certificate_hash": "3005da659869617fcec3aae310b456c6399aa299"
+          }
+        },
+        {
+          "client_id": "629223737879-lrfvfjrg10archbf4nn1frupmap1s91a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.personalbest",
+            "certificate_hash": "07ca09042dadf86ee5800dba4b6e6acf695a3842"
+          }
+        },
+        {
+
           "client_id": "629223737879-3l5248hgqad0asogmkvr30oj3tle7vo7.apps.googleusercontent.com",
           "client_type": 3
         }

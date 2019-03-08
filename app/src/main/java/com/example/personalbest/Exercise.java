@@ -49,18 +49,6 @@ public class Exercise {
         saveLocal.setLastExerciseSteps(stepDifference);
         saveLocal.setLastExerciseSpeed(saveLocal.getSpeed());
         saveLocal.setLastExerciseTimeStart(saveLocal.getLastSessionStartTime());
-        DataSource dataSource =
-                new DataSource.Builder()
-                        .setStreamName("Exercise Steps")
-                        .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                        .setAppPackageName(activity)
-                        .setType(DataSource.TYPE_RAW)
-                        .build();
-
-
-
-
-
 
 
             Log.d(TAG,"This Exercise Step Count: "+stepDifference);

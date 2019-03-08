@@ -21,7 +21,7 @@
     <TextView
         android:id="@+id/goal"
         android:layout_width="103dp"
-        android:layout_height="88dp"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:text="Goal: "
         android:textSize="18sp" />
@@ -82,6 +82,12 @@
         android:onClick="launchGraphActivity"
         android:text="See Stats" />
 
+    <Button
+        android:id="@+id/goToChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="launchChat"
+        android:text="Chat" />
     <Button
         android:id="@+id/friendButton"
         android:layout_width="match_parent"

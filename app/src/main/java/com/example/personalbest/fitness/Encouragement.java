@@ -13,8 +13,8 @@ public class Encouragement {
     public Encouragement(StepCountActivity activity){
         this.act = activity;
         this.saveLocal = new SaveLocal(activity);
-        this.saveLocal.setOldSubGoal(0);
-        this.saveLocal.setCurrSubGoal(500);
+        //this.saveLocal.setOldSubGoal(0);
+        //this.saveLocal.setCurrSubGoal(500);
         this.saveLocal.setTime(0);
         this.saveLocal.setSpeed(0); 
         this.saveLocal.setSteps(0);
@@ -23,18 +23,15 @@ public class Encouragement {
 
     public void showEncouragement() {
         if(act.numSteps>=saveLocal.getCurrSubGoal()) {
-            act.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    int goalMet = ((int) act.numSteps / 500) * 500;
-                    int oldSubGoal = saveLocal.getOldSubGoal();
-                    saveLocal.setOldSubGoal(goalMet);
-                    saveLocal.setCurrSubGoal((int)act.numSteps+500);
-                    int stepsIncreased = goalMet-oldSubGoal;
-                    Toast t = Toast.makeText(act, "You've increased your daily steps by over "
-                            +stepsIncreased+ " steps. Keep up the good work!", Toast.LENGTH_LONG);
-                    t.show();
-                }
+            act.runOnUiThread(() -> {
+                int goalMet = ((int) act.numSteps / 500) * 500;
+                int oldSubGoal = saveLocal.getOldSubGoal();
+                saveLocal.setOldSubGoal(goalMet);
+                saveLocal.setCurrSubGoal((int)act.numSteps+500);
+                int stepsIncreased = goalMet-oldSubGoal;
+                Toast t = Toast.makeText(act, "You've increased your daily steps by over "
+                        +stepsIncreased+ " steps. Keep up the good work!", Toast.LENGTH_LONG);
+                t.show();
             });
         }
     }
