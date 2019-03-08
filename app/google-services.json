@@ -31,6 +31,38 @@
           }
         },
         {
+          "client_id": "629223737879-nkdb5fg1dtom2pvmit6p1jed1cpnsf3k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.personalbest",
+            "certificate_hash": "ff28d496feb6dad7485c088d5d800585929e8444"
+          }
+        },
+        {
+          "client_id": "629223737879-e5gqijqnt7g8a0g67brku7ht6vgmalsc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.personalbest",
+            "certificate_hash": "675536e7ceff93f0ad46bfe90d361c1fa7449163"
+          }
+        },
+        {
+          "client_id": "629223737879-o51qbr2ejmrvtk5agecetufp1f6gk4om.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.personalbest",
+            "certificate_hash": "3005da659869617fcec3aae310b456c6399aa299"
+          }
+        },
+        {
+          "client_id": "629223737879-lrfvfjrg10archbf4nn1frupmap1s91a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.personalbest",
+            "certificate_hash": "07ca09042dadf86ee5800dba4b6e6acf695a3842"
+          }
+        },
+        {
           "client_id": "629223737879-3l5248hgqad0asogmkvr30oj3tle7vo7.apps.googleusercontent.com",
           "client_type": 3
         }
