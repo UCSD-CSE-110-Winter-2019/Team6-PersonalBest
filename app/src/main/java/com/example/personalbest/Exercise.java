@@ -57,35 +57,7 @@ public class Exercise {
                         .setType(DataSource.TYPE_RAW)
                         .build();
 
-        // Create a data set
-        int stepCountDelta = (int)saveLocal.getLastExerciseSteps();
-        DataSet dataSet = DataSet.create(dataSource);
 
-        // For each data point, specify a start time, end time, and the data value -- in this case,
-        // the number of new steps.
-        DataPoint dataPoint =
-                dataSet.createDataPoint().setTimeInterval(saveLocal.getLastSessionStartTime(), calendar.getTimeInMillis(), TimeUnit.MILLISECONDS);
-        dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
-        dataSet.add(dataPoint);
-        DataUpdateRequest request = new DataUpdateRequest.Builder()
-                .setDataSet(dataSet)
-                .setTimeInterval(saveLocal.getLastSessionStartTime(), calendar.getTimeInMillis(), TimeUnit.MILLISECONDS)
-                .build();
-
-
-        Task<Void> response = Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity)).updateData(request)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.i(TAG, "Successfully added 500 steps!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i(TAG, "There was a problem adding 500 steps.");
-                    }
-                });
 
 
 

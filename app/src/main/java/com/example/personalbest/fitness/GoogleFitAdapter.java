@@ -51,14 +51,6 @@ public class GoogleFitAdapter implements FitnessService {
 
     public void setup() {
         String serverClientId = SERVER_CLIENT_ID;
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
-                .requestServerAuthCode(serverClientId)
-                .requestEmail()
-                .build();
-        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        ActivityCompat.startActivityForResult(activity,signInIntent,4,null);
 
         FitnessOptions fitnessOptions = FitnessOptions.builder()
                 .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
