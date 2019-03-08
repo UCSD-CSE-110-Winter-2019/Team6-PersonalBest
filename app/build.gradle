@@ -5,7 +5,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.personalbest"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -21,9 +21,6 @@ android {
         unitTests {
             includeAndroidResources = true
         }
-    }
-    lintOptions {
-        abortOnError false
     }
 
 }
@@ -46,7 +43,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.7'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.1'
-    testImplementation 'androidx.test:core:1.1.0' 
+    testImplementation 'androidx.test:core:1.1.0'
 
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
