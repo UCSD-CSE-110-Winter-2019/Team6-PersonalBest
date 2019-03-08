@@ -82,4 +82,11 @@
         android:onClick="launchGraphActivity"
         android:text="See Stats" />
 
+    <Button
+        android:id="@+id/goToChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="launchChat"
+        android:text="Chat" />
+
 </LinearLayout>

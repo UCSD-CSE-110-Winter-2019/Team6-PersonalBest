@@ -36,6 +36,7 @@ import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -72,6 +73,8 @@ public class StepCountActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FirebaseApp.initializeApp(this);
 
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
@@ -271,6 +274,12 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
 
+    public void launchChat(View view){
+        Intent intent = new Intent(this, MessageActivity.class);
+        int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
+        intent.putExtra("numSteps", dailySteps);
+        startActivity(intent);
+    }
 
 
 
@@ -308,16 +317,10 @@ public class StepCountActivity extends AppCompatActivity{
             fitnessService.updateStepCount(c);
 
             stats = new WalkStats(StepCountActivity.this);
-            stats.update();
-            //if(exercise.isActive()){
-                WalkStats stats = new WalkStats(StepCountActivity.this);
-           // if (exercise.isActive()) {
-                stats.update();
-                //onResume();
-            //}
 
-            stats = new WalkStats(StepCountActivity.this);
-            stats.update();
+            if (exercise.isActive()) {
+                stats.update();
+            }
 
             if (fitnessService.getDailyStepCount(c) >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);
@@ -327,8 +330,6 @@ public class StepCountActivity extends AppCompatActivity{
             if(hour>=20) {
                 encourage.showEncouragement();
             }
-
-            //onResume(c);
         }
 
         @Override
@@ -347,6 +348,7 @@ public class StepCountActivity extends AppCompatActivity{
 
         }
     }
+
 
 
 
