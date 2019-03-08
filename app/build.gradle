@@ -5,6 +5,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.personalbest"
+
         minSdkVersion 24
         targetSdkVersion 27
         versionCode 1
@@ -30,6 +31,7 @@ android {
         abortOnError false
     }
 
+
 }
 
 repositories {
@@ -47,7 +49,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
     implementation 'com.google.firebase:firebase-firestore:18.1.0'
-    implementation 'com.google.firebase:firebase-database:16.1.0'
+    //implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-messaging:17.4.0'
     implementation 'com.google.firebase:firebase-auth:16.1.0'
@@ -60,7 +62,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-
 
 }
 

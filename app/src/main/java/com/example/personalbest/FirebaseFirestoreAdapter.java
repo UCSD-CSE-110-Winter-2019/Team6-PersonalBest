@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,7 +26,6 @@ public class FirebaseFirestoreAdapter implements ChatMessageService {
     private static final String TIMESTAMP_KEY = "timestamp";
     private static final String FROM_KEY = "from";
     private static final String TEXT_KEY = "text";
-
 
     private CollectionReference chat;
 
@@ -59,15 +59,21 @@ public class FirebaseFirestoreAdapter implements ChatMessageService {
                     }
 
                     if (newChatSnapShot != null && !newChatSnapShot.isEmpty()) {
+                        boolean test = newChatSnapShot.getMetadata().hasPendingWrites();
                         if (!newChatSnapShot.getMetadata().hasPendingWrites()) {
                             List<DocumentChange> documentChanges = newChatSnapShot.getDocumentChanges();
 
                             List<ChatMessage> newMessages = documentChanges.stream()
                                     .map(DocumentChange::getDocument)
-                                    .map(doc -> new ChatMessage(doc.getString(FROM_KEY), doc.getString(TEXT_KEY)))
+                                    .map(doc -> {
+                                        Log.d("TAG", "DATA:  "+ doc.getData());
+                                        if (doc.getData().get(TIMESTAMP_KEY) instanceof Timestamp) {
+                                            return new ChatMessage(doc.getString(FROM_KEY), doc.getString(TEXT_KEY));
+                                        }
+                                        return null;
+                                    })
                                     .collect(Collectors.toList());
-
-                            listener.accept(newMessages);
+                                listener.accept(newMessages);
                         }
                     }
                 });

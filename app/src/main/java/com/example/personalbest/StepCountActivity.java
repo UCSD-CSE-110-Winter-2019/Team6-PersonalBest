@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.personalbest.database.FirebaseAdapter;
 import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
@@ -33,13 +34,27 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.DataDeleteRequest;
+import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.request.DataUpdateRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 
+//import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -49,7 +64,7 @@ public class StepCountActivity extends AppCompatActivity{
 
     private static final String TAG = "StepCountActivity";
 
-
+    private FirebaseAdapter firebaseAdapter;
     private TextView textSteps;
     private TextView goalView;
 
@@ -74,7 +89,16 @@ public class StepCountActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FirebaseApp.initializeApp(this);
+
+        //FirebaseApp.initializeApp(this);
+
+
+
+
+        firebaseAdapter=new FirebaseAdapter(StepCountActivity.this, this);
+
+
+
 
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
@@ -113,8 +137,6 @@ public class StepCountActivity extends AppCompatActivity{
         stats = new WalkStats(StepCountActivity.this);
 
 
-
-
         //Button to start and stop exercises
         final Button startExerciseButton = findViewById(R.id.startExerciseButton);
         exercise=new Exercise(StepCountActivity.this, fitnessService);
@@ -129,12 +151,15 @@ public class StepCountActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 if(exercise.isActive()){
+
                     //STOP EXERCISING
                     startExerciseButton.setText("Start Exercise");
                     startExerciseButton.setBackgroundColor(Color.parseColor("#06A62B"));
                     Calendar calendar=Calendar.getInstance();
                     exercise.stopExercise(calendar);
+
                     stats.update();
+
                 }
                 else{
                     //START EXERCISING
@@ -204,18 +229,26 @@ public class StepCountActivity extends AppCompatActivity{
         runner.execute();
     }
 
-    public void printSteps(View view) {
-        //endDay.newDayActions(1,fitnessService);
-        //endDay.updateDate(Calendar.getInstance());
+    public void printSteps() {
         for(int i=0;i<7; i++){
             Log.d(TAG,""+i+" days before Background count: "+saveLocal.getBackgroundStepCount(i));
             Log.d(TAG,""+i+" days before Exercise count: "+saveLocal.getExerciseStepCount(i));
+            Log.d(TAG,""+i+" days Current count: "+numSteps);
+
         }
 
     }
 
     public void updateSteps(View view) {
+        firebaseAdapter.getUsers();
+        firebaseAdapter.getFriends(saveLocal.getEmail());
+        ArrayList<String> arr = saveLocal.getFriends();
+        for (String s: arr) {
+            Log.d("TAGTAG", s);
+        }
         onResume();
+        //printSteps();
+
 
     }
     private void insert500Steps(Calendar currTime){
@@ -229,21 +262,28 @@ public class StepCountActivity extends AppCompatActivity{
         // Create a data source
         DataSource dataSource =
                 new DataSource.Builder()
-                        .setAppPackageName(this)
+                        .setStreamName("Manual Insert")
                         .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                        .setStreamName(TAG + " - step count")
+                        .setAppPackageName(this)
                         .setType(DataSource.TYPE_RAW)
                         .build();
 
         // Create a data set
         int stepCountDelta = 500;
         DataSet dataSet = DataSet.create(dataSource);
+
         // For each data point, specify a start time, end time, and the data value -- in this case,
         // the number of new steps.
         DataPoint dataPoint =
                 dataSet.createDataPoint().setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
         dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
+//        System.out.println("SCA UPDATE : "+dataSet.getDataSource().getName());
         dataSet.add(dataPoint);
+        DataUpdateRequest request = new DataUpdateRequest.Builder()
+                .setDataSet(dataSet)
+                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                .build();
+
 
         Task<Void> response = Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this)).insertData(dataSet)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -258,6 +298,7 @@ public class StepCountActivity extends AppCompatActivity{
                         Log.i(TAG, "There was a problem adding 500 steps.");
                     }
                 });
+        firebaseAdapter.getUsers();
     }
 
     public void putData(View view){
@@ -276,11 +317,27 @@ public class StepCountActivity extends AppCompatActivity{
 
     public void launchChat(View view){
         Intent intent = new Intent(this, MessageActivity.class);
-        int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
-        intent.putExtra("numSteps", dailySteps);
+        //int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
+        //intent.putExtra("numSteps", dailySteps);
         startActivity(intent);
     }
 
+    public void launchFriendsList(View v){
+        Intent intent = new Intent(this, FriendsListActivity.class);
+        startActivity(intent);
+    }
+
+    public void addFriend(View view) {
+        String name = saveLocal.getName();
+        if (!name.equals("NO NAME")) {
+            DialogFragment friendFrag = new AddFriendFragment();
+            friendFrag.show(getSupportFragmentManager(), "Add Friend");
+        }
+        else {
+            DialogFragment nameFrag = new NameFragment();
+            nameFrag.show(getSupportFragmentManager(), "Set Name");
+        }
+    }
 
 
     public class Background extends AsyncTask<String, String, String> {

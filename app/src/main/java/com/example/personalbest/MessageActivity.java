@@ -45,7 +45,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseApp.initializeApp(this);
+        //FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_message);
         SharedPreferences sharedpreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
@@ -107,7 +107,8 @@ public class MessageActivity extends AppCompatActivity {
                 chatMessagesList -> {
                     Log.d(TAG, "msg list size:" + chatMessagesList.size());
                     chatMessagesList.forEach(chatMessage -> {
-                        chatView.append(chatMessage.toString());
+                        if (chatMessage != null)
+                            chatView.append(chatMessage.toString());
                     });
                 });
     }
