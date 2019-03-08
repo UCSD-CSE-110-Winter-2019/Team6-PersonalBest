@@ -7,6 +7,11 @@ import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class SaveLocal {
@@ -233,5 +238,39 @@ public class SaveLocal {
         }
     }
 
+
+    public void setFriends(ArrayList<String> arr) {
+        Gson gson = new Gson();
+        String json = gson.toJson(arr); //tasks is an ArrayList instance variable
+        editor.putString("friendsList", json);
+        editor.commit();
+    }
+
+    public ArrayList<String> getFriends() {
+        Gson gson = new Gson();
+        String json = exercisePreferences.getString("friendsList", "");
+        if (json.length() == 0)
+            return new ArrayList<String>();
+        ArrayList<String> arr = gson.fromJson(json, new TypeToken<ArrayList<String>>(){}.getType());
+        return arr;
+    }
+
+    public void setName(String name) {
+        editor.putString("name", name);
+        editor.apply();
+    }
+
+    public String getName() {
+        return exercisePreferences.getString("name", "NO NAME");
+    }
+
+    public void setEmail(String email) {
+        editor.putString("email", email);
+        editor.apply();
+    }
+
+    public String getEmail() {
+        return exercisePreferences.getString("email", "NO EMAIL");
+    }
 
 }

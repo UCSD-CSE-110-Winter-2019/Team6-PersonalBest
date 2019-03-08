@@ -1,18 +1,25 @@
 package com.example.personalbest.fitness;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.personalbest.StepCountActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -23,10 +30,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
 public class GoogleFitAdapter implements FitnessService {
     private final int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = System.identityHashCode(this) & 0xFFFF;
     private final String TAG = "GoogleFitAdapter";
-
+    private final String SERVER_CLIENT_ID="629223737879-3l5248hgqad0asogmkvr30oj3tle7vo7.apps.googleusercontent.com";
     private long dailyStepCount;
     private StepCountActivity activity;
     private boolean isCumulativeSet;
@@ -38,11 +46,12 @@ public class GoogleFitAdapter implements FitnessService {
         isCumulativeSet=false;
         isAggregateSet=false;
         isDeltaSet=false;
-
     }
 
 
     public void setup() {
+        String serverClientId = SERVER_CLIENT_ID;
+
         FitnessOptions fitnessOptions = FitnessOptions.builder()
                 .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
                 .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
@@ -57,13 +66,7 @@ public class GoogleFitAdapter implements FitnessService {
                     GoogleSignIn.getLastSignedInAccount(activity),
                     fitnessOptions);
                     //startRecording();
-
-
-        } else {
-            //updateStepCount(cal);
-            //startRecording();
         }
-
     }
 
     public boolean startRecording() {
@@ -126,7 +129,8 @@ public class GoogleFitAdapter implements FitnessService {
      * in this class and in StepCountActivity.
      */
     public void updateStepCount(Calendar currentTime) {
-        GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
+        GoogleSignInAccount lastSignedInAccount=GoogleSignIn.getLastSignedInAccount(activity);
+//        String authCode=lastSignedInAccount.getServerAuthCode();
         if (lastSignedInAccount == null) {
             return;
         }
@@ -185,6 +189,7 @@ public class GoogleFitAdapter implements FitnessService {
     }
 
     public long getDailyStepCount(Calendar cal){
+
         updateStepCount(cal);
         return dailyStepCount;
     }
@@ -193,15 +198,17 @@ public class GoogleFitAdapter implements FitnessService {
     public static int getSteps(DataReadResponse dataReadResponse){
         List<DataSet> dataSets = dataReadResponse.getDataSets();
 
-        DataSet dataSet =dataSets.get(0);
-
-        int stepCount=0;
-        for (DataPoint dp : dataSet.getDataPoints()) {
-            for (Field field : dp.getDataType().getFields()) {
-                stepCount+= dp.getValue(field).asInt();
+        for(DataSet dataSet:dataSets) {
+            int stepCount = 0;
+            for (DataPoint dp : dataSet.getDataPoints()) {
+                Log.i("GoogleFitAdapter","STREAM NAME: "+dp.getOriginalDataSource().getStreamName());
+                for (Field field : dp.getDataType().getFields()) {
+                    stepCount += dp.getValue(field).asInt();
+                }
             }
+            return stepCount;
         }
-        return stepCount;
+        return 0;
     }
     //Updates the background steps of a day in the past from the current day.
     public void updateBackgroundCount(Calendar currentTime, int daysBefore){

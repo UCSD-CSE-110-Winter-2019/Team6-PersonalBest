@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".StepCountActivity">
 
 
     <TextView
@@ -30,7 +30,7 @@
         android:id="@+id/walk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="100dp"
+        android:paddingTop="0dp"
         android:text="Walk/Run Stats:"
         android:textSize="24sp" />
 
@@ -81,5 +81,19 @@
         android:layout_height="wrap_content"
         android:onClick="launchGraphActivity"
         android:text="See Stats" />
+
+    <Button
+        android:id="@+id/friendButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Friends"
+        android:onClick="launchFriendsList"/>
+
+    <Button
+        android:id="@+id/addFriend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="addFriend"
+        android:text="Add Friend" />
 
 </LinearLayout>

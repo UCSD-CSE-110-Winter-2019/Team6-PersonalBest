@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.personalbest"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -21,6 +22,7 @@ android {
             includeAndroidResources = true
         }
     }
+
 }
 
 repositories {
@@ -37,13 +39,18 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
+    implementation 'com.google.firebase:firebase-firestore:18.1.0'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.1'
-    testImplementation 'androidx.test:core:1.0.0'
+    testImplementation 'androidx.test:core:1.1.0'
 
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
+    //implementation files("${System.properties['java.home']}/../lib/tools.jar")
 }
+
+apply plugin: 'com.google.gms.google-services'
