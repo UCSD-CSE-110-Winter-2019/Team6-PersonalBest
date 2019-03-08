@@ -91,7 +91,7 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
-        firebaseAdapter=new FirebaseAdapter(StepCountActivity.this);
+        firebaseAdapter=new FirebaseAdapter(StepCountActivity.this, this);
         //firebaseAdapter.addUser("Ani Lermi")
 
 
@@ -131,9 +131,6 @@ public class StepCountActivity extends AppCompatActivity{
         timeElapsed.setText("Time Elapsed: " + saveLocal.getLastExerciseTime());
 
         stats = new WalkStats(StepCountActivity.this);
-
-
-        firebaseAdapter=new FirebaseAdapter(this);
 
 
         //Button to start and stop exercises
@@ -239,11 +236,9 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void updateSteps(View view) {
-        firebaseAdapter.addUser("Orr Toledano", "otoledan@ucsd.edu");
         firebaseAdapter.getUsers();
-        firebaseAdapter.addFriend("otoledan@ucsd.edu", "elerner@ucsd.edu");
-        firebaseAdapter.addFriend("otoledan@ucsd.edu", "alermi@ucsd.edu");
-        ArrayList<String> arr = firebaseAdapter.getFriends("otoledan@ucsd.edu");
+        firebaseAdapter.getFriends(saveLocal.getEmail());
+        ArrayList<String> arr = saveLocal.getFriends();
         for (String s: arr) {
             Log.d("TAGTAG", s);
         }
@@ -320,6 +315,18 @@ public class StepCountActivity extends AppCompatActivity{
     public void launchFriendsList(View v){
         Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
+    }
+
+    public void addFriend(View view) {
+        String name = saveLocal.getName();
+        if (!name.equals("NO NAME")) {
+            DialogFragment friendFrag = new AddFriendFragment();
+            friendFrag.show(getSupportFragmentManager(), "Add Friend");
+        }
+        else {
+            DialogFragment nameFrag = new NameFragment();
+            nameFrag.show(getSupportFragmentManager(), "Set Name");
+        }
     }
 
 

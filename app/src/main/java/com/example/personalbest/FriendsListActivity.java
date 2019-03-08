@@ -14,14 +14,14 @@ import java.util.ArrayList;
 
 public class FriendsListActivity extends AppCompatActivity {
     ArrayList <String> arrayList;
+    SaveLocal saveLocal;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friends_list);
-
+        saveLocal = new SaveLocal(this);
         ListView listView = findViewById(R.id.listView);
-        arrayList = new ArrayList<>();
-        fillArray(arrayList);
+        arrayList = saveLocal.getFriends();
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList);
 
