@@ -42,12 +42,14 @@ public class GoogleFitAdapter implements FitnessService {
     private boolean isCumulativeSet;
     private boolean isDeltaSet;
     private boolean isAggregateSet;
+    private SaveLocal saveLocal;
 
     public GoogleFitAdapter(StepCountActivity activity) {
         this.activity = activity;
         isCumulativeSet=false;
         isAggregateSet=false;
         isDeltaSet=false;
+        saveLocal = new SaveLocal(activity);
     }
 
 
@@ -85,8 +87,10 @@ public class GoogleFitAdapter implements FitnessService {
     }
 
     public String getEmail(){
-        GoogleSignInAccount lastAccount=GoogleSignIn.getLastSignedInAccount(activity);
-        return lastAccount.getEmail();
+
+        String email =  GoogleSignIn.getLastSignedInAccount(activity).getEmail();
+        saveLocal.setEmail(email);
+        return email;
     }
 
     public boolean startRecording() {

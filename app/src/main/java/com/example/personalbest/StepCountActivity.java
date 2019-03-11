@@ -329,8 +329,8 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void addFriend(View view) {
-        String name = saveLocal.getName();
-        if (!name.equals("NO NAME")) {
+        String email = saveLocal.getEmail();
+        if (!email.equals("NO EMAIL")) {
             DialogFragment friendFrag = new AddFriendFragment();
             friendFrag.show(getSupportFragmentManager(), "Add Friend");
         }
