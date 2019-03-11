@@ -20,6 +20,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +31,8 @@ public class FirebaseAdapter {
     FirebaseFirestore db;
     SaveLocal saveLocal;
 
-    public FirebaseAdapter(Context context, Activity activity) {
-        FirebaseApp.initializeApp(context);
+    public FirebaseAdapter(Activity activity) {
+        FirebaseApp.initializeApp(activity);
         db = FirebaseFirestore.getInstance();
         // Create a new user with a first and last name
         saveLocal = new SaveLocal(activity);
@@ -240,6 +241,44 @@ public class FirebaseAdapter {
                         }
 
                         saveLocal.setFriends(arr);
+                    }
+                });
+    }
+
+    public void pushStepStats(Calendar time, int backgroundSteps, int exerciseSteps){
+        String myEmail=saveLocal.getEmail();
+        if(myEmail.equals("NO EMAIL")){
+            return;
+        }
+        Calendar newCal=Calendar.getInstance();
+        newCal.setTimeInMillis(time.getTimeInMillis());
+        newCal.set(Calendar.HOUR_OF_DAY,0);
+        newCal.set(Calendar.MINUTE,0);
+        newCal.set(Calendar.SECOND,0);
+        newCal.set(Calendar.MINUTE,0);
+        newCal.set(Calendar.SECOND,0);
+        newCal.set(Calendar.MILLISECOND,0);
+
+
+        Map<String, Integer> steps = new HashMap<>();
+        steps.put("Background", backgroundSteps);
+        steps.put("Exercise", exerciseSteps);
+        // Add a new document with a generated ID
+        db.collection("users")
+                .document(myEmail)
+                .collection("steps")
+                .document(""+newCal.get(Calendar.DAY_OF_MONTH)+"-"+((int)newCal.get(Calendar.MONTH)+1)+"-"+newCal.get(Calendar.YEAR))
+                .set(steps)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Steps set for Email:" + myEmail+" Date: "+time);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error set steps", e);
                     }
                 });
     }

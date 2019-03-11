@@ -44,7 +44,7 @@ public class NameFragment extends DialogFragment {
         saveLocal = new SaveLocal(getActivity());
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        firebaseAdapter = new FirebaseAdapter(getContext(), getActivity());
+        firebaseAdapter = new FirebaseAdapter(getActivity());
 
         //spinner.setOnItemSelectedListener(this);
         // Inflate and set the layout for the dialog

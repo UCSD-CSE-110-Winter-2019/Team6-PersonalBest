@@ -95,7 +95,7 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
-        firebaseAdapter=new FirebaseAdapter(StepCountActivity.this, this);
+        firebaseAdapter=new FirebaseAdapter(this);
 
 
 
@@ -246,6 +246,7 @@ public class StepCountActivity extends AppCompatActivity{
             Log.d("TAGTAG", s);
         }
         onResume();
+
         //printSteps();
 
 

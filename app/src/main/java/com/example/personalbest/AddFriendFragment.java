@@ -49,7 +49,7 @@ public class AddFriendFragment extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        firebaseAdapter = new FirebaseAdapter(getContext(), getActivity());
+        firebaseAdapter = new FirebaseAdapter(getActivity());
         View v = inflater.inflate(R.layout.add_friend_popup,null);
         final EditText email = v.findViewById(R.id.emailView2);
 
