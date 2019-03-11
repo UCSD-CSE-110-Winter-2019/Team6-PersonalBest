@@ -10,7 +10,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.personalbest.database.FirebaseAdapter;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class FriendsListActivity extends AppCompatActivity {
     ArrayList <String> arrayList;
@@ -22,6 +25,7 @@ public class FriendsListActivity extends AppCompatActivity {
         saveLocal = new SaveLocal(this);
         ListView listView = findViewById(R.id.listView);
         arrayList = saveLocal.getFriends();
+        FirebaseAdapter firebaseAdapter=new FirebaseAdapter(this);
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList);
 
@@ -50,6 +54,17 @@ public class FriendsListActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        for (String friend : arrayList) {
+            //Calendar needs to be mocked
+            int i = 0;
+            Calendar currDay=Calendar.getInstance();
+            while (i < 30) {
+                firebaseAdapter.saveFriendStepLocal(friend, currDay);
+                currDay.add(Calendar.DAY_OF_YEAR, -1);
+                i++;
+            }
+        }
     }
 
     void fillArray(ArrayList <String> arr){
