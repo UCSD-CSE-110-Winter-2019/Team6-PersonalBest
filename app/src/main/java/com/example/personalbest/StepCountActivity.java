@@ -245,7 +245,7 @@ public class StepCountActivity extends AppCompatActivity{
         for (String s: arr) {
             Log.d("TAGTAG", s);
         }
-        firebaseAdapter.saveFriendStepLocal("anilermi@gmail.com", Calendar.getInstance());
+        //firebaseAdapter.saveFriendStepLocal("anilermi@gmail.com", Calendar.getInstance());
 
         onResume();
         //printSteps();
