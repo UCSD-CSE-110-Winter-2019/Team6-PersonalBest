@@ -44,8 +44,6 @@ public class FriendsListActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                saveLocal.setLastClickedFriend(arrayList.get(i));
                 DialogFragment optionsFrag = new OptionsFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("name", arrayList.get(i));
@@ -53,7 +51,7 @@ public class FriendsListActivity extends AppCompatActivity {
                 optionsFrag.show(getSupportFragmentManager(), "Long Press");
 
                 Toast.makeText(FriendsListActivity.this, "you long clicked: " + arrayList.get(i), Toast.LENGTH_SHORT).show();
-
+                saveLocal.setLastClickedFriend(arrayList.get(i));
                 return false;
             }
         });

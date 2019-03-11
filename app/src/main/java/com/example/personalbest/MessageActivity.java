@@ -76,23 +76,8 @@ public class MessageActivity extends AppCompatActivity {
         Button returnButton = findViewById(R.id.returnBtn);
         returnButton.setOnClickListener(view -> this.finish());
 
-        EditText nameView = findViewById((R.id.user_name));
+        TextView nameView = findViewById((R.id.user_name));
         nameView.setText(saveLocal.getEmail());
-        nameView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                from = s.toString();
-                sharedpreferences.edit().putString(FROM_KEY, from).apply();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
     }
 
     private void sendMessage() {

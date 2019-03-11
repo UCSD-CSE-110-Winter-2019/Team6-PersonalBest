@@ -34,13 +34,11 @@ public class FirebaseFirestoreAdapter implements ChatMessageService {
     }
 
     public static ChatMessageService getInstance(String key) {
-        if (singeleton == null) {
-            CollectionReference collection = FirebaseFirestore.getInstance()
-                    .collection(COLLECTION_KEY)
-                    .document(key)
-                    .collection(MESSAGES_KEY);
-            singeleton = new FirebaseFirestoreAdapter(collection);
-        }
+        CollectionReference collection = FirebaseFirestore.getInstance()
+                .collection(COLLECTION_KEY)
+                .document(key)
+                .collection(MESSAGES_KEY);
+        singeleton = new FirebaseFirestoreAdapter(collection);
         return singeleton;
     }
 
