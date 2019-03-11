@@ -303,6 +303,7 @@ public class FirebaseAdapter {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             Map<String,Object> steps= task.getResult().getData();
+                            if(steps==null) return;
                             long backgroundSteps=((long)steps.get("Background"));
                             long exerciseSteps=(long)steps.get("Exercise");
                             saveLocal.setAccountBackgroundStep(friendEmail,(int)backgroundSteps,date);

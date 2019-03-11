@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,15 +19,16 @@ import java.util.Calendar;
 public class FriendsListActivity extends AppCompatActivity {
     ArrayList <String> arrayList;
     SaveLocal saveLocal;
+    FirebaseAdapter firebaseAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        firebaseAdapter=new FirebaseAdapter(this);
+        saveLocal = new SaveLocal(this);
+        firebaseAdapter.getFriends(saveLocal.getEmail());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friends_list);
-        saveLocal = new SaveLocal(this);
         ListView listView = findViewById(R.id.listView);
         arrayList = saveLocal.getFriends();
-        FirebaseAdapter firebaseAdapter=new FirebaseAdapter(this);
-
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList);
 
         listView.setAdapter(arrayAdapter);
@@ -59,9 +61,12 @@ public class FriendsListActivity extends AppCompatActivity {
             //Calendar needs to be mocked
             int i = 0;
             Calendar currDay=Calendar.getInstance();
-            while (i < 30) {
+            while (i < 28) {
                 firebaseAdapter.saveFriendStepLocal(friend, currDay);
                 currDay.add(Calendar.DAY_OF_YEAR, -1);
+                String dateKey=currDay.get(Calendar.DAY_OF_MONTH)+"-"+((int)currDay.get(Calendar.MONTH)+1)+"-"+currDay.get(Calendar.YEAR);
+
+                Log.d("Friend Data","Saved "+friend+" data for day "+dateKey);
                 i++;
             }
         }

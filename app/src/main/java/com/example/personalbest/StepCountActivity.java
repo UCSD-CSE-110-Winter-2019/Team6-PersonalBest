@@ -240,7 +240,7 @@ public class StepCountActivity extends AppCompatActivity{
 
     public void updateSteps(View view) {
         firebaseAdapter.getUsers();
-        firebaseAdapter.getFriends(saveLocal.getEmail());
+
         ArrayList<String> arr = saveLocal.getFriends();
         for (String s: arr) {
             Log.d("TAGTAG", s);
