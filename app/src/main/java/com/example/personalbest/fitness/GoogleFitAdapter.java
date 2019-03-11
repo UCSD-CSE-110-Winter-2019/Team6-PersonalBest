@@ -187,7 +187,7 @@ public class GoogleFitAdapter implements FitnessService {
                                 dailyStepCount=stepCount;
                                 Log.d(TAG, "Total steps: " + stepCount);
                                 Calendar calendar=Calendar.getInstance();
-                                firebaseAdapter.pushStepStats(calendar,backgroundStepCount,exerciseStepCount);
+                                firebaseAdapter.pushStepStats(calendar,backgroundStepCount,exerciseStepCount,getEmail());
                                 System.out.println("NUMBER OF STEPS: "+stepCount);
                                 //Update data
                             }
@@ -251,7 +251,7 @@ public class GoogleFitAdapter implements FitnessService {
         cal.set(Calendar.MILLISECOND,0);
         long startTime = cal.getTimeInMillis();
 
-        listenStepCount(startTime,endTime,new UpdateBackgroundListener(activity,daysBefore),new UpdateBackgroundListener(activity,daysBefore));
+        listenStepCount(startTime,endTime,new UpdateBackgroundListener(activity,daysBefore,getEmail()),new UpdateBackgroundListener(activity,daysBefore,getEmail()));
     }
     //Creates a read request and sends it to the listener to update variables.
     private void listenStepCount(long startMillis, long endMillis, OnSuccessListener<DataReadResponse> listener, OnFailureListener failureListener){

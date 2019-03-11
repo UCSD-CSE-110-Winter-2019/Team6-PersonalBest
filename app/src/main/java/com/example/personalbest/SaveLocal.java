@@ -272,5 +272,24 @@ public class SaveLocal {
     public String getEmail() {
         return exercisePreferences.getString("email", "NO EMAIL");
     }
-
+    public void setAccountBackgroundStep(String accountEmail, int backgroundStepCount, Calendar date){
+        String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
+        String key=accountEmail+dateString+"background";
+        editor.putInt(key,backgroundStepCount);
+    }
+    public void setAccountExerciseStep(String accountEmail, int exerciseStepCount, Calendar date){
+        String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
+        String key=accountEmail+dateString+"exercise";
+        editor.putInt(key,exerciseStepCount);
+    }
+    public int getAccountBackgroundStep(String accountEmail, Calendar date){
+        String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
+        String key=accountEmail+dateString+"background";
+        return  exercisePreferences.getInt(key,-1);
+    }
+    public int getAccountExerciseStep(String accountEmail, Calendar date){
+        String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
+        String key=accountEmail+dateString+"exercise";
+        return  exercisePreferences.getInt(key,-1);
+    }
 }

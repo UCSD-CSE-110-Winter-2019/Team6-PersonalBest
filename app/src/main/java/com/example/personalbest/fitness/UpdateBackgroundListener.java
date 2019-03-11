@@ -19,8 +19,10 @@ public class UpdateBackgroundListener implements OnSuccessListener<DataReadRespo
     int daysBefore;
     Activity activity;
     FirebaseAdapter firebaseAdapter;
-    public UpdateBackgroundListener(Activity activity, int daysBefore){
+    String userEmail;
+    public UpdateBackgroundListener(Activity activity, int daysBefore, String userEmail){
         super();
+        this.userEmail=userEmail;
         this.activity=activity;
         this.daysBefore=daysBefore;
         saveLocal=new SaveLocal(activity);
@@ -38,7 +40,7 @@ public class UpdateBackgroundListener implements OnSuccessListener<DataReadRespo
         saveLocal.setBackgroundStepCount(backgroundStepCount,daysBefore);
         Calendar calendar=Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -daysBefore);
-        firebaseAdapter.pushStepStats(calendar,backgroundStepCount,exerciseStepCount);
+        firebaseAdapter.pushStepStats(calendar,backgroundStepCount,exerciseStepCount,userEmail);
         System.out.println("NUMBER OF STEPS: "+stepCount);
         //Update data
     }

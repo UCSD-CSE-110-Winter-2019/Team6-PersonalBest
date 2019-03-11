@@ -245,11 +245,8 @@ public class FirebaseAdapter {
                 });
     }
 
-    public void pushStepStats(Calendar time, int backgroundSteps, int exerciseSteps){
-        String myEmail=saveLocal.getEmail();
-        if(myEmail.equals("NO EMAIL")){
-            return;
-        }
+    public void pushStepStats(Calendar time, int backgroundSteps, int exerciseSteps, String myEmail){
+
         Calendar newCal=Calendar.getInstance();
         newCal.setTimeInMillis(time.getTimeInMillis());
         newCal.set(Calendar.HOUR_OF_DAY,0);
