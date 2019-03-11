@@ -316,12 +316,7 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
 
-    public void launchChat(View view){
-        Intent intent = new Intent(this, MessageActivity.class);
-        //int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
-        //intent.putExtra("numSteps", dailySteps);
-        startActivity(intent);
-    }
+
 
     public void launchFriendsList(View v){
         Intent intent = new Intent(this, FriendsListActivity.class);

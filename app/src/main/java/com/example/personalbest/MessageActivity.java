@@ -34,26 +34,40 @@ public class MessageActivity extends AppCompatActivity {
 
     String TAG = MainActivity.class.getSimpleName();
 
-    String DOCUMENT_KEY = "chat1";
+    String DOCUMENT_KEY;
     String FROM_KEY = "from";
     String TEXT_KEY = "text";
     String TIMESTAMP_KEY = "timestamp";
 
     ChatMessageService chat;
     String from;
-
+    SaveLocal saveLocal;
+    String friendEmail;
+    String myEmail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_message);
         SharedPreferences sharedpreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-
-        from = sharedpreferences.getString(FROM_KEY, null);
-
+        this.saveLocal=new SaveLocal(this);
+        from = saveLocal.getEmail();
+        friendEmail=saveLocal.getLastCLickedFriend();
+        myEmail=saveLocal.getEmail();
+        if(myEmail.compareTo(friendEmail)>0){
+            DOCUMENT_KEY=myEmail+friendEmail;
+        }else{
+            DOCUMENT_KEY=friendEmail+myEmail;
+        }
+        String NEW_KEY="";
+        String array1[] = DOCUMENT_KEY.split("@");
+        for(String s : array1){
+            NEW_KEY += s;
+        }
+        DOCUMENT_KEY = NEW_KEY;
         String stringExtra = getIntent().getStringExtra(CHAT_MESSAGE_SERVICE_EXTRA);
-        chat = ChatMessageServiceFactory.getInstance().getOrDefault(stringExtra, FirebaseFirestoreAdapter::getInstance);
-
+        //chat = ChatMessageServiceFactory.getInstance().getOrDefault(stringExtra, FirebaseFirestoreAdapter::getInstance);
+        chat = FirebaseFirestoreAdapter.getInstance(DOCUMENT_KEY);
         initMessageUpdateListener();
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
@@ -63,7 +77,7 @@ public class MessageActivity extends AppCompatActivity {
         returnButton.setOnClickListener(view -> this.finish());
 
         EditText nameView = findViewById((R.id.user_name));
-        nameView.setText(from);
+        nameView.setText(saveLocal.getEmail());
         nameView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

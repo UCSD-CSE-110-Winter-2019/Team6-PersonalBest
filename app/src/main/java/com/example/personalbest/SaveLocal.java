@@ -292,4 +292,11 @@ public class SaveLocal {
         String key=accountEmail+dateString+"exercise";
         return  exercisePreferences.getInt(key,-1);
     }
+    public void setLastClickedFriend(String friend){
+        editor.putString("LastClickedFriend", friend);
+        editor.apply();
+    }
+    public String getLastCLickedFriend(){
+        return exercisePreferences.getString("LastClickedFriend", null);
+    }
 }

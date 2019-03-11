@@ -15,9 +15,10 @@
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
-        android:layout_height="43dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@color/colorAccent"
+        android:onClick="launchChatView"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
     <ImageView

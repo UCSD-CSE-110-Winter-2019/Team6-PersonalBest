@@ -1,5 +1,6 @@
 package com.example.personalbest;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -44,14 +45,14 @@ public class FriendsListActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-
+                saveLocal.setLastClickedFriend(arrayList.get(i));
                 DialogFragment optionsFrag = new OptionsFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("name", arrayList.get(i));
                 optionsFrag.setArguments(bundle);
                 optionsFrag.show(getSupportFragmentManager(), "Long Press");
 
-                Toast.makeText(FriendsListActivity.this, "you long clicked: " + arrayList.get(i).toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(FriendsListActivity.this, "you long clicked: " + arrayList.get(i), Toast.LENGTH_SHORT).show();
 
                 return false;
             }
@@ -83,5 +84,12 @@ public class FriendsListActivity extends AppCompatActivity {
         DialogFragment addFriendFragment = new AddFriendFragment();
         addFriendFragment.show(getSupportFragmentManager(), "Add Friend");
 
+    }
+
+    public void launchChatView(View view) {
+        Intent intent = new Intent(this, MessageActivity.class);
+        //int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
+        //intent.putExtra("numSteps", dailySteps);
+        startActivity(intent);
     }
 }
