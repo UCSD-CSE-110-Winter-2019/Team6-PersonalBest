@@ -21,7 +21,6 @@ public class FirebaseFirestoreAdapter implements ChatMessageService {
     private static final String TAG = FirebaseFirestoreAdapter.class.getSimpleName();
 
     private static final String COLLECTION_KEY = "chats";
-    private static final String DOCUMENT_KEY = "chat1";
     private static final String MESSAGES_KEY = "messages";
     private static final String TIMESTAMP_KEY = "timestamp";
     private static final String FROM_KEY = "from";
