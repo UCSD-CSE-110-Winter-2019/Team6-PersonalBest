@@ -20,6 +20,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +31,8 @@ public class FirebaseAdapter {
     FirebaseFirestore db;
     SaveLocal saveLocal;
 
-    public FirebaseAdapter(Context context, Activity activity) {
-        FirebaseApp.initializeApp(context);
+    public FirebaseAdapter(Activity activity) {
+        FirebaseApp.initializeApp(activity);
         db = FirebaseFirestore.getInstance();
         // Create a new user with a first and last name
         saveLocal = new SaveLocal(activity);
@@ -240,6 +241,79 @@ public class FirebaseAdapter {
                         }
 
                         saveLocal.setFriends(arr);
+                    }
+                });
+    }
+
+    public void pushStepStats(Calendar time, int backgroundSteps, int exerciseSteps, String myEmail){
+
+        Calendar newCal=Calendar.getInstance();
+        newCal.setTimeInMillis(time.getTimeInMillis());
+        newCal.set(Calendar.HOUR_OF_DAY,0);
+        newCal.set(Calendar.MINUTE,0);
+        newCal.set(Calendar.SECOND,0);
+        newCal.set(Calendar.MINUTE,0);
+        newCal.set(Calendar.SECOND,0);
+        newCal.set(Calendar.MILLISECOND,0);
+
+        String dateKey=newCal.get(Calendar.DAY_OF_MONTH)+"-"+((int)newCal.get(Calendar.MONTH)+1)+"-"+newCal.get(Calendar.YEAR);
+
+
+        Map<String, Integer> steps = new HashMap<>();
+        steps.put("Background", backgroundSteps);
+        steps.put("Exercise", exerciseSteps);
+        // Add a new document with a generated ID
+        db.collection("users")
+                .document(myEmail)
+                .collection("steps")
+                .document(""+dateKey)
+                .set(steps)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Steps set for Email:" + myEmail+" Date: "+dateKey);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error set steps", e);
+                    }
+                });
+    }
+
+    public void saveFriendStepLocal(String friendEmail, Calendar date){
+
+        Calendar newCal=Calendar.getInstance();
+        newCal.setTimeInMillis(date.getTimeInMillis());
+        newCal.set(Calendar.HOUR_OF_DAY,0);
+        newCal.set(Calendar.MINUTE,0);
+        newCal.set(Calendar.SECOND,0);
+        newCal.set(Calendar.MINUTE,0);
+        newCal.set(Calendar.SECOND,0);
+        newCal.set(Calendar.MILLISECOND,0);
+        String dateKey=newCal.get(Calendar.DAY_OF_MONTH)+"-"+((int)newCal.get(Calendar.MONTH)+1)+"-"+newCal.get(Calendar.YEAR);
+        db.collection("users")
+                .document(friendEmail)
+                .collection("steps")
+                .document(""+dateKey)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Map<String,Object> steps= task.getResult().getData();
+                            if(steps==null) return;
+                            long backgroundSteps=((long)steps.get("Background"));
+                            long exerciseSteps=(long)steps.get("Exercise");
+                            saveLocal.setAccountBackgroundStep(friendEmail,(int)backgroundSteps,date);
+                            saveLocal.setAccountExerciseStep(friendEmail,(int)exerciseSteps,date);
+                            Log.d(TAG, "Steps saved locally for " +friendEmail+ " => Background: "
+                                    +backgroundSteps+", Exercise: "+exerciseSteps+" Date: "+dateKey);
+
+                        } else {
+                            Log.w(TAG, "Error getting documents.", task.getException());
+                        }
                     }
                 });
     }

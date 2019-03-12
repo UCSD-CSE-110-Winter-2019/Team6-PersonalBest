@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.personalbest.SaveLocal;
 import com.example.personalbest.StepCountActivity;
+import com.example.personalbest.database.FirebaseAdapter;
 import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -17,12 +18,15 @@ public class UpdateBackgroundListener implements OnSuccessListener<DataReadRespo
     SaveLocal saveLocal;
     int daysBefore;
     Activity activity;
-    public UpdateBackgroundListener(Activity activity, int daysBefore){
+    FirebaseAdapter firebaseAdapter;
+    GoogleFitAdapter googleFitAdapter;
+    public UpdateBackgroundListener(Activity activity, int daysBefore, GoogleFitAdapter googleFitAdapter){
         super();
+        this.googleFitAdapter=googleFitAdapter;
         this.activity=activity;
         this.daysBefore=daysBefore;
         saveLocal=new SaveLocal(activity);
-
+        firebaseAdapter=new FirebaseAdapter(activity);
     }
     public void setDay(int daysBefore){
         this.daysBefore=daysBefore;
@@ -31,7 +35,14 @@ public class UpdateBackgroundListener implements OnSuccessListener<DataReadRespo
     @Override
     public void onSuccess(DataReadResponse dataReadResponse) {
         int stepCount=GoogleFitAdapter.getSteps(dataReadResponse);
-        saveLocal.setBackgroundStepCount(stepCount-saveLocal.getExerciseStepCount(daysBefore),daysBefore);
+        int exerciseStepCount=(int)saveLocal.getExerciseStepCount(daysBefore);
+        int backgroundStepCount=stepCount-exerciseStepCount;
+        saveLocal.setBackgroundStepCount(backgroundStepCount,daysBefore);
+        Calendar calendar=Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -daysBefore);
+        if (googleFitAdapter.getEmail()!=null) {
+            firebaseAdapter.pushStepStats(calendar, backgroundStepCount, exerciseStepCount, googleFitAdapter.getEmail());
+        }
         System.out.println("NUMBER OF STEPS: "+stepCount);
         //Update data
     }

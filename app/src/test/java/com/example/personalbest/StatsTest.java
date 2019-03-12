@@ -146,6 +146,12 @@ public class StatsTest {
         public boolean startRecording() {
             return true;
         }
+
+        @Override
+        public String getEmail() {
+            return null;
+        }
+
         @Override
         public void updateBackgroundCount(Calendar currentTime, int daysBefore){
 

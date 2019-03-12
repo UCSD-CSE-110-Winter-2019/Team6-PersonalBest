@@ -71,33 +71,28 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="putData"
         android:text="Put 500 Steps (Works every 50 seconds)" />
+
     <Button
         android:id="@+id/graphActivityButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="launchGraphActivity"
         android:text="See Stats" />
 
     <Button
-        android:id="@+id/goToChat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="launchChat"
-        android:text="Chat" />
-    <Button
         android:id="@+id/friendButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Friends"
-        android:onClick="launchFriendsList"/>
+        android:onClick="launchFriendsList"
+        android:text="Friends" />
 
     <Button
         android:id="@+id/addFriend"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="addFriend"
         android:text="Add Friend" />

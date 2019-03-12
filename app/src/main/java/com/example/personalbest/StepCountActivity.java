@@ -95,7 +95,7 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
-        firebaseAdapter=new FirebaseAdapter(StepCountActivity.this, this);
+        firebaseAdapter=new FirebaseAdapter(this);
 
 
 
@@ -240,11 +240,13 @@ public class StepCountActivity extends AppCompatActivity{
 
     public void updateSteps(View view) {
         firebaseAdapter.getUsers();
-        firebaseAdapter.getFriends(saveLocal.getEmail());
+
         ArrayList<String> arr = saveLocal.getFriends();
         for (String s: arr) {
             Log.d("TAGTAG", s);
         }
+        //firebaseAdapter.saveFriendStepLocal("anilermi@gmail.com", Calendar.getInstance());
+
         onResume();
         //printSteps();
 
@@ -314,12 +316,7 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
 
-    public void launchChat(View view){
-        Intent intent = new Intent(this, MessageActivity.class);
-        //int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
-        //intent.putExtra("numSteps", dailySteps);
-        startActivity(intent);
-    }
+
 
     public void launchFriendsList(View v){
         Intent intent = new Intent(this, FriendsListActivity.class);
@@ -327,8 +324,8 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void addFriend(View view) {
-        String name = saveLocal.getName();
-        if (!name.equals("NO NAME")) {
+        String email = saveLocal.getEmail();
+        if (!email.equals("NO EMAIL")) {
             DialogFragment friendFrag = new AddFriendFragment();
             friendFrag.show(getSupportFragmentManager(), "Add Friend");
         }
