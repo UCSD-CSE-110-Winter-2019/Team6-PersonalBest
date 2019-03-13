@@ -6,7 +6,9 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.personalbest.SaveLocal;
 import com.example.personalbest.StepCountActivity;
+import com.example.personalbest.database.FirebaseAdapter;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -40,25 +42,22 @@ public class GoogleFitAdapter implements FitnessService {
     private boolean isCumulativeSet;
     private boolean isDeltaSet;
     private boolean isAggregateSet;
+    private SaveLocal saveLocal;
 
     public GoogleFitAdapter(StepCountActivity activity) {
         this.activity = activity;
         isCumulativeSet=false;
         isAggregateSet=false;
         isDeltaSet=false;
+        saveLocal = new SaveLocal(activity);
     }
 
 
     public void setup() {
         String serverClientId = SERVER_CLIENT_ID;
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
-                .requestServerAuthCode(serverClientId)
-                .requestEmail()
-                .build();
-        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        ActivityCompat.startActivityForResult(activity,signInIntent,4,null);
+
+
+
 
         FitnessOptions fitnessOptions = FitnessOptions.builder()
                 .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
@@ -74,7 +73,24 @@ public class GoogleFitAdapter implements FitnessService {
                     GoogleSignIn.getLastSignedInAccount(activity),
                     fitnessOptions);
                     //startRecording();
+
         }
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestEmail()
+                .build();
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        ActivityCompat.startActivityForResult(activity,signInIntent,GOOGLE_FIT_PERMISSIONS_REQUEST_CODE,null);
+
+
+    }
+
+    public String getEmail(){
+
+        String email =  GoogleSignIn.getLastSignedInAccount(activity).getEmail();
+        saveLocal.setEmail(email);
+        return email;
     }
 
     public boolean startRecording() {
@@ -168,13 +184,21 @@ public class GoogleFitAdapter implements FitnessService {
                 .readData(readRequest)
                 .addOnSuccessListener(
                         new OnSuccessListener<DataReadResponse>() {
+                            FirebaseAdapter firebaseAdapter=new FirebaseAdapter(activity);
+                            SaveLocal saveLocal=new SaveLocal(activity);
                             @Override
                             public void onSuccess(DataReadResponse dataReadResponse) {
                                 int stepCount=GoogleFitAdapter.getSteps(dataReadResponse);
-
+                                int exerciseStepCount=(int)saveLocal.getExerciseStepCount(0);
+                                int backgroundStepCount=stepCount-exerciseStepCount;
                                 activity.setStepCount(stepCount);
                                 dailyStepCount=stepCount;
                                 Log.d(TAG, "Total steps: " + stepCount);
+                                Calendar calendar=Calendar.getInstance();
+                                if(getEmail()!=null) {
+                                    firebaseAdapter.pushStepStats(calendar, backgroundStepCount, exerciseStepCount, getEmail());
+                                }
+                                System.out.println("NUMBER OF STEPS: "+stepCount);
                                 //Update data
                             }
                         })
@@ -237,7 +261,7 @@ public class GoogleFitAdapter implements FitnessService {
         cal.set(Calendar.MILLISECOND,0);
         long startTime = cal.getTimeInMillis();
 
-        listenStepCount(startTime,endTime,new UpdateBackgroundListener(activity,daysBefore),new UpdateBackgroundListener(activity,daysBefore));
+        listenStepCount(startTime,endTime,new UpdateBackgroundListener(activity,daysBefore,this),new UpdateBackgroundListener(activity,daysBefore,this));
     }
     //Creates a read request and sends it to the listener to update variables.
     private void listenStepCount(long startMillis, long endMillis, OnSuccessListener<DataReadResponse> listener, OnFailureListener failureListener){

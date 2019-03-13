@@ -7,6 +7,11 @@ import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class SaveLocal {
@@ -234,4 +239,64 @@ public class SaveLocal {
     }
 
 
+    public void setFriends(ArrayList<String> arr) {
+        Gson gson = new Gson();
+        String json = gson.toJson(arr); //tasks is an ArrayList instance variable
+        editor.putString("friendsList", json);
+        editor.commit();
+    }
+
+    public ArrayList<String> getFriends() {
+        Gson gson = new Gson();
+        String json = exercisePreferences.getString("friendsList", "");
+        if (json.length() == 0)
+            return new ArrayList<String>();
+        ArrayList<String> arr = gson.fromJson(json, new TypeToken<ArrayList<String>>(){}.getType());
+        return arr;
+    }
+
+    public void setName(String name) {
+        editor.putString("name", name);
+        editor.apply();
+    }
+
+    public String getName() {
+        return exercisePreferences.getString("name", "NO NAME");
+    }
+
+    public void setEmail(String email) {
+        editor.putString("email", email);
+        editor.apply();
+    }
+
+    public String getEmail() {
+        return exercisePreferences.getString("email", "NO EMAIL");
+    }
+    public void setAccountBackgroundStep(String accountEmail, int backgroundStepCount, Calendar date){
+        String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
+        String key=accountEmail+dateString+"background";
+        editor.putInt(key,backgroundStepCount);
+    }
+    public void setAccountExerciseStep(String accountEmail, int exerciseStepCount, Calendar date){
+        String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
+        String key=accountEmail+dateString+"exercise";
+        editor.putInt(key,exerciseStepCount);
+    }
+    public int getAccountBackgroundStep(String accountEmail, Calendar date){
+        String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
+        String key=accountEmail+dateString+"background";
+        return  exercisePreferences.getInt(key,-1);
+    }
+    public int getAccountExerciseStep(String accountEmail, Calendar date){
+        String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
+        String key=accountEmail+dateString+"exercise";
+        return  exercisePreferences.getInt(key,-1);
+    }
+    public void setLastClickedFriend(String friend){
+        editor.putString("LastClickedFriend", friend);
+        editor.apply();
+    }
+    public String getLastCLickedFriend(){
+        return exercisePreferences.getString("LastClickedFriend", null);
+    }
 }

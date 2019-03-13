@@ -38,7 +38,7 @@ public class StatsTest {
     private TextView textSpeed;
     private Button walkBtn;
     private long nextStepCount;
-
+    private WalkStats stats;
     //@Rule
     //public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<>(MainActivity.class);
 
@@ -61,7 +61,7 @@ public class StatsTest {
         textTime = activity.findViewById(R.id.walkTime);
         textSpeed = activity.findViewById(R.id.textSpeed);
         walkBtn = activity.findViewById(R.id.startExerciseButton);
-
+        stats=new WalkStats(activity);
         nextStepCount = 1000;
     }
 
@@ -73,13 +73,13 @@ public class StatsTest {
         Date dummyStartTime = new Date(1550053000000L);
         //Wed, February 13, 2019 02:31:40
         Date dummyEndTime = new Date(1550053900000L);
-
+        stats = new WalkStats(activity);
         cal.setTime(dummyStartTime);
         exercise.startExercise(cal);
         cal.setTime(dummyEndTime);
         exercise.stopExercise(cal);
         activity.onResume(cal);
-
+        stats.update();
         assertEquals("Time Elapsed: 15:00", textTime.getText());
     }
 
@@ -97,7 +97,7 @@ public class StatsTest {
         nextStepCount = 2000;
         exercise.stopExercise(cal);
         activity.onResume(cal);
-
+        stats.update();
         assertEquals("MPH: 1.7729799", textSpeed.getText());
 
     }
@@ -146,6 +146,12 @@ public class StatsTest {
         public boolean startRecording() {
             return true;
         }
+
+        @Override
+        public String getEmail() {
+            return null;
+        }
+
         @Override
         public void updateBackgroundCount(Calendar currentTime, int daysBefore){
 

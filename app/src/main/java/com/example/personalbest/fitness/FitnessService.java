@@ -14,6 +14,6 @@ public interface FitnessService {
     void updateBackgroundCount(Calendar currentTime, int daysBefore);
     boolean isSetupComplete();
     boolean startRecording();
-
+    String getEmail();
 
 }

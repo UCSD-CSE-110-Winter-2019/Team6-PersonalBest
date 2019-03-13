@@ -40,6 +40,7 @@ import com.google.android.gms.fitness.request.DataUpdateRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+
 //import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -49,6 +50,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,7 +64,7 @@ public class StepCountActivity extends AppCompatActivity{
 
     private static final String TAG = "StepCountActivity";
 
-
+    private FirebaseAdapter firebaseAdapter;
     private TextView textSteps;
     private TextView goalView;
 
@@ -88,10 +90,13 @@ public class StepCountActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
 
 
+        //FirebaseApp.initializeApp(this);
 
 
-        FirebaseAdapter firebaseAdapter=new FirebaseAdapter(StepCountActivity.this);
-        //firebaseAdapter.addUser("Ani Lermi");
+
+
+        firebaseAdapter=new FirebaseAdapter(this);
+
 
 
         setContentView(R.layout.activity_step_count);
@@ -129,8 +134,6 @@ public class StepCountActivity extends AppCompatActivity{
         timeElapsed.setText("Time Elapsed: " + saveLocal.getLastExerciseTime());
 
         stats = new WalkStats(StepCountActivity.this);
-
-
 
 
         //Button to start and stop exercises
@@ -236,8 +239,17 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void updateSteps(View view) {
+        firebaseAdapter.getUsers();
+
+        ArrayList<String> arr = saveLocal.getFriends();
+        for (String s: arr) {
+            Log.d("TAGTAG", s);
+        }
+        //firebaseAdapter.saveFriendStepLocal("anilermi@gmail.com", Calendar.getInstance());
+
         onResume();
         //printSteps();
+
 
     }
     private void insert500Steps(Calendar currTime){
@@ -287,6 +299,7 @@ public class StepCountActivity extends AppCompatActivity{
                         Log.i(TAG, "There was a problem adding 500 steps.");
                     }
                 });
+        firebaseAdapter.getUsers();
     }
 
     public void putData(View view){
@@ -304,6 +317,23 @@ public class StepCountActivity extends AppCompatActivity{
 
 
 
+
+    public void launchFriendsList(View v){
+        Intent intent = new Intent(this, FriendsListActivity.class);
+        startActivity(intent);
+    }
+
+    public void addFriend(View view) {
+        String email = saveLocal.getEmail();
+        if (!email.equals("NO EMAIL")) {
+            DialogFragment friendFrag = new AddFriendFragment();
+            friendFrag.show(getSupportFragmentManager(), "Add Friend");
+        }
+        else {
+            DialogFragment nameFrag = new NameFragment();
+            nameFrag.show(getSupportFragmentManager(), "Set Name");
+        }
+    }
 
 
     public class Background extends AsyncTask<String, String, String> {
@@ -340,16 +370,10 @@ public class StepCountActivity extends AppCompatActivity{
             fitnessService.updateStepCount(c);
 
             stats = new WalkStats(StepCountActivity.this);
-            stats.update();
-            //if(exercise.isActive()){
-                WalkStats stats = new WalkStats(StepCountActivity.this);
-           // if (exercise.isActive()) {
-                stats.update();
-                //onResume();
-            //}
 
-            stats = new WalkStats(StepCountActivity.this);
-            stats.update();
+            if (exercise.isActive()) {
+                stats.update();
+            }
 
             if (fitnessService.getDailyStepCount(c) >= saveLocal.getGoal() && !saveLocal.isAchieved()){
                 saveLocal.setAchieved(true);
@@ -359,8 +383,6 @@ public class StepCountActivity extends AppCompatActivity{
             if(hour>=20) {
                 encourage.showEncouragement();
             }
-
-            //onResume(c);
         }
 
         @Override
@@ -379,6 +401,7 @@ public class StepCountActivity extends AppCompatActivity{
 
         }
     }
+
 
 
 
