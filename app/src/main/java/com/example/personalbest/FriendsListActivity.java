@@ -57,8 +57,10 @@ public class FriendsListActivity extends AppCompatActivity {
         });
 
         for (String friend : arrayList) {
-            //Calendar needs to be mocked
+
+            firebaseAdapter.saveNewGoalsLocal(friend);
             int i = 0;
+            //Calendar needs to be mocked
             Calendar currDay=Calendar.getInstance();
             while (i < 28) {
                 firebaseAdapter.saveFriendStepLocal(friend, currDay);

@@ -2,59 +2,40 @@ package com.example.personalbest;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import android.os.Handler;
 import android.support.annotation.NonNull;
 
-import android.support.annotation.NonNull;
 import android.support.v4.app.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.personalbest.database.FirebaseAdapter;
 import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
-import com.example.personalbest.fitness.UpdateBackgroundListener;
 import com.example.personalbest.fitness.WalkStats;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.HistoryClient;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.DataDeleteRequest;
-import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.request.DataUpdateRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 //import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -90,14 +71,7 @@ public class StepCountActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
 
 
-        //FirebaseApp.initializeApp(this);
-
-
-
-
         firebaseAdapter=new FirebaseAdapter(this);
-
-
 
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
@@ -193,6 +167,9 @@ public class StepCountActivity extends AppCompatActivity{
 
     public void setGoal(long goalSteps) {
         goalView.setText("Goal: "+goalSteps);
+        if(!saveLocal.getEmail().equals("NO EMAIL")) {
+            firebaseAdapter.pushNewGoal(Calendar.getInstance(), (int) goalSteps);
+        }
     }
 
 
@@ -245,11 +222,7 @@ public class StepCountActivity extends AppCompatActivity{
         for (String s: arr) {
             Log.d("TAGTAG", s);
         }
-        //firebaseAdapter.saveFriendStepLocal("anilermi@gmail.com", Calendar.getInstance());
-
         onResume();
-        //printSteps();
-
 
     }
     private void insert500Steps(Calendar currTime){
@@ -309,6 +282,7 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void launchGraphActivity(View view) {
+        firebaseAdapter.saveNewGoalsLocal(saveLocal.getEmail());
         Intent intent = new Intent(this, GraphActivity.class);
         int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
         intent.putExtra("numSteps", dailySteps);

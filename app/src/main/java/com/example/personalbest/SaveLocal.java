@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 
 import android.content.Context;
-import android.provider.Settings;
-import android.util.Log;
 
-import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -298,5 +295,22 @@ public class SaveLocal {
     }
     public String getLastCLickedFriend(){
         return exercisePreferences.getString("LastClickedFriend", null);
+    }
+
+
+    public void setNewGoals(ArrayList<Goal> arr, String email) {
+        Gson gson = new Gson();
+        String json = gson.toJson(arr); //tasks is an ArrayList instance variable
+        editor.putString("newGoals"+email, json);
+        editor.commit();
+    }
+
+    public ArrayList<Goal> getNewGoals(String email) {
+        Gson gson = new Gson();
+        String json = exercisePreferences.getString("newGoals"+email, "");
+        if (json.length() == 0)
+            return new ArrayList<Goal>();
+        ArrayList<Goal> arr = gson.fromJson(json, new TypeToken<ArrayList<Goal>>(){}.getType());
+        return arr;
     }
 }

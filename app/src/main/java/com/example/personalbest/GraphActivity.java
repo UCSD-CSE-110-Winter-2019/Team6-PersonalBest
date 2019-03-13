@@ -1,8 +1,8 @@
 package com.example.personalbest;
 
-import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -102,6 +102,14 @@ public class GraphActivity extends AppCompatActivity {
         xAxis.setSpaceMax(barData.getBarWidth() / 2f);
 
         combinedChart.invalidate();
+
+
+//        //Delete
+//        SaveLocal saveLocal=new SaveLocal(this);
+//        ArrayList<Goal> goalss=saveLocal.getNewGoals(saveLocal.getEmail());
+//        for(Goal o:goalss){
+//            Log.d("A",o.toString());
+//        }
     }
 
     public void returnMain(){
