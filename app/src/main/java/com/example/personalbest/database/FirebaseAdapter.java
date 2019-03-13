@@ -306,8 +306,8 @@ public class FirebaseAdapter {
                             if(steps==null) return;
                             long backgroundSteps=((long)steps.get("Background"));
                             long exerciseSteps=(long)steps.get("Exercise");
-                            saveLocal.setAccountBackgroundStep(friendEmail,(int)backgroundSteps,date);
-                            saveLocal.setAccountExerciseStep(friendEmail,(int)exerciseSteps,date);
+                            saveLocal.setAccountBackgroundStep(friendEmail,(int)backgroundSteps,newCal);
+                            saveLocal.setAccountExerciseStep(friendEmail,(int)exerciseSteps,newCal);
                             Log.d(TAG, "Steps saved locally for " +friendEmail+ " => Background: "
                                     +backgroundSteps+", Exercise: "+exerciseSteps+" Date: "+dateKey);
 

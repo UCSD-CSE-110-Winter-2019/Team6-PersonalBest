@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,6 +75,7 @@ public class MessageActivity extends AppCompatActivity {
         for(Goal o:goals){
             Log.d("A",o.toString());
         }
+        Log.d("BackgroundStep:",""+saveLocal.getAccountBackgroundStep(friendEmail, Calendar.getInstance()));
     }
 
     private void sendMessage() {
