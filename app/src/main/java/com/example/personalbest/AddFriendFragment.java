@@ -1,43 +1,26 @@
 package com.example.personalbest;
 
 import android.app.Dialog;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.NumberPicker;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.personalbest.MainActivity;
-import com.example.personalbest.R;
-import com.example.personalbest.SaveLocal;
-import com.example.personalbest.StepCountActivity;
 import com.example.personalbest.database.FirebaseAdapter;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import org.w3c.dom.Text;
-
-import static android.content.Context.MODE_PRIVATE;
+import com.example.personalbest.database.FirebaseFactory;
+import com.example.personalbest.database.IFirebase;
 
 public class AddFriendFragment extends DialogFragment {
     SaveLocal saveLocal;
     private String valid_email;
     Button positiveButton;
-    FirebaseAdapter firebaseAdapter;
+    IFirebase firebaseAdapter;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -49,7 +32,7 @@ public class AddFriendFragment extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        firebaseAdapter = new FirebaseAdapter(getActivity());
+        firebaseAdapter = FirebaseFactory.getFirebase();
         View v = inflater.inflate(R.layout.add_friend_popup,null);
         final EditText email = v.findViewById(R.id.emailView2);
 
