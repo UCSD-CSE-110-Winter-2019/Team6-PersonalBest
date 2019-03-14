@@ -2,18 +2,15 @@ package com.example.personalbest.database;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.personalbest.SaveLocal;
-import com.example.personalbest.StepCountActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -25,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class FirebaseAdapter {
+public class FirebaseAdapter implements IFirebase {
     final String PROJECT_ID="PersonalBest";
     final String TAG="FirebaseAdapter";
     FirebaseFirestore db;
@@ -38,6 +35,7 @@ public class FirebaseAdapter {
         saveLocal = new SaveLocal(activity);
 
     }
+    @Override
     public void addUser(String userName, final String email){
         Map<String, Object> user = new HashMap<>();
         user.put("name", userName);
@@ -62,6 +60,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void addFriendToFriendsList(String friendsName, final String friendsEmail) {
         final String myEmail = saveLocal.getEmail();
         final String myName = saveLocal.getName();
@@ -131,6 +130,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void addFriendToPendingFriendsList(final String friendsEmail){
         final String myEmail = saveLocal.getEmail();
         Map<String, Object> friend = new HashMap<>();
@@ -157,6 +157,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void addFriend(final String friendsEmail) {
         final String myEmail = saveLocal.getEmail();
         db.collection("users")
@@ -210,6 +211,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void getUsers(){
 
         db.collection("users")
@@ -228,6 +230,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void getFriends(String email){
         final ArrayList<String> arr = new ArrayList<>();
 
@@ -245,6 +248,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void pushStepStats(Calendar time, int backgroundSteps, int exerciseSteps, String myEmail){
 
         Calendar newCal=Calendar.getInstance();
@@ -282,6 +286,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void saveFriendStepLocal(String friendEmail, Calendar date){
 
         Calendar newCal=Calendar.getInstance();

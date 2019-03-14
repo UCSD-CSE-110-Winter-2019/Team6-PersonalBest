@@ -4,11 +4,12 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.personalbest.SaveLocal;
 import com.example.personalbest.StepCountActivity;
 import com.example.personalbest.database.FirebaseAdapter;
+import com.example.personalbest.database.FirebaseFactory;
+import com.example.personalbest.database.IFirebase;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -21,14 +22,12 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -184,7 +183,7 @@ public class GoogleFitAdapter implements FitnessService {
                 .readData(readRequest)
                 .addOnSuccessListener(
                         new OnSuccessListener<DataReadResponse>() {
-                            FirebaseAdapter firebaseAdapter=new FirebaseAdapter(activity);
+                            IFirebase IFirebase = FirebaseFactory.getFirebase();
                             SaveLocal saveLocal=new SaveLocal(activity);
                             @Override
                             public void onSuccess(DataReadResponse dataReadResponse) {
@@ -196,7 +195,7 @@ public class GoogleFitAdapter implements FitnessService {
                                 Log.d(TAG, "Total steps: " + stepCount);
                                 Calendar calendar=Calendar.getInstance();
                                 if(getEmail()!=null) {
-                                    firebaseAdapter.pushStepStats(calendar, backgroundStepCount, exerciseStepCount, getEmail());
+                                    IFirebase.pushStepStats(calendar, backgroundStepCount, exerciseStepCount, getEmail());
                                 }
                                 System.out.println("NUMBER OF STEPS: "+stepCount);
                                 //Update data

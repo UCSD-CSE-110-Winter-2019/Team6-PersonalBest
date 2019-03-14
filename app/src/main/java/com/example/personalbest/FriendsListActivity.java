@@ -1,7 +1,6 @@
 package com.example.personalbest;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +12,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.personalbest.database.FirebaseAdapter;
+import com.example.personalbest.database.FirebaseFactory;
+import com.example.personalbest.database.IFirebase;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,10 +21,10 @@ import java.util.Calendar;
 public class FriendsListActivity extends AppCompatActivity {
     ArrayList <String> arrayList;
     SaveLocal saveLocal;
-    FirebaseAdapter firebaseAdapter;
+    IFirebase firebaseAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        firebaseAdapter=new FirebaseAdapter(this);
+        firebaseAdapter = FirebaseFactory.getFirebase();
         saveLocal = new SaveLocal(this);
         firebaseAdapter.getFriends(saveLocal.getEmail());
         super.onCreate(savedInstanceState);
