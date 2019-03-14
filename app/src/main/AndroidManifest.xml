@@ -9,12 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MessageActivity" >
-        </activity>
-        <activity android:name=".FriendsListActivity">
 
-        </activity>
+        <service
+            android:name=".NotifyService"
+            android:exported="false" />
 
+        <activity android:name=".MessageActivity" />
+        <activity android:name=".FriendsListActivity" />
         <activity android:name=".GraphActivity" />
         <activity
             android:name=".MainActivity"

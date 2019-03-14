@@ -1,9 +1,12 @@
 package com.example.personalbest;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
@@ -174,6 +177,23 @@ public class StepCountActivity extends AppCompatActivity{
         }
 
         endDay=new EndDay(saveLocal);
+        createNotifactionChannel();
+        NotifyService notifyService = new NotifyService();
+        Intent intent = new Intent();
+        startService(new Intent(this, notifyService.getClass()));
+
+    }
+
+    public void createNotifactionChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(getString(R.string.channel_id), name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     public void setGoal(long goalSteps) {

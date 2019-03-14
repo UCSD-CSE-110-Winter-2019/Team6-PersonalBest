@@ -182,6 +182,7 @@ public class SaveLocal {
         editor.putInt("goal", goal);
         editor.apply();
         setAchieved(false);
+        setGoalNotificationSent(false);
     }
     public int getGoal(){
         return exercisePreferences.getInt("goal", 5000);
@@ -194,6 +195,14 @@ public class SaveLocal {
     public void setAchieved(boolean isAchieved){
         editor.putBoolean("goalAchieved", isAchieved);
         editor.apply();
+    }
+    public void setGoalNotificationSent(boolean sent) {
+        editor.putBoolean("goalNotification", sent);
+        editor.apply();
+    }
+
+    public boolean getGoalNotificationSent() {
+        return exercisePreferences.getBoolean("goalNotication", false);
     }
 
     public void setLastLogin(Calendar cal){
