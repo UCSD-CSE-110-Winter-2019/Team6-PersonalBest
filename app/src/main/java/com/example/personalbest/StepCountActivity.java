@@ -408,6 +408,22 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
 
+    public static long generateStartTime(Calendar cal) {
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
+    }
+
+    public static long generateEndTime(Calendar cal) {
+        cal.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 59);
+        return cal.getTimeInMillis();
+    }
 
 
 
