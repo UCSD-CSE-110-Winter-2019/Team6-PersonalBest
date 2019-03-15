@@ -5,20 +5,20 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.personalbest.SaveLocal;
-import com.example.personalbest.StepCountActivity;
 import com.example.personalbest.database.FirebaseAdapter;
+import com.example.personalbest.database.FirebaseFactory;
+import com.example.personalbest.database.IFirebase;
 import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class UpdateBackgroundListener implements OnSuccessListener<DataReadResponse>, OnFailureListener{
     SaveLocal saveLocal;
     int daysBefore;
     Activity activity;
-    FirebaseAdapter firebaseAdapter;
+    IFirebase firebaseAdapter;
     GoogleFitAdapter googleFitAdapter;
     public UpdateBackgroundListener(Activity activity, int daysBefore, GoogleFitAdapter googleFitAdapter){
         super();
@@ -26,7 +26,7 @@ public class UpdateBackgroundListener implements OnSuccessListener<DataReadRespo
         this.activity=activity;
         this.daysBefore=daysBefore;
         saveLocal=new SaveLocal(activity);
-        firebaseAdapter=new FirebaseAdapter(activity);
+        firebaseAdapter = FirebaseFactory.getFirebase();
     }
     public void setDay(int daysBefore){
         this.daysBefore=daysBefore;
