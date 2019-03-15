@@ -71,7 +71,6 @@ public class MessageActivity extends AppCompatActivity {
         initMessageUpdateListener();
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
-        subscribeToNotificationsTopic();
 
         Button returnButton = findViewById(R.id.returnBtn);
         returnButton.setOnClickListener(view -> this.finish());
@@ -112,17 +111,4 @@ public class MessageActivity extends AppCompatActivity {
                 });
     }
 
-    private void subscribeToNotificationsTopic() {
-        NotificationServiceFactory notificationServiceFactory = NotificationServiceFactory.getInstance();
-        String notificationServiceKey = getIntent().getStringExtra(NOTIFICATION_SERVICE_EXTRA);
-        NotificationService notificationService = notificationServiceFactory.getOrDefault(notificationServiceKey, FirebaseCloudMessagingAdapter::getInstance);
-
-        notificationService.subscribeToNotificationsTopic(DOCUMENT_KEY, task -> {
-            String msg = "Subscribed to notifications";
-            if (!task.isSuccessful()) {
-                msg = "Subscribe to notifications failed";
-            }
-            Log.d(TAG, msg);
-        });
-    }
 }

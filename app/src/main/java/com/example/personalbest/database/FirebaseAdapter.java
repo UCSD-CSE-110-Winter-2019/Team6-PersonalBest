@@ -76,7 +76,6 @@ public class FirebaseAdapter {
         me.put("email", myEmail);
         me.put("name", myName);
 
-        subscribeToNotification(myEmail, friendsEmail);
 
         // Add a new document with a generated ID
         db.collection("users")
@@ -88,6 +87,8 @@ public class FirebaseAdapter {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot added with ID: " + friendsEmail);
+
+                        subscribeToNotification(myEmail, friendsEmail);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
