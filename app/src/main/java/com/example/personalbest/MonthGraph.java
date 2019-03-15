@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.personalbest.database.FirebaseAdapter;
 import com.github.mikephil.charting.charts.CombinedChart;
@@ -31,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -43,6 +46,12 @@ public class MonthGraph extends AppCompatActivity {
     private CombinedChart combinedChart;
     private CombinedData combinedData;
     private TextView waitText;
+    private EditText message;
+    private ChatMessageService chat;
+    private String DOCUMENT_KEY;
+    private String FROM_KEY = "from";
+    private String TEXT_KEY = "text";
+    private String TIMESTAMP_KEY = "timestamp";
     private int[] workout;
     private int[] background;
     private Goal[] goals;
@@ -56,6 +65,20 @@ public class MonthGraph extends AppCompatActivity {
         setContentView(R.layout.activity_month_graph);
 
         saveLocal = new SaveLocal(this);
+        email = getIntent().getStringExtra("email");
+        String myEmail=saveLocal.getEmail();
+        if(myEmail.compareTo(email)>0){
+            DOCUMENT_KEY=myEmail + email;
+        }else{
+            DOCUMENT_KEY=email+myEmail;
+        }
+        String NEW_KEY="";
+        String array1[] = DOCUMENT_KEY.split("@");
+        for(String s : array1){
+            NEW_KEY += s;
+        }
+        DOCUMENT_KEY = NEW_KEY;
+        chat = FirebaseFirestoreAdapter.getInstance(DOCUMENT_KEY);
 
         combinedChart = findViewById(R.id.monthChart);
         combinedChart.setVisibility(View.GONE);
@@ -66,7 +89,7 @@ public class MonthGraph extends AppCompatActivity {
         waitText = findViewById(R.id.waitText);
         waitText.setText("Obtaining Information from Firebase");
 
-        email = getIntent().getStringExtra("email");
+
         if(email.equals(saveLocal.getEmail())){
             View btn = findViewById(R.id.sendButton);
             btn.setVisibility(View.GONE);
@@ -203,6 +226,18 @@ public class MonthGraph extends AppCompatActivity {
 
     public void sendMessage(View view){
 
+        EditText messageView = findViewById(R.id.messageGraph);
+
+        Map<String, String> newMessage = new HashMap<>();
+        newMessage.put(FROM_KEY, email);
+        newMessage.put(TIMESTAMP_KEY, String.valueOf(new Date().getTime()));
+        newMessage.put(TEXT_KEY, messageView.getText().toString());
+
+        chat.addMessage(newMessage).addOnSuccessListener(result -> {
+            messageView.setText("");
+        }).addOnFailureListener(error -> {
+            Log.e("Message", error.getLocalizedMessage());
+        });
     }
 
     public int[] getBackgroundSteps(String email, SaveLocal saveLocal){
