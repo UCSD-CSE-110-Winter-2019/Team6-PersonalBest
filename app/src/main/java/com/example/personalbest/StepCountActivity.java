@@ -300,9 +300,6 @@ public class StepCountActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
-
-
-
     public void launchFriendsList(View v){
         Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
@@ -365,7 +362,8 @@ public class StepCountActivity extends AppCompatActivity{
                 goalFrag = new GoalFragment();
                 goalFrag.show(getSupportFragmentManager(), "Goal");
             }
-            if(hour>=20) {
+            ArrayList<String> arrayList = saveLocal.getFriends();
+            if(hour>=20 && arrayList.size() == 0) {
                 encourage.showEncouragement();
             }
         }
