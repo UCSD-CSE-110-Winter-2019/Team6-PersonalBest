@@ -312,10 +312,17 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void launchGraphActivity(View view) {
+        /*
         firebaseAdapter.saveNewGoalsLocal(saveLocal.getEmail());
         Intent intent = new Intent(this, GraphActivity.class);
         int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
         intent.putExtra("numSteps", dailySteps);
+        startActivity(intent);*/
+        String email = saveLocal.getEmail();
+        int daysToShow = 7;
+        Intent intent = new Intent(this, MonthGraph.class);
+        intent.putExtra("email", email);
+        intent.putExtra("days", daysToShow);
         startActivity(intent);
     }
 
@@ -334,13 +341,6 @@ public class StepCountActivity extends AppCompatActivity{
             DialogFragment nameFrag = new NameFragment();
             nameFrag.show(getSupportFragmentManager(), "Set Name");
         }
-    }
-
-
-    public void MonthGraph(View view){
-        Intent intent = new Intent(this, MonthGraph.class);
-        intent.putExtra("email", saveLocal.getEmail());
-        startActivity(intent);
     }
 
     public class Background extends AsyncTask<String, String, String> {
