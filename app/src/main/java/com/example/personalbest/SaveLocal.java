@@ -227,7 +227,7 @@ public class SaveLocal {
     }
     public long getGoals(int daysBefore){
         if(daysBefore < DAYS_TO_KEEP_TRACK_OF){
-            return exercisePreferences.getLong("" + daysBefore + "DaysBeforeGoal", 0);
+            return exercisePreferences.getLong("" + daysBefore + "DaysBeforeGoal", 5000);
         }else return -1;
     }
 
