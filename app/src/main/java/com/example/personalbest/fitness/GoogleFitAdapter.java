@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.example.personalbest.SaveLocal;
 import com.example.personalbest.StepCountActivity;
-import com.example.personalbest.database.FirebaseAdapter;
 import com.example.personalbest.database.FirebaseFactory;
 import com.example.personalbest.database.IFirebase;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
