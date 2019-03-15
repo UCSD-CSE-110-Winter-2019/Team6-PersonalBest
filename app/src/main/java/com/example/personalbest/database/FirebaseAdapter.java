@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -29,7 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class FirebaseAdapter {
+public class FirebaseAdapter implements IFirebase {
     final String PROJECT_ID="PersonalBest";
     final String TAG="FirebaseAdapter";
     FirebaseFirestore db;
@@ -42,6 +43,7 @@ public class FirebaseAdapter {
         saveLocal = new SaveLocal(activity);
 
     }
+    @Override
     public void addUser(String userName, final String email){
         Map<String, Object> user = new HashMap<>();
         user.put("name", userName);
@@ -66,6 +68,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void addFriendToFriendsList(String friendsName, final String friendsEmail) {
         final String myEmail = saveLocal.getEmail();
         final String myName = saveLocal.getName();
@@ -135,6 +138,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void addFriendToPendingFriendsList(final String friendsEmail){
         final String myEmail = saveLocal.getEmail();
         Map<String, Object> friend = new HashMap<>();
@@ -161,6 +165,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void addFriend(final String friendsEmail) {
         final String myEmail = saveLocal.getEmail();
         db.collection("users")
@@ -214,6 +219,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void getUsers(){
 
         db.collection("users")
@@ -232,6 +238,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void getFriends(String email){
         final ArrayList<String> arr = new ArrayList<>();
 
@@ -249,6 +256,7 @@ public class FirebaseAdapter {
                 });
     }
 
+    @Override
     public void pushStepStats(Calendar time, int backgroundSteps, int exerciseSteps, String myEmail){
 
         Calendar newCal=Calendar.getInstance();
@@ -285,6 +293,8 @@ public class FirebaseAdapter {
                     }
                 });
     }
+
+
     public Task<QuerySnapshot> saveFriendStepLocal(String friendEmail){
         Log.d("Query Results", "Went into method");
         Task<QuerySnapshot> task= db.collection("users")

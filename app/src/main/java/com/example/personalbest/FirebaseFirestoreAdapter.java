@@ -63,14 +63,14 @@ public class FirebaseFirestoreAdapter implements ChatMessageService {
                             List<ChatMessage> newMessages = documentChanges.stream()
                                     .map(DocumentChange::getDocument)
                                     .map(doc -> {
-                                        Log.d("TAG", "DATA:  "+ doc.getData());
+                                        Log.d("TAG", "DATA:  " + doc.getData());
                                         if (doc.getData().get(TIMESTAMP_KEY) instanceof Timestamp) {
                                             return new ChatMessage(doc.getString(FROM_KEY), doc.getString(TEXT_KEY));
                                         }
                                         return null;
                                     })
                                     .collect(Collectors.toList());
-                                listener.accept(newMessages);
+                            listener.accept(newMessages);
                         }
                     }
                 });

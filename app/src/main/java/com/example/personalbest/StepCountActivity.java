@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import android.support.v4.app.*;
@@ -17,6 +16,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.personalbest.database.FirebaseAdapter;
+import com.example.personalbest.database.FirebaseFactory;
+import com.example.personalbest.database.IFirebase;
 import com.example.personalbest.fitness.Encouragement;
 import com.example.personalbest.fitness.FitnessService;
 import com.example.personalbest.fitness.FitnessServiceFactory;
@@ -44,9 +45,10 @@ public class StepCountActivity extends AppCompatActivity{
 
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
 
+    public static final String FIREBASEKEY = "FIREBASE_KEY";
     private static final String TAG = "StepCountActivity";
 
-    private FirebaseAdapter firebaseAdapter;
+    public IFirebase firebaseAdapter;
     private TextView textSteps;
     private TextView goalView;
 
@@ -67,12 +69,20 @@ public class StepCountActivity extends AppCompatActivity{
     EndDay endDay;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
-        firebaseAdapter=new FirebaseAdapter(this);
+        //FirebaseApp.initializeApp(this);
+
+        String firebaseType = this.getIntent().getStringExtra(FIREBASEKEY);
+
+
+       FirebaseFactory.createFirebase(firebaseType, this);
+
+        firebaseAdapter = FirebaseFactory.getFirebase();
 
         setContentView(R.layout.activity_step_count);
         textSteps = findViewById(R.id.textSteps);
@@ -290,9 +300,6 @@ public class StepCountActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
-
-
-
     public void launchFriendsList(View v){
         Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
@@ -361,7 +368,8 @@ public class StepCountActivity extends AppCompatActivity{
                 goalFrag = new GoalFragment();
                 goalFrag.show(getSupportFragmentManager(), "Goal");
             }
-            if(hour>=20) {
+            ArrayList<String> arrayList = saveLocal.getFriends();
+            if(hour>=20 && arrayList.size() == 0) {
                 encourage.showEncouragement();
             }
         }
