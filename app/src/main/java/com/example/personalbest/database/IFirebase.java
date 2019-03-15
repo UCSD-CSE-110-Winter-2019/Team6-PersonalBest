@@ -1,5 +1,9 @@
 package com.example.personalbest.database;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.Calendar;
 
 public interface IFirebase {
@@ -17,5 +21,9 @@ public interface IFirebase {
 
     void pushStepStats(Calendar time, int backgroundSteps, int exerciseSteps, String myEmail);
 
-    void saveFriendStepLocal(String friendEmail, Calendar date);
+    public Task<QuerySnapshot> saveFriendStepLocal(String friendEmail);
+
+    public Task<DocumentSnapshot> saveNewGoalsLocal(String email);
+
+    public void pushNewGoal(Calendar time, int goal);
 }

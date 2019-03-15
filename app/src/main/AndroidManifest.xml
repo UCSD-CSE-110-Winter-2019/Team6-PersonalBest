@@ -8,14 +8,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
+        <activity android:name=".MonthGraph"></activity>
         <activity
-            android:name=".MessageActivity"
-            android:parentActivityName=".FriendsListActivity" />
+            android:name=".MessageActivity" />
 
         <activity
-            android:name=".FriendsListActivity"
-            android:parentActivityName=".StepCountActivity" />
+            android:name=".FriendsListActivity"/>
 
         <activity android:name=".GraphActivity" />
 
