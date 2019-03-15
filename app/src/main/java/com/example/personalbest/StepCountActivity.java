@@ -1,9 +1,12 @@
 package com.example.personalbest;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
@@ -173,6 +176,23 @@ public class StepCountActivity extends AppCompatActivity{
         }
 
         endDay=new EndDay(saveLocal);
+        createNotifactionChannel();
+        NotifyService notifyService = new NotifyService();
+        Intent intent = new Intent();
+        startService(new Intent(this, notifyService.getClass()));
+
+    }
+
+    public void createNotifactionChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(getString(R.string.channel_id), name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     public void setGoal(long goalSteps) {
@@ -392,6 +412,22 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
 
+    public static long generateStartTime(Calendar cal) {
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
+    }
+
+    public static long generateEndTime(Calendar cal) {
+        cal.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 59);
+        return cal.getTimeInMillis();
+    }
 
 
 
