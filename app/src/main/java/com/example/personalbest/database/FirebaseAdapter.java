@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.personalbest.FirebaseCloudMessagingAdapter;
+import com.example.personalbest.NotificationService;
 import com.example.personalbest.Goal;
 import com.example.personalbest.SaveLocal;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -92,6 +94,8 @@ public class FirebaseAdapter implements IFirebase {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot added with ID: " + friendsEmail);
+
+                        subscribeToNotification(myEmail, friendsEmail);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -136,6 +140,33 @@ public class FirebaseAdapter implements IFirebase {
                         Log.w(TAG, "Error deleting document", e);
                     }
                 });
+
+    }
+
+    public void subscribeToNotification(String myEmail, String friendsEmail) {
+        String DOCUMENT_KEY = "";
+        if(myEmail.compareTo(friendsEmail)>0){
+            DOCUMENT_KEY=myEmail+friendsEmail;
+        }else{
+            DOCUMENT_KEY=friendsEmail+myEmail;
+        }
+        DOCUMENT_KEY = DOCUMENT_KEY.toString();
+        String NEW_KEY="";
+        String array1[] = DOCUMENT_KEY.split("@");
+        for(String s : array1){
+            NEW_KEY += s;
+        }
+        DOCUMENT_KEY = NEW_KEY;
+
+        NotificationService notificationService = FirebaseCloudMessagingAdapter.getInstance();
+
+        notificationService.subscribeToNotificationsTopic(DOCUMENT_KEY, task -> {
+            String msg = "Subscribed to notifications";
+            if (!task.isSuccessful()) {
+                msg = "Subscribe to notifications failed";
+            }
+            Log.d(TAG, msg);
+        });
     }
 
     @Override
@@ -155,6 +186,8 @@ public class FirebaseAdapter implements IFirebase {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot added with ID: " + friendsEmail);
+                        createChat(myEmail, friendsEmail);
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -163,6 +196,8 @@ public class FirebaseAdapter implements IFirebase {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
+
+
     }
 
     @Override
@@ -179,6 +214,7 @@ public class FirebaseAdapter implements IFirebase {
                         Map<String, Object> arr = documentSnapshot.getData();
                         if (documentSnapshot.getData() == null) {
                             addFriendOfficial(friendsEmail);
+
                         }
                     }
                 })
@@ -189,7 +225,41 @@ public class FirebaseAdapter implements IFirebase {
                     }
                 });
 
+    }
 
+    public void createChat(String myEmail, String friendsEmail) {
+        String DOCUMENT_KEY = "";
+        if(myEmail.compareTo(friendsEmail)>0){
+            DOCUMENT_KEY=myEmail+friendsEmail;
+        }else{
+            DOCUMENT_KEY=friendsEmail+myEmail;
+        }
+        DOCUMENT_KEY = DOCUMENT_KEY.toString();
+        String NEW_KEY="";
+        String array1[] = DOCUMENT_KEY.split("@");
+        for(String s : array1){
+            NEW_KEY += s;
+        }
+        DOCUMENT_KEY = NEW_KEY;
+
+        Map<String, Object> messages = new HashMap<>();
+
+        db.collection("chats")
+                .document(DOCUMENT_KEY)
+                .set(messages)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Success create chat");
+                        subscribeToNotification(myEmail, friendsEmail);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error set steps", e);
+                    }
+                });
     }
 
     private void addFriendOfficial(final String friendsEmail) {

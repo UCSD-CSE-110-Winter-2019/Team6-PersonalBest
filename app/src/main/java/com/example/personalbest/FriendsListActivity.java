@@ -55,7 +55,7 @@ public class FriendsListActivity extends AppCompatActivity {
                 Toast.makeText(FriendsListActivity.this, "you long clicked: " + arrayList.get(i), Toast.LENGTH_SHORT).show();
                 saveLocal.setLastClickedFriend(arrayList.get(i));
 
-                return false;
+                return true;
             }
         });/*
 
