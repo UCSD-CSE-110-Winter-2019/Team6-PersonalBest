@@ -99,7 +99,7 @@ public class StepCountActivity extends AppCompatActivity{
         //Set the goal and subgoal.
         goalSteps = saveLocal.getGoal();
         setGoal(goalSteps);
-        saveLocal.setCurrSubGoal(500);
+
         Calendar cal = Calendar.getInstance();
 
         //Create and start the background activity
@@ -364,6 +364,7 @@ public class StepCountActivity extends AppCompatActivity{
             }
             ArrayList<String> arrayList = saveLocal.getFriends();
             if(hour>=20 && arrayList.size() == 0) {
+            //if(hour>=20) {
                 encourage.showEncouragement();
             }
         }

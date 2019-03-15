@@ -22,9 +22,11 @@ public class Encouragement {
 
 
     public void showEncouragement() {
-        if(act.numSteps>=saveLocal.getCurrSubGoal()) {
+        int currSubGoal = saveLocal.getCurrSubGoal();
+        long numSteps = act.numSteps;
+        if(numSteps>=currSubGoal) {
             act.runOnUiThread(() -> {
-                int goalMet = ((int) act.numSteps / 500) * 500;
+                int goalMet = ((int) numSteps / 500) * 500;
                 int oldSubGoal = saveLocal.getOldSubGoal();
                 saveLocal.setOldSubGoal(goalMet);
                 saveLocal.setCurrSubGoal((int)act.numSteps+500);

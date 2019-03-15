@@ -10,12 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MessageActivity"
-            android:parentActivityName=".FriendsListActivity" />
+            android:name=".MessageActivity" />
 
         <activity
-            android:name=".FriendsListActivity"
-            android:parentActivityName=".StepCountActivity" />
+            android:name=".FriendsListActivity" />
 
         <activity android:name=".GraphActivity" />
 
