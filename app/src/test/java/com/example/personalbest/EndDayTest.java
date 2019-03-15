@@ -119,7 +119,7 @@ public class EndDayTest {
         for(int i=6;i>3;i--){
             assertEquals(0,saveLocal.getBackgroundStepCount(i));
             assertEquals(0,saveLocal.getBackgroundStepCount(i));
-            assertEquals(0,saveLocal.getGoals(i));
+            assertEquals(5000,saveLocal.getGoals(i));
         }
 
         assertEquals(20,saveLocal.getExerciseStepCount(0));

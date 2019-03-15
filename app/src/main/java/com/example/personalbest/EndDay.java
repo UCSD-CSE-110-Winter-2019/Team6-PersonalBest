@@ -55,7 +55,7 @@ public class EndDay {
                 saveLocal.clearStepData();
                 numDays = 6;
             } else newDayShift(numDays);
-            for (int i = 1; i <= numDays; i++) {
+            for (int i = 1; i <= 6; i++) {
                 fitnessService.updateBackgroundCount(currDay, i);
             }
         }
@@ -66,7 +66,7 @@ public class EndDay {
                 saveLocal.clearStepData();
                 numDays = 6;
             } else newDayShift(numDays);
-            for (int i = 6; i >= 7-numDays; i++) {
+            for (int i = 1; i <= 6; i++) {
                 fitnessService.updateBackgroundCount(currDay, i);
             }
         }
@@ -99,7 +99,7 @@ public class EndDay {
                 saveLocal.setExerciseStepCount(0,saveLocal.DAYS_TO_KEEP_TRACK_OF-1);
                 saveLocal.setBackgroundStepCount(0, 0);
                 saveLocal.setBackgroundStepCount(0,saveLocal.DAYS_TO_KEEP_TRACK_OF-1);
-                saveLocal.setPreviousDayGoal(0,saveLocal.DAYS_TO_KEEP_TRACK_OF-1);
+                saveLocal.setPreviousDayGoal(5000,saveLocal.DAYS_TO_KEEP_TRACK_OF-1);
 
             }
         }

@@ -255,12 +255,12 @@ public class StepCountActivity extends AppCompatActivity{
         onResume();
 
     }
-    private void insert500Steps(Calendar currTime){
+    private void insert10Steps(Calendar currTime){
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(currTime.getTimeInMillis());
 
         long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.SECOND, -50);
+        cal.add(Calendar.SECOND, -1);
         long startTime = cal.getTimeInMillis();
 
         // Create a data source
@@ -273,7 +273,7 @@ public class StepCountActivity extends AppCompatActivity{
                         .build();
 
         // Create a data set
-        int stepCountDelta = 500;
+        int stepCountDelta = 10;
         DataSet dataSet = DataSet.create(dataSource);
 
         // For each data point, specify a start time, end time, and the data value -- in this case,
@@ -293,20 +293,20 @@ public class StepCountActivity extends AppCompatActivity{
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.i(TAG, "Successfully added 500 steps!");
+                        Log.i(TAG, "Successfully added 10 steps!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.i(TAG, "There was a problem adding 500 steps.");
+                        Log.i(TAG, "There was a problem adding 10 steps.");
                     }
                 });
         firebaseAdapter.getUsers();
     }
 
     public void putData(View view){
-        insert500Steps(Calendar.getInstance());
+        insert10Steps(Calendar.getInstance());
 
 
     }
