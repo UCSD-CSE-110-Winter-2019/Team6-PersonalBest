@@ -22,17 +22,20 @@ public class Encouragement {
 
 
     public void showEncouragement() {
-        if(act.numSteps>=saveLocal.getCurrSubGoal()) {
-            act.runOnUiThread(() -> {
-                int goalMet = ((int) act.numSteps / 500) * 500;
-                int oldSubGoal = saveLocal.getOldSubGoal();
-                saveLocal.setOldSubGoal(goalMet);
-                saveLocal.setCurrSubGoal((int)act.numSteps+500);
-                int stepsIncreased = goalMet-oldSubGoal;
-                Toast t = Toast.makeText(act, "You've increased your daily steps by over "
-                        +stepsIncreased+ " steps. Keep up the good work!", Toast.LENGTH_LONG);
-                t.show();
-            });
+        if (saveLocal.getFriends().size()>0){
+            int currSubGoal = saveLocal.getCurrSubGoal();
+            if(act.numSteps>=currSubGoal) {
+                act.runOnUiThread(() -> {
+                    int goalMet = ((int) act.numSteps / 500) * 500;
+                    int oldSubGoal = saveLocal.getOldSubGoal();
+                    saveLocal.setOldSubGoal(goalMet);
+                    saveLocal.setCurrSubGoal(goalMet + 500);
+                    int stepsIncreased = goalMet - oldSubGoal;
+                    Toast t = Toast.makeText(act, "You've increased your daily steps by over "
+                            + stepsIncreased + " steps. Keep up the good work!", Toast.LENGTH_LONG);
+                    t.show();
+                });
+            }
         }
     }
 }
