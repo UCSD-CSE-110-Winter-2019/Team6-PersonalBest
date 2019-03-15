@@ -5,20 +5,28 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.personalbest.Goal;
 import com.example.personalbest.SaveLocal;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -286,40 +294,90 @@ public class FirebaseAdapter implements IFirebase {
                 });
     }
 
-    @Override
-    public void saveFriendStepLocal(String friendEmail, Calendar date){
 
+    public Task<QuerySnapshot> saveFriendStepLocal(String friendEmail){
+        Log.d("Query Results", "Went into method");
+        Task<QuerySnapshot> task= db.collection("users")
+                .document(friendEmail)
+                .collection("steps")
+                .get();
+
+               return task;
+    }
+
+    public void pushNewGoal(Calendar time, int goal){
         Calendar newCal=Calendar.getInstance();
-        newCal.setTimeInMillis(date.getTimeInMillis());
+        newCal.setTimeInMillis(time.getTimeInMillis());
         newCal.set(Calendar.HOUR_OF_DAY,0);
         newCal.set(Calendar.MINUTE,0);
         newCal.set(Calendar.SECOND,0);
         newCal.set(Calendar.MINUTE,0);
         newCal.set(Calendar.SECOND,0);
         newCal.set(Calendar.MILLISECOND,0);
-        String dateKey=newCal.get(Calendar.DAY_OF_MONTH)+"-"+((int)newCal.get(Calendar.MONTH)+1)+"-"+newCal.get(Calendar.YEAR);
-        db.collection("users")
-                .document(friendEmail)
-                .collection("steps")
-                .document(""+dateKey)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            Map<String,Object> steps= task.getResult().getData();
-                            if(steps==null) return;
-                            long backgroundSteps=((long)steps.get("Background"));
-                            long exerciseSteps=(long)steps.get("Exercise");
-                            saveLocal.setAccountBackgroundStep(friendEmail,(int)backgroundSteps,date);
-                            saveLocal.setAccountExerciseStep(friendEmail,(int)exerciseSteps,date);
-                            Log.d(TAG, "Steps saved locally for " +friendEmail+ " => Background: "
-                                    +backgroundSteps+", Exercise: "+exerciseSteps+" Date: "+dateKey);
 
-                        } else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
-                        }
+        Date newGoalDate= new Date();
+        newGoalDate.setTime(newCal.getTimeInMillis());
+        String dateKey=newCal.get(Calendar.DAY_OF_MONTH)+"-"+(newCal.get(Calendar.MONTH)+1)+"-"+newCal.get(Calendar.YEAR);
+
+        DocumentReference goalsDocument=db.collection("users")
+                .document(saveLocal.getEmail())
+                .collection("New Goals")
+                .document("Goals");
+
+        goalsDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+
+                    Map<String, Object> map=document.getData();
+                    if(map==null){
+                        map=new HashMap<>();
                     }
-                });
+                    Goal newGoal=new Goal(newGoalDate,goal);
+                    map.put(dateKey,newGoal);
+                    goalsDocument.set(map);
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
+    public Task<DocumentSnapshot> saveNewGoalsLocal(String email) {
+        DocumentReference goalsDocument = db.collection("users")
+                .document(email)
+                .collection("New Goals")
+                .document("Goals");
+        ArrayList<Goal> newGoals = new ArrayList<>();
+
+        Task<DocumentSnapshot> task = goalsDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> map = document.getData();
+                        for (Object o : map.values()) {
+                            HashMap<String, Object> returnedGoal = (HashMap<String, Object>) o;
+                            Timestamp newTimestamp = (Timestamp) returnedGoal.get("date");
+                            Date derivedDate = newTimestamp.toDate();
+                            long stepCount = (long) returnedGoal.get("stepGoal");
+                            Goal oneGoal = new Goal(derivedDate, stepCount);
+                            newGoals.add(oneGoal);
+                        }
+                        saveLocal.setNewGoals(newGoals, email);
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
+        return task;
+    }
+
 }

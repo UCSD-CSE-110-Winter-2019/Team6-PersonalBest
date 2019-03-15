@@ -10,28 +10,16 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.example.personalbest.ChatMessageService;
-import com.example.personalbest.ChatMessageServiceFactory;
-import com.example.personalbest.FirebaseFirestoreAdapter;
-import com.example.personalbest.FirebaseCloudMessagingAdapter;
-import com.example.personalbest.NotificationService;
-import com.example.personalbest.NotificationServiceFactory;
-import com.google.firebase.FirebaseApp;
-
-import android.support.v7.app.AppCompatActivity;
 
 public class MessageActivity extends AppCompatActivity {
     public static final String SHARED_PREFERENCES_NAME = "FirebaseLabApp";
@@ -86,7 +74,16 @@ public class MessageActivity extends AppCompatActivity {
         subscribeToNotificationsTopic();
 
         TextView nameView = findViewById((R.id.user_name));
-        nameView.setText(myEmail);
+
+        nameView.setText(saveLocal.getEmail());
+
+
+        //DELETE
+        ArrayList<Goal> goals=saveLocal.getNewGoals(friendEmail);
+
+
+
+
     }
 
     private void sendMessage() {

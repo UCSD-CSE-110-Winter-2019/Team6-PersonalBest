@@ -178,6 +178,9 @@ public class StepCountActivity extends AppCompatActivity{
 
     public void setGoal(long goalSteps) {
         goalView.setText("Goal: "+goalSteps);
+        if(!saveLocal.getEmail().equals("NO EMAIL")) {
+            firebaseAdapter.pushNewGoal(Calendar.getInstance(), (int) goalSteps);
+        }
     }
 
 
@@ -230,11 +233,7 @@ public class StepCountActivity extends AppCompatActivity{
         for (String s: arr) {
             Log.d("TAGTAG", s);
         }
-        //firebaseAdapter.saveFriendStepLocal("anilermi@gmail.com", Calendar.getInstance());
-
         onResume();
-        //printSteps();
-
 
     }
     private void insert500Steps(Calendar currTime){
@@ -294,6 +293,7 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void launchGraphActivity(View view) {
+        firebaseAdapter.saveNewGoalsLocal(saveLocal.getEmail());
         Intent intent = new Intent(this, GraphActivity.class);
         int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
         intent.putExtra("numSteps", dailySteps);
@@ -317,6 +317,12 @@ public class StepCountActivity extends AppCompatActivity{
         }
     }
 
+
+    public void MonthGraph(View view){
+        Intent intent = new Intent(this, MonthGraph.class);
+        intent.putExtra("email", saveLocal.getEmail());
+        startActivity(intent);
+    }
 
     public class Background extends AsyncTask<String, String, String> {
         DialogFragment goalFrag;

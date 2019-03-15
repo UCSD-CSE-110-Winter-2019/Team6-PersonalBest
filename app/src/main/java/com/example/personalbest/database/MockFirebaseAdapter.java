@@ -5,6 +5,9 @@ import android.support.v4.content.res.FontResourcesParserCompat;
 import android.util.Log;
 
 import com.example.personalbest.SaveLocal;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,7 +72,17 @@ public class MockFirebaseAdapter implements IFirebase {
     }
 
     @Override
-    public void saveFriendStepLocal(String friendEmail, Calendar date) {
+    public Task<QuerySnapshot> saveFriendStepLocal(String friendEmail) {
+        return null;
+    }
+
+    @Override
+    public Task<DocumentSnapshot> saveNewGoalsLocal(String email) {
+        return null;
+    }
+
+    @Override
+    public void pushNewGoal(Calendar time, int goal) {
 
     }
 }
