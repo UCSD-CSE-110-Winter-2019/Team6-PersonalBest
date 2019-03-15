@@ -159,18 +159,11 @@ public class GoogleFitAdapter implements FitnessService {
         }
         //Find the end of the day
         Calendar cal=Calendar.getInstance();
-        cal.setTimeInMillis(currentTime.getTimeInMillis());
-        cal.set(Calendar.HOUR_OF_DAY,23);
-        cal.set(Calendar.MINUTE,59);
-        cal.set(Calendar.SECOND,59);
-        cal.set(Calendar.MILLISECOND,59);
-        long endTime = cal.getTimeInMillis();
+
+        long endTime = StepCountActivity.generateEndTime(cal);
         //Find the start of the day
-        cal.set(Calendar.HOUR_OF_DAY,0);
-        cal.set(Calendar.MINUTE,0);
-        cal.set(Calendar.SECOND,0);
-        cal.set(Calendar.MILLISECOND,0);
-        long startTime = cal.getTimeInMillis();
+
+        long startTime = StepCountActivity.generateStartTime(cal);
 
         DataReadRequest readRequest =
                 new DataReadRequest.Builder()
@@ -246,19 +239,11 @@ public class GoogleFitAdapter implements FitnessService {
 
         //Find the end of the desired day
         Calendar cal=Calendar.getInstance();
-        cal.setTimeInMillis(currentTime.getTimeInMillis());
-        cal.add(Calendar.DAY_OF_YEAR, -daysBefore);
-        cal.set(Calendar.HOUR_OF_DAY,23);
-        cal.set(Calendar.MINUTE,59);
-        cal.set(Calendar.SECOND,59);
-        cal.set(Calendar.MILLISECOND,59);
-        long endTime = cal.getTimeInMillis();
+
+        long endTime = StepCountActivity.generateEndTime(cal);
         //Find the start of the desired day
-        cal.set(Calendar.HOUR_OF_DAY,0);
-        cal.set(Calendar.MINUTE,0);
-        cal.set(Calendar.SECOND,0);
-        cal.set(Calendar.MILLISECOND,0);
-        long startTime = cal.getTimeInMillis();
+
+        long startTime = StepCountActivity.generateStartTime(cal);
 
         listenStepCount(startTime,endTime,new UpdateBackgroundListener(activity,daysBefore,this),new UpdateBackgroundListener(activity,daysBefore,this));
     }
