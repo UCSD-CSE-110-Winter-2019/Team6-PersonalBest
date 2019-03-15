@@ -1,12 +1,6 @@
 package com.example.personalbest;
 
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+
 import android.util.Log;
 
 import com.example.personalbest.fitness.FitnessService;
@@ -51,24 +45,22 @@ public class EndDay {
         //If the shift is into the future
         if(numDays>0) {
             //If the shift is more than 6 days, clear data
-            if (numDays >= 7) {
+            if (numDays >= 28) {
                 saveLocal.clearStepData();
                 saveLocal.clearGoalData();
-                numDays = 6;
             } else newDayShift(numDays);
-            for (int i = 1; i <= 6; i++) {
+            for (int i = 1; i <= 27; i++) {
                 fitnessService.updateBackgroundCount(currDay, i);
             }
         }
         //If the shift is backwards in time
         else if (numDays<0){
             //If the shift is more than 6 days, clear data
-            if (numDays <= -7) {
+            if (numDays <= -28) {
                 saveLocal.clearStepData();
                 saveLocal.clearGoalData();
-                numDays = 6;
             } else newDayShift(numDays);
-            for (int i = 1; i <= 6; i++) {
+            for (int i = 1; i <= 27; i++) {
                 fitnessService.updateBackgroundCount(currDay, i);
             }
         }

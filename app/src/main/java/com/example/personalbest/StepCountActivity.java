@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.personalbest.database.FirebaseAdapter;
 import com.example.personalbest.database.FirebaseFactory;
 import com.example.personalbest.database.IFirebase;
 import com.example.personalbest.fitness.Encouragement;
@@ -37,7 +36,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-//import com.google.auth.oauth2.GoogleCredentials;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -312,6 +310,10 @@ public class StepCountActivity extends AppCompatActivity{
     }
 
     public void launchGraphActivity(View view) {
+        Calendar currDay=Calendar.getInstance();
+        for(int i=1;i<28;i++){
+            fitnessService.updateBackgroundCount(currDay,i);
+        }
         firebaseAdapter.saveNewGoalsLocal(saveLocal.getEmail());
         Intent intent = new Intent(this, GraphActivity.class);
         int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
