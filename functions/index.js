@@ -41,7 +41,7 @@ exports.addTimeStamp = functions.firestore
             });
         }
 
-        return "document was null or emtpy";
+        return "document was null or empty";
       });
 
 

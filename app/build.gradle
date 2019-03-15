@@ -51,6 +51,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:18.1.0'
     //implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.google.firebase:firebase-iid:17.1.0'
     implementation 'com.google.firebase:firebase-messaging:17.4.0'
     implementation 'com.google.firebase:firebase-auth:16.1.0'
     testImplementation 'junit:junit:4.12'

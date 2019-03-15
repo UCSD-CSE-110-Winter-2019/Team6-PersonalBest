@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 
 import android.content.Context;
-import android.provider.Settings;
-import android.util.Log;
 
-import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -144,7 +141,6 @@ public class SaveLocal {
     public void setCurrSubGoal(int subGoal){
         editor.putInt("currsubGoal", subGoal);
         editor.apply();
-
     }
     public void setOldSubGoal(int old){
         editor.putInt("oldSubGoal", old);
@@ -285,21 +281,23 @@ public class SaveLocal {
         String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
         String key=accountEmail+dateString+"background";
         editor.putInt(key,backgroundStepCount);
+        editor.apply();
     }
     public void setAccountExerciseStep(String accountEmail, int exerciseStepCount, Calendar date){
         String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
         String key=accountEmail+dateString+"exercise";
         editor.putInt(key,exerciseStepCount);
+        editor.apply();
     }
     public int getAccountBackgroundStep(String accountEmail, Calendar date){
         String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
         String key=accountEmail+dateString+"background";
-        return  exercisePreferences.getInt(key,-1);
+        return  exercisePreferences.getInt(key,0);
     }
     public int getAccountExerciseStep(String accountEmail, Calendar date){
         String dateString=date.get(Calendar.DAY_OF_MONTH)+"-"+((int)date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.YEAR);
         String key=accountEmail+dateString+"exercise";
-        return  exercisePreferences.getInt(key,-1);
+        return  exercisePreferences.getInt(key,0);
     }
     public void setLastClickedFriend(String friend){
         editor.putString("LastClickedFriend", friend);
@@ -307,5 +305,22 @@ public class SaveLocal {
     }
     public String getLastCLickedFriend(){
         return exercisePreferences.getString("LastClickedFriend", null);
+    }
+
+
+    public void setNewGoals(ArrayList<Goal> arr, String email) {
+        Gson gson = new Gson();
+        String json = gson.toJson(arr); //tasks is an ArrayList instance variable
+        editor.putString("newGoals"+email, json);
+        editor.commit();
+    }
+
+    public ArrayList<Goal> getNewGoals(String email) {
+        Gson gson = new Gson();
+        String json = exercisePreferences.getString("newGoals"+email, "");
+        if (json.length() == 0)
+            return new ArrayList<Goal>();
+        ArrayList<Goal> arr = gson.fromJson(json, new TypeToken<ArrayList<Goal>>(){}.getType());
+        return arr;
     }
 }
