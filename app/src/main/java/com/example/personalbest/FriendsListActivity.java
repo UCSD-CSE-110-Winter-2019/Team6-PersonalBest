@@ -99,6 +99,7 @@ public class FriendsListActivity extends AppCompatActivity {
     public void launchFriendGraph(String email){
         Intent intent = new Intent(this, MonthGraph.class);
         intent.putExtra("email", email);
+        intent.putExtra("days", 28);
         startActivity(intent);
     }
 }

@@ -55,7 +55,7 @@ public class MonthGraph extends AppCompatActivity {
     private int daysToShow;
 
     private final String[] labels = {"Exercise Steps", "Background Steps"};
-    private final int[] colors = {0xff0000ff, 0xff5B2C6F};
+    private final int[] colors = {0xffff0000, 0xffabcdef};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,8 +195,8 @@ public class MonthGraph extends AppCompatActivity {
 
         LineDataSet lineDataSet = new LineDataSet(lineEntries, "");
         lineDataSet.setLineWidth(3f);
-        lineDataSet.setColor(0xffff0000);
-        lineDataSet.setCircleColor(0xffff0000);
+        lineDataSet.setColor(0xff008000);
+        lineDataSet.setCircleColor(0xff008000);
         lineDataSet.setLabel("Goal");
         lineDataSet.setDrawValues(false);
 
