@@ -22,7 +22,6 @@ public class Encouragement {
 
 
     public void showEncouragement() {
-        if (saveLocal.getFriends().size()>0){
             int currSubGoal = saveLocal.getCurrSubGoal();
             if(act.numSteps>=currSubGoal) {
                 act.runOnUiThread(() -> {
@@ -36,6 +35,5 @@ public class Encouragement {
                     t.show();
                 });
             }
-        }
     }
 }

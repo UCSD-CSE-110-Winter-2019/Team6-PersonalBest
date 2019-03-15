@@ -99,7 +99,6 @@ public class StepCountActivity extends AppCompatActivity{
         //Set the goal and subgoal.
         goalSteps = saveLocal.getGoal();
         setGoal(goalSteps);
-        saveLocal.setCurrSubGoal(500);
         Calendar cal = Calendar.getInstance();
 
         //Create and start the background activity
