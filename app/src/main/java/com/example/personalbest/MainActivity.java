@@ -16,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String docKey = getIntent().getStringExtra("from");
+
         setContentView(R.layout.activity_step_count);
 
         FitnessServiceFactory.put(fitnessServiceKey, new FitnessServiceFactory.BluePrint() {
@@ -26,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         launchStepCountActivity();
+        if(docKey != null){
+            launchMessageActivity(docKey);
+        }
     }
 
     public void launchStepCountActivity() {
@@ -36,5 +42,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void setFitnessServiceKey(String fitnessServiceKey) {
         this.fitnessServiceKey = fitnessServiceKey;
+    }
+
+    public void launchMessageActivity(String docKey){
+        Intent intent = new Intent(this, MessageActivity.class);
+        String array1[] = docKey.split("/topics/");
+        intent.putExtra("DOCUMENT_KEY", array1[1]);
+        startActivity(intent);
     }
 }

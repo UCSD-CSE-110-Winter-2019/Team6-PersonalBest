@@ -144,7 +144,6 @@ public class SaveLocal {
     public void setCurrSubGoal(int subGoal){
         editor.putInt("currsubGoal", subGoal);
         editor.apply();
-
     }
     public void setOldSubGoal(int old){
         editor.putInt("oldSubGoal", old);
