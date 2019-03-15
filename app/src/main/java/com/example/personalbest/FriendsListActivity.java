@@ -37,7 +37,8 @@ public class FriendsListActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(FriendsListActivity.this, "you clicked: " + arrayList.get(i).toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(FriendsListActivity.this, "you clicked: " + arrayList.get(i).toString(), Toast.LENGTH_SHORT).show();
+                launchFriendGraph(arrayList.get(i));
             }
         });
 
@@ -52,9 +53,10 @@ public class FriendsListActivity extends AppCompatActivity {
 
                 Toast.makeText(FriendsListActivity.this, "you long clicked: " + arrayList.get(i), Toast.LENGTH_SHORT).show();
                 saveLocal.setLastClickedFriend(arrayList.get(i));
+
                 return false;
             }
-        });
+        });/*
 
         for (String friend : arrayList) {
 
@@ -70,7 +72,7 @@ public class FriendsListActivity extends AppCompatActivity {
                 Log.d("Friend Data","Saved "+friend+" data for day "+dateKey);
                 i++;
             }
-        }
+        }*/
     }
 
     void fillArray(ArrayList <String> arr){
@@ -90,6 +92,12 @@ public class FriendsListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MessageActivity.class);
         //int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
         //intent.putExtra("numSteps", dailySteps);
+        startActivity(intent);
+    }
+
+    public void launchFriendGraph(String email){
+        Intent intent = new Intent(this, MonthGraph.class);
+        intent.putExtra("email", email);
         startActivity(intent);
     }
 }

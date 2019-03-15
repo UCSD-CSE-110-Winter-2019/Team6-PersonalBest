@@ -1,5 +1,6 @@
 package com.example.personalbest;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,11 +24,13 @@ public class GraphActivity extends AppCompatActivity {
     private final String[] labels = {"Exercise Steps", "Background Steps"};
     private final int[] colors = {0xff0000ff, 0xff5B2C6F};
     private int numSteps;
+    private SaveLocal saveLocal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
+
 
         numSteps = getIntent().getIntExtra("numSteps", 0);
 
@@ -41,7 +44,7 @@ public class GraphActivity extends AppCompatActivity {
 
         CombinedChart combinedChart = findViewById(R.id.combinedChart);
 
-        SaveLocal saveLocal = new SaveLocal(this);
+        saveLocal = new SaveLocal(this);
 
         long[] exercise = getExercise(saveLocal);
         long[] background = getBackground(saveLocal);
@@ -121,7 +124,7 @@ public class GraphActivity extends AppCompatActivity {
         for(int i = 1; i < 7; i++){
             background[6-i] = saveLocal.getBackgroundStepCount(i);
         }
-        background[6] = numSteps- saveLocal.getExerciseStepCount(0);
+        background[6] = numSteps - saveLocal.getExerciseStepCount(0);
         return background;
     }
     public long[] getExercise(SaveLocal saveLocal){
@@ -138,5 +141,11 @@ public class GraphActivity extends AppCompatActivity {
         }
         goals[6] = saveLocal.getGoal();
         return goals;
+    }
+
+    public void launchMonth(View view){
+        Intent intent = new Intent(this, MonthGraph.class);
+        intent.putExtra("email", saveLocal.getEmail());
+        startActivity(intent);
     }
 }

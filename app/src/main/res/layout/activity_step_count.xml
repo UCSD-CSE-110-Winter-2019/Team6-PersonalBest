@@ -97,4 +97,5 @@
         android:onClick="addFriend"
         android:text="Add Friend" />
 
+
 </LinearLayout>

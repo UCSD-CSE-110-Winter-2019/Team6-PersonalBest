@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import java.util.Date;
 
 public class Goal
-//        implements Comparable
+        implements Comparable
 {
     private Date date;
     private long stepGoal;
@@ -26,14 +26,14 @@ public class Goal
         return "Date: "+date.toString()+" Goal: "+stepGoal;
     }
 
-//    @Override
-//    public int compareTo(@NonNull Object o) {
-//        if(this.getDate().getTime()>((Goal) o).getDate().getTime()) {
-//            return 1;
-//        }
-//        else if(this.getDate().getTime()==((Goal) o).getDate().getTime()){
-//            return 0;
-//        }
-//        else return -1;
-//    }
+    @Override
+    public int compareTo(@NonNull Object o) {
+        if(this.getDate().getTime()>((Goal) o).getDate().getTime()) {
+            return 1;
+        }
+        else if(this.getDate().getTime()==((Goal) o).getDate().getTime()){
+            return 0;
+        }
+        else return -1;
+    }
 }

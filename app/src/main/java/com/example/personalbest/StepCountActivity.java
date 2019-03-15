@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import android.support.v4.app.*;
@@ -309,6 +310,12 @@ public class StepCountActivity extends AppCompatActivity{
         }
     }
 
+
+    public void MonthGraph(View view){
+        Intent intent = new Intent(this, MonthGraph.class);
+        intent.putExtra("email", saveLocal.getEmail());
+        startActivity(intent);
+    }
 
     public class Background extends AsyncTask<String, String, String> {
         DialogFragment goalFrag;
