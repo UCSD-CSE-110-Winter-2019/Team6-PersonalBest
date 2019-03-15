@@ -71,7 +71,6 @@ public class MessageActivity extends AppCompatActivity {
         initMessageUpdateListener();
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
-        subscribeToNotificationsTopic();
 
         TextView nameView = findViewById((R.id.user_name));
 
@@ -127,6 +126,7 @@ public class MessageActivity extends AppCompatActivity {
                     notificationManagerCompat.notify(3, builder.build());*/
                 });
     }
+
 
     private void setSenderAndMsg(String newString, String newMsg){
         lastSender = newString+" sent you a message";
