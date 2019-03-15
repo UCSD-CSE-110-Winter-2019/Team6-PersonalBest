@@ -138,7 +138,9 @@ public class NotifyService extends Service {
                                                 int steps = GoogleFitAdapter.getSteps(dataReadResponse);
                                                 int goal = sharedPreferences.getInt("goal", -1);
                                                 boolean bool = sharedPreferences.getBoolean("goalNotification", false);
+                                                Log.i("Notification", "Checking if user has met goal");
                                                 if (steps > goal && !bool) {
+                                                    Log.i("Notification", "Notified User that goal achieved");
                                                     sendNotification(var);
                                                 }
                                             }
