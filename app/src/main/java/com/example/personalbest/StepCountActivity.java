@@ -369,6 +369,7 @@ public class StepCountActivity extends AppCompatActivity{
             }
             ArrayList<String> arrayList = saveLocal.getFriends();
             if(hour>=20 && arrayList.size() == 0) {
+            //if(hour>=20) {
                 encourage.showEncouragement();
             }
         }

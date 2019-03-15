@@ -39,6 +39,7 @@ public class WalkStats {
         long steps_temp = act.numSteps - steps;
 
         float distance = calc.calcDistance(steps_temp);
+
         float speed = calc.calcSpeed(startTime, endTime, distance);
         save.setSpeed(speed);
 
