@@ -227,7 +227,7 @@ public class MonthGraph extends AppCompatActivity {
         EditText messageView = findViewById(R.id.messageGraph);
 
         Map<String, String> newMessage = new HashMap<>();
-        newMessage.put(FROM_KEY, email);
+        newMessage.put(FROM_KEY, saveLocal.getEmail());
         newMessage.put(TIMESTAMP_KEY, String.valueOf(new Date().getTime()));
         newMessage.put(TEXT_KEY, messageView.getText().toString());
 
