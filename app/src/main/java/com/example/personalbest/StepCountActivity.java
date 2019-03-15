@@ -134,12 +134,14 @@ public class StepCountActivity extends AppCompatActivity{
         startExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onResume();
+                Calendar calendar=Calendar.getInstance();
+                fitnessService.updateStepCount(calendar);
                 if(exercise.isActive()){
 
                     //STOP EXERCISING
                     startExerciseButton.setText("Start Exercise");
                     startExerciseButton.setBackgroundColor(Color.parseColor("#06A62B"));
-                    Calendar calendar=Calendar.getInstance();
                     exercise.stopExercise(calendar);
 
                     stats.update();
@@ -149,7 +151,6 @@ public class StepCountActivity extends AppCompatActivity{
                     //START EXERCISING
                     startExerciseButton.setText("Stop Exercise");
                     startExerciseButton.setBackgroundColor(Color.parseColor("#FF0000"));
-                    Calendar calendar=Calendar.getInstance();
                     exercise.startExercise(calendar);
                     stats.update();
                 }
@@ -246,10 +247,10 @@ public class StepCountActivity extends AppCompatActivity{
     public void updateSteps(View view) {
         firebaseAdapter.getUsers();
 
-        ArrayList<String> arr = saveLocal.getFriends();
-        for (String s: arr) {
-            Log.d("TAGTAG", s);
-        }
+//        ArrayList<String> arr = saveLocal.getFriends();
+//        for (String s: arr) {
+//            Log.d("TAGTAG", s);
+//        }
         onResume();
 
     }
@@ -305,6 +306,7 @@ public class StepCountActivity extends AppCompatActivity{
 
     public void putData(View view){
         insert10Steps(Calendar.getInstance());
+        onResume();
 
 
     }
