@@ -239,7 +239,7 @@ public class SaveLocal {
     }
     public void clearGoalData() {
         for (int i = 0; i < DAYS_TO_KEEP_TRACK_OF; i++) {
-            setPreviousDayGoal(0, i);
+            setPreviousDayGoal(5000, i);
         }
     }
 

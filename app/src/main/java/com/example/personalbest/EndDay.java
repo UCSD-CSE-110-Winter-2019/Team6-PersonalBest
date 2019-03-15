@@ -53,6 +53,7 @@ public class EndDay {
             //If the shift is more than 6 days, clear data
             if (numDays >= 7) {
                 saveLocal.clearStepData();
+                saveLocal.clearGoalData();
                 numDays = 6;
             } else newDayShift(numDays);
             for (int i = 1; i <= 6; i++) {
@@ -64,6 +65,7 @@ public class EndDay {
             //If the shift is more than 6 days, clear data
             if (numDays <= -7) {
                 saveLocal.clearStepData();
+                saveLocal.clearGoalData();
                 numDays = 6;
             } else newDayShift(numDays);
             for (int i = 1; i <= 6; i++) {
