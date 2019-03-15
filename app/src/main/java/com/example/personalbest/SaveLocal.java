@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class SaveLocal {
-    final int DAYS_TO_KEEP_TRACK_OF=7;
+    final int DAYS_TO_KEEP_TRACK_OF=28;
 
     private SharedPreferences exercisePreferences;
     private SharedPreferences.Editor editor;
@@ -239,7 +239,7 @@ public class SaveLocal {
     }
     public void clearGoalData() {
         for (int i = 0; i < DAYS_TO_KEEP_TRACK_OF; i++) {
-            setPreviousDayGoal(0, i);
+            setPreviousDayGoal(5000, i);
         }
     }
 

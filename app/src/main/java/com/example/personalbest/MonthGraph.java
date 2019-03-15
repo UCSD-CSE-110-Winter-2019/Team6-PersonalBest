@@ -1,5 +1,6 @@
 package com.example.personalbest;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,18 +47,15 @@ public class MonthGraph extends AppCompatActivity {
     private CombinedChart combinedChart;
     private CombinedData combinedData;
     private TextView waitText;
-    private EditText message;
     private ChatMessageService chat;
     private String DOCUMENT_KEY;
     private String FROM_KEY = "from";
     private String TEXT_KEY = "text";
     private String TIMESTAMP_KEY = "timestamp";
-    private int[] workout;
-    private int[] background;
-    private Goal[] goals;
+    private int daysToShow;
 
     private final String[] labels = {"Exercise Steps", "Background Steps"};
-    private final int[] colors = {0xff0000ff, 0xff5B2C6F};
+    private final int[] colors = {0xffff0000, 0xffabcdef};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +64,11 @@ public class MonthGraph extends AppCompatActivity {
 
         saveLocal = new SaveLocal(this);
         email = getIntent().getStringExtra("email");
+        daysToShow = getIntent().getIntExtra("days", 28);
+        if(daysToShow == 28){
+            View btnMonth = findViewById(R.id.daysDisplayed);
+            btnMonth.setVisibility(View.GONE);
+        }
         String myEmail=saveLocal.getEmail();
         if(myEmail.compareTo(email)>0){
             DOCUMENT_KEY=myEmail + email;
@@ -139,13 +142,8 @@ public class MonthGraph extends AppCompatActivity {
                 waitText.setVisibility(View.GONE);
                 combinedChart.setVisibility(View.VISIBLE);
 
-
-
                 int[] goals = getGoals(email, saveLocal);
                 addLine(goals);
-
-
-                //buildGraph(combinedChart, workoutSteps, backgroundSteps, goals);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -177,8 +175,8 @@ public class MonthGraph extends AppCompatActivity {
 
         combinedChart.setData(combinedData);
         combinedChart.getXAxis().setDrawLabels(false);
-        combinedChart.setVisibleXRangeMaximum(14);
-        combinedChart.moveViewToX(14);
+        combinedChart.setVisibleXRangeMaximum(daysToShow / 2);
+        combinedChart.moveViewToX(daysToShow / 2);
 
         XAxis xAxis = combinedChart.getXAxis();
         xAxis.setSpaceMin(barData.getBarWidth() / 2f);
@@ -197,8 +195,8 @@ public class MonthGraph extends AppCompatActivity {
 
         LineDataSet lineDataSet = new LineDataSet(lineEntries, "");
         lineDataSet.setLineWidth(3f);
-        lineDataSet.setColor(0xffff0000);
-        lineDataSet.setCircleColor(0xffff0000);
+        lineDataSet.setColor(0xff008000);
+        lineDataSet.setCircleColor(0xff008000);
         lineDataSet.setLabel("Goal");
         lineDataSet.setDrawValues(false);
 
@@ -229,7 +227,7 @@ public class MonthGraph extends AppCompatActivity {
         EditText messageView = findViewById(R.id.messageGraph);
 
         Map<String, String> newMessage = new HashMap<>();
-        newMessage.put(FROM_KEY, email);
+        newMessage.put(FROM_KEY, saveLocal.getEmail());
         newMessage.put(TIMESTAMP_KEY, String.valueOf(new Date().getTime()));
         newMessage.put(TEXT_KEY, messageView.getText().toString());
 
@@ -241,10 +239,10 @@ public class MonthGraph extends AppCompatActivity {
     }
 
     public int[] getBackgroundSteps(String email, SaveLocal saveLocal){
-        int[] steps = new int[28];
+        int[] steps = new int[daysToShow];
         Calendar calendar = Calendar.getInstance();
-        steps[27] = saveLocal.getAccountBackgroundStep(email, calendar);
-        for(int i = 26; i >= 0; i--){
+        steps[daysToShow - 1] = saveLocal.getAccountBackgroundStep(email, calendar);
+        for(int i = daysToShow - 2; i >= 0; i--){
             calendar.add(Calendar.DAY_OF_MONTH, -1);
             steps[i] = saveLocal.getAccountBackgroundStep(email, calendar);
         }
@@ -252,10 +250,10 @@ public class MonthGraph extends AppCompatActivity {
     }
 
     public int[] getWorkoutSteps(String email, SaveLocal saveLocal){
-        int[] steps = new int[28];
+        int[] steps = new int[daysToShow];
         Calendar calendar = Calendar.getInstance();
-        steps[27] = saveLocal.getAccountExerciseStep(email, calendar);
-        for(int i = 26; i >= 0; i--){
+        steps[daysToShow - 1] = saveLocal.getAccountExerciseStep(email, calendar);
+        for(int i = daysToShow - 2; i >= 0; i--){
             calendar.add(Calendar.DAY_OF_MONTH, -1);
             steps[i] = saveLocal.getAccountExerciseStep(email, calendar);
         }
@@ -263,21 +261,9 @@ public class MonthGraph extends AppCompatActivity {
     }
 
     public int[] getGoals(String email, SaveLocal saveLocal){
-        int[] goals = new int[28];
+        int[] goals = new int[daysToShow];
         ArrayList<Goal> arrayListGoals = saveLocal.getNewGoals(email);
-        int pointer = arrayListGoals.size() - 1;/*
-        for (int i = 27; i >= 0; i--) {
-            if(pointer != -1) {
-                goals[i] = arrayListGoals.get(pointer);
-                pointer--;
-            }
-            else{
-                goals[i] = new Goal(new Date(), 0);
-            }
-        }*/
 
-
-        int counter = 0;
         Collections.sort(arrayListGoals, new Comparator<Goal>() {
             @Override
             public int compare(Goal goal1, Goal goal2)
@@ -288,7 +274,7 @@ public class MonthGraph extends AppCompatActivity {
         });
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -27);
+        calendar.add(Calendar.DAY_OF_YEAR, -(daysToShow - 1));
         calendar.set(Calendar.HOUR,0);
         calendar.set(Calendar.MINUTE,0);
         calendar.set(Calendar.SECOND,0);
@@ -309,5 +295,14 @@ public class MonthGraph extends AppCompatActivity {
         }
 
         return goals;
+    }
+
+    public void daysDisplayed(View view){
+        String email = saveLocal.getEmail();
+        int daysToShow = 28;
+        Intent intent = new Intent(this, MonthGraph.class);
+        intent.putExtra("email", email);
+        intent.putExtra("days", daysToShow);
+        startActivity(intent);
     }
 }
