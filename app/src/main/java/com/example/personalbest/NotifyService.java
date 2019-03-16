@@ -171,7 +171,7 @@ public class NotifyService extends Service {
                                             @Override
                                             public void onSuccess(DataReadResponse dataReadResponse) {
                                                 int steps = GoogleFitAdapter.getSteps(dataReadResponse);
-                                                int goal = sharedPreferences.getInt("goal", -1);
+                                                int goal = sharedPreferences.getInt("goal", 5000);
                                                 boolean bool = sharedPreferences.getBoolean("goalNotification", false);
                                                 Log.i("Notification", "Checking if user has met goal");
                                                 if (steps > goal && !bool) {

@@ -108,7 +108,7 @@ public class MonthGraph extends AppCompatActivity {
             msg.setVisibility(View.GONE);
         }
         String firebaseType = this.getIntent().getStringExtra(FIREBASEKEY);
-        FirebaseFactory.createFirebase("MockFirebase", this);
+        FirebaseFactory.createFirebase(firebaseType, this);
         firebaseAdapter = FirebaseFactory.getFirebase();
         Task<QuerySnapshot> task = firebaseAdapter.saveFriendStepLocal(email);
         task.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
