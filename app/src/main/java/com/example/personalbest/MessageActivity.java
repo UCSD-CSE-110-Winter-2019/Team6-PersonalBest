@@ -7,11 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,19 +71,9 @@ public class MessageActivity extends AppCompatActivity {
         }
 
         initMessageUpdateListener();
-
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
-
         TextView nameView = findViewById((R.id.user_name));
-
         nameView.setText(saveLocal.getEmail());
-
-
-        //DELETE
-        ArrayList<Goal> goals=saveLocal.getNewGoals(friendEmail);
-
-
-
 
     }
 

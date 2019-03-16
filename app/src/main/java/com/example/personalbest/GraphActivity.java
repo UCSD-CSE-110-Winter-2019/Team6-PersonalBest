@@ -106,13 +106,6 @@ public class GraphActivity extends AppCompatActivity {
 
         combinedChart.invalidate();
 
-
-//        //Delete
-//        SaveLocal saveLocal=new SaveLocal(this);
-//        ArrayList<Goal> goalss=saveLocal.getNewGoals(saveLocal.getEmail());
-//        for(Goal o:goalss){
-//            Log.d("A",o.toString());
-//        }
     }
 
     public void returnMain(){
