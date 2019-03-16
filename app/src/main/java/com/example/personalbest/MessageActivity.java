@@ -87,10 +87,6 @@ public class MessageActivity extends AppCompatActivity {
 
         //DELETE
         ArrayList<Goal> goals=saveLocal.getNewGoals(friendEmail);
-
-
-
-
     }
 
     private void sendMessage() {
