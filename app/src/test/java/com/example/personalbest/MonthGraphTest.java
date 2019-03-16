@@ -17,13 +17,11 @@ import static org.junit.Assert.assertArrayEquals;
 public class MonthGraphTest {
     private MonthGraph monthGraph;
     private SaveLocal saveLocal;
-    private ChatMessageService chat;
 
     @Before
     public void init(){
         monthGraph = Robolectric.setupActivity(MonthGraph.class);
         saveLocal = new MockSaveLocal();
-        //chat = new MockMessaging();
     }
 
     @Test

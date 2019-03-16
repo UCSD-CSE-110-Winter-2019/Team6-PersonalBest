@@ -53,6 +53,7 @@ public class MonthGraph extends AppCompatActivity {
     private String TEXT_KEY = "text";
     private String TIMESTAMP_KEY = "timestamp";
     private int daysToShow;
+    public Boolean TEST = false;
 
     private final String[] labels = {"Exercise Steps", "Background Steps"};
     private final int[] colors = {0xffff0000, 0xffabcdef};
@@ -238,11 +239,16 @@ public class MonthGraph extends AppCompatActivity {
         newMessage.put(TIMESTAMP_KEY, String.valueOf(new Date().getTime()));
         newMessage.put(TEXT_KEY, messageView.getText().toString());
 
-        chat.addMessage(newMessage).addOnSuccessListener(result -> {
-            messageView.setText("");
-        }).addOnFailureListener(error -> {
-            Log.e("Message", error.getLocalizedMessage());
-        });
+        if(TEST == false) {
+            chat.addMessage(newMessage).addOnSuccessListener(result -> {
+                messageView.setText("");
+            }).addOnFailureListener(error -> {
+                Log.e("Message", error.getLocalizedMessage());
+            });
+        }
+        else{
+            chat.addMessage(newMessage);
+        }
     }
 
     public int[] getBackgroundSteps(String email, SaveLocal saveLocal, int daysToShow){
