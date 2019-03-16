@@ -40,6 +40,29 @@ public class NotifyService extends Service {
     int Your_X_SECS = 5;
     Intent intent;
 
+    final class MyThread implements Runnable {
+        int startid;
+        public MyThread(int startid) {
+            this.startid = startid;
+        }
+
+        @Override
+        public void run() {
+            synchronized (this) {
+                try {
+                    initializeTimerTask();
+                    wait(5000);
+                    startTimer();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                //stopSelf(startid);
+            }
+
+        }
+    }
+
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -52,7 +75,10 @@ public class NotifyService extends Service {
         super.onStartCommand(intent, flags, startId);
         this.intent = intent;
 
-        startTimer();
+        Thread thread = new Thread(new MyThread(startId));
+        thread.start();
+
+
 
         return START_STICKY;
     }
@@ -79,7 +105,7 @@ public class NotifyService extends Service {
         timer = new Timer();
 
         //initialize the TimerTask's job
-        initializeTimerTask();
+        //initializeTimerTask();
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
         timer.schedule(timerTask, 5000, Your_X_SECS * 1000); //
