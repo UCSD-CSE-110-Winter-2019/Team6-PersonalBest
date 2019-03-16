@@ -55,6 +55,7 @@ public class FriendsListActivity extends AppCompatActivity {
                 Toast.makeText(FriendsListActivity.this, "you long clicked: " + arrayList.get(i), Toast.LENGTH_SHORT).show();
                 saveLocal.setLastClickedFriend(arrayList.get(i));
 
+
                 return true;
             }
         });/*
@@ -99,6 +100,7 @@ public class FriendsListActivity extends AppCompatActivity {
     public void launchFriendGraph(String email){
         Intent intent = new Intent(this, MonthGraph.class);
         intent.putExtra("email", email);
+        intent.putExtra("days", 28);
         startActivity(intent);
     }
 }

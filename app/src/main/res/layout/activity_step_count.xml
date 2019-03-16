@@ -74,7 +74,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="putData"
-        android:text="Put 500 Steps (Works every 50 seconds)" />
+        android:text="Put 10 Steps (Works every second)" />
 
     <Button
         android:id="@+id/graphActivityButton"

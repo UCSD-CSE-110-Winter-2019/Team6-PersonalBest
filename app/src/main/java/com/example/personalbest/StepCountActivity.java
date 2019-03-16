@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.personalbest.database.FirebaseAdapter;
 import com.example.personalbest.database.FirebaseFactory;
 import com.example.personalbest.database.IFirebase;
 import com.example.personalbest.fitness.Encouragement;
@@ -37,7 +36,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-//import com.google.auth.oauth2.GoogleCredentials;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -136,12 +134,14 @@ public class StepCountActivity extends AppCompatActivity{
         startExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onResume();
+                Calendar calendar=Calendar.getInstance();
+                fitnessService.updateStepCount(calendar);
                 if(exercise.isActive()){
 
                     //STOP EXERCISING
                     startExerciseButton.setText("Start Exercise");
                     startExerciseButton.setBackgroundColor(Color.parseColor("#06A62B"));
-                    Calendar calendar=Calendar.getInstance();
                     exercise.stopExercise(calendar);
 
                     stats.update();
@@ -151,7 +151,6 @@ public class StepCountActivity extends AppCompatActivity{
                     //START EXERCISING
                     startExerciseButton.setText("Stop Exercise");
                     startExerciseButton.setBackgroundColor(Color.parseColor("#FF0000"));
-                    Calendar calendar=Calendar.getInstance();
                     exercise.startExercise(calendar);
                     stats.update();
                 }
@@ -248,19 +247,19 @@ public class StepCountActivity extends AppCompatActivity{
     public void updateSteps(View view) {
         firebaseAdapter.getUsers();
 
-        ArrayList<String> arr = saveLocal.getFriends();
-        for (String s: arr) {
-            Log.d("TAGTAG", s);
-        }
+//        ArrayList<String> arr = saveLocal.getFriends();
+//        for (String s: arr) {
+//            Log.d("TAGTAG", s);
+//        }
         onResume();
 
     }
-    private void insert500Steps(Calendar currTime){
+    private void insert10Steps(Calendar currTime){
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(currTime.getTimeInMillis());
 
         long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.SECOND, -50);
+        cal.add(Calendar.SECOND, -1);
         long startTime = cal.getTimeInMillis();
 
         // Create a data source
@@ -273,7 +272,7 @@ public class StepCountActivity extends AppCompatActivity{
                         .build();
 
         // Create a data set
-        int stepCountDelta = 500;
+        int stepCountDelta = 10;
         DataSet dataSet = DataSet.create(dataSource);
 
         // For each data point, specify a start time, end time, and the data value -- in this case,
@@ -293,29 +292,35 @@ public class StepCountActivity extends AppCompatActivity{
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.i(TAG, "Successfully added 500 steps!");
+                        Log.i(TAG, "Successfully added 10 steps!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.i(TAG, "There was a problem adding 500 steps.");
+                        Log.i(TAG, "There was a problem adding 10 steps.");
                     }
                 });
         firebaseAdapter.getUsers();
     }
 
     public void putData(View view){
-        insert500Steps(Calendar.getInstance());
+        insert10Steps(Calendar.getInstance());
+        onResume();
 
 
     }
 
     public void launchGraphActivity(View view) {
-        firebaseAdapter.saveNewGoalsLocal(saveLocal.getEmail());
-        Intent intent = new Intent(this, GraphActivity.class);
-        int dailySteps=(int)fitnessService.getDailyStepCount(Calendar.getInstance());
-        intent.putExtra("numSteps", dailySteps);
+        Calendar currDay=Calendar.getInstance();
+        for(int i=1;i<28;i++){
+            fitnessService.updateBackgroundCount(currDay,i);
+        }
+        String email = saveLocal.getEmail();
+        int daysToShow = 7;
+        Intent intent = new Intent(this, MonthGraph.class);
+        intent.putExtra("email", email);
+        intent.putExtra("days", daysToShow);
         startActivity(intent);
     }
 
@@ -334,13 +339,6 @@ public class StepCountActivity extends AppCompatActivity{
             DialogFragment nameFrag = new NameFragment();
             nameFrag.show(getSupportFragmentManager(), "Set Name");
         }
-    }
-
-
-    public void MonthGraph(View view){
-        Intent intent = new Intent(this, MonthGraph.class);
-        intent.putExtra("email", saveLocal.getEmail());
-        startActivity(intent);
     }
 
     public class Background extends AsyncTask<String, String, String> {
