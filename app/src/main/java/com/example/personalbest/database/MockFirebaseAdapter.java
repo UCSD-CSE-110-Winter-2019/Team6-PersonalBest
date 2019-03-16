@@ -1,11 +1,15 @@
 package com.example.personalbest.database;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.res.FontResourcesParserCompat;
 import android.util.Log;
 
 import com.example.personalbest.ChatMessage;
 import com.example.personalbest.SaveLocal;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
@@ -20,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -86,12 +91,150 @@ public class MockFirebaseAdapter implements IFirebase {
 
     @Override
     public Task<QuerySnapshot> saveFriendStepLocal(String friendEmail) {
-        return null;
+        return new Task<QuerySnapshot>() {
+            @Override
+            public boolean isComplete() {
+                return true;
+            }
+
+            @Override
+            public boolean isSuccessful() {
+                return true;
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+
+            @Nullable
+            @Override
+            public QuerySnapshot getResult() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public <X extends Throwable> QuerySnapshot getResult(@NonNull Class<X> aClass) throws X {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Exception getException() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<QuerySnapshot> addOnSuccessListener(@NonNull OnSuccessListener<? super QuerySnapshot> onSuccessListener) {
+                return this;
+            }
+
+            @NonNull
+            @Override
+            public Task<QuerySnapshot> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super QuerySnapshot> onSuccessListener) {
+                return this;
+            }
+
+            @NonNull
+            @Override
+            public Task<QuerySnapshot> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super QuerySnapshot> onSuccessListener) {
+                return this;
+            }
+
+            @NonNull
+            @Override
+            public Task<QuerySnapshot> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<QuerySnapshot> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<QuerySnapshot> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+        };
     }
 
     @Override
     public Task<DocumentSnapshot> saveNewGoalsLocal(String email) {
-        return null;
+        return new Task<DocumentSnapshot>() {
+            @Override
+            public boolean isComplete() {
+                return true;
+            }
+
+            @Override
+            public boolean isSuccessful() {
+                return true;
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+
+            @Nullable
+            @Override
+            public DocumentSnapshot getResult() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public <X extends Throwable> DocumentSnapshot getResult(@NonNull Class<X> aClass) throws X {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Exception getException() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentSnapshot> addOnSuccessListener(@NonNull OnSuccessListener<? super DocumentSnapshot> onSuccessListener) {
+                return this;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentSnapshot> addOnSuccessListener(@NonNull Executor executor, @NonNull OnSuccessListener<? super DocumentSnapshot> onSuccessListener) {
+                return this;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentSnapshot> addOnSuccessListener(@NonNull Activity activity, @NonNull OnSuccessListener<? super DocumentSnapshot> onSuccessListener) {
+                return this;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentSnapshot> addOnFailureListener(@NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentSnapshot> addOnFailureListener(@NonNull Executor executor, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Task<DocumentSnapshot> addOnFailureListener(@NonNull Activity activity, @NonNull OnFailureListener onFailureListener) {
+                return null;
+            }
+        };
     }
 
     @Override

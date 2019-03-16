@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.personalbest.database.FirebaseAdapter;
+import com.example.personalbest.database.FirebaseFactory;
+import com.example.personalbest.database.IFirebase;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -39,11 +41,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.example.personalbest.StepCountActivity.FIREBASEKEY;
+
 public class MonthGraph extends AppCompatActivity {
 
     private String email;
     private SaveLocal saveLocal;
-    private FirebaseAdapter firebaseAdapter;
+    private IFirebase firebaseAdapter;
     private CombinedChart combinedChart;
     private CombinedData combinedData;
     private TextView waitText;
@@ -53,6 +57,7 @@ public class MonthGraph extends AppCompatActivity {
     private String TEXT_KEY = "text";
     private String TIMESTAMP_KEY = "timestamp";
     private int daysToShow;
+    public Boolean TEST = false;
 
     private final String[] labels = {"Exercise Steps", "Background Steps"};
     private final int[] colors = {0xffff0000, 0xffabcdef};
@@ -64,6 +69,9 @@ public class MonthGraph extends AppCompatActivity {
 
         saveLocal = new SaveLocal(this);
         email = getIntent().getStringExtra("email");
+        if(email == null){
+            email = saveLocal.getEmail();
+        }
         daysToShow = getIntent().getIntExtra("days", 28);
         if(daysToShow == 28){
             View btnMonth = findViewById(R.id.daysDisplayed);
@@ -81,7 +89,7 @@ public class MonthGraph extends AppCompatActivity {
             NEW_KEY += s;
         }
         DOCUMENT_KEY = NEW_KEY;
-        chat = FirebaseFirestoreAdapter.getInstance(DOCUMENT_KEY);
+
 
         combinedChart = findViewById(R.id.monthChart);
         combinedChart.setVisibility(View.GONE);
@@ -99,8 +107,9 @@ public class MonthGraph extends AppCompatActivity {
             View msg = findViewById(R.id.messageGraph);
             msg.setVisibility(View.GONE);
         }
-
-        firebaseAdapter = new FirebaseAdapter(this);
+        String firebaseType = this.getIntent().getStringExtra(FIREBASEKEY);
+        FirebaseFactory.createFirebase("MockFirebase", this);
+        firebaseAdapter = FirebaseFactory.getFirebase();
         Task<QuerySnapshot> task = firebaseAdapter.saveFriendStepLocal(email);
         task.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -122,8 +131,8 @@ public class MonthGraph extends AppCompatActivity {
                     waitText.setVisibility(View.GONE);
                     combinedChart.setVisibility(View.VISIBLE);
 
-                    int[] backgroundSteps = getBackgroundSteps(email, saveLocal);
-                    int[] workoutSteps = getWorkoutSteps(email, saveLocal);
+                    int[] backgroundSteps = getBackgroundSteps(email, saveLocal, daysToShow);
+                    int[] workoutSteps = getWorkoutSteps(email, saveLocal, daysToShow);
 
                     addBar(workoutSteps, backgroundSteps);
                 });
@@ -142,7 +151,7 @@ public class MonthGraph extends AppCompatActivity {
                 waitText.setVisibility(View.GONE);
                 combinedChart.setVisibility(View.VISIBLE);
 
-                int[] goals = getGoals(email, saveLocal);
+                int[] goals = getGoals(email, saveLocal, daysToShow);
                 addLine(goals);
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -223,7 +232,11 @@ public class MonthGraph extends AppCompatActivity {
     }
 
     public void sendMessage(View view){
+        chat = FirebaseFirestoreAdapter.getInstance(DOCUMENT_KEY);
+        sendMessage(chat);
+    }
 
+    public void sendMessage(ChatMessageService chat){
         EditText messageView = findViewById(R.id.messageGraph);
 
         Map<String, String> newMessage = new HashMap<>();
@@ -231,14 +244,19 @@ public class MonthGraph extends AppCompatActivity {
         newMessage.put(TIMESTAMP_KEY, String.valueOf(new Date().getTime()));
         newMessage.put(TEXT_KEY, messageView.getText().toString());
 
-        chat.addMessage(newMessage).addOnSuccessListener(result -> {
-            messageView.setText("");
-        }).addOnFailureListener(error -> {
-            Log.e("Message", error.getLocalizedMessage());
-        });
+        if(TEST == false) {
+            chat.addMessage(newMessage).addOnSuccessListener(result -> {
+                messageView.setText("");
+            }).addOnFailureListener(error -> {
+                Log.e("Message", error.getLocalizedMessage());
+            });
+        }
+        else{
+            chat.addMessage(newMessage);
+        }
     }
 
-    public int[] getBackgroundSteps(String email, SaveLocal saveLocal){
+    public int[] getBackgroundSteps(String email, SaveLocal saveLocal, int daysToShow){
         int[] steps = new int[daysToShow];
         Calendar calendar = Calendar.getInstance();
         steps[daysToShow - 1] = saveLocal.getAccountBackgroundStep(email, calendar);
@@ -249,7 +267,7 @@ public class MonthGraph extends AppCompatActivity {
         return steps;
     }
 
-    public int[] getWorkoutSteps(String email, SaveLocal saveLocal){
+    public int[] getWorkoutSteps(String email, SaveLocal saveLocal, int daysToShow){
         int[] steps = new int[daysToShow];
         Calendar calendar = Calendar.getInstance();
         steps[daysToShow - 1] = saveLocal.getAccountExerciseStep(email, calendar);
@@ -260,7 +278,7 @@ public class MonthGraph extends AppCompatActivity {
         return steps;
     }
 
-    public int[] getGoals(String email, SaveLocal saveLocal){
+    public int[] getGoals(String email, SaveLocal saveLocal, int daysToShow){
         int[] goals = new int[daysToShow];
         ArrayList<Goal> arrayListGoals = saveLocal.getNewGoals(email);
 

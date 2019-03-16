@@ -103,6 +103,24 @@ public class MessageTest {
         assertEquals("Run Forrest run!", mockMessageAdapter.getMessages());
     }
 
+    @Test
+    public void messageFromGraph() {
+        mockFirebaseAdapter.db.get("friend1email@ucsd.edu").get("pendingList").add("myemail@ucsd.edu");
+        addFriendHelper();
+
+        Intent intent = new Intent(RuntimeEnvironment.application, MonthGraph.class);
+        MonthGraph act = Robolectric.buildActivity(MonthGraph.class, intent).create().start().resume().get();
+
+        TextView text = act.findViewById(R.id.messageGraph);
+        text.setText("hi");
+
+        act.TEST = true;
+
+        act.sendMessage(mockMessageAdapter);
+
+        assertEquals("hi", mockMessageAdapter.getMessages());
+    }
+
     private void addFriendHelper() {
         Button addFriend = activity.findViewById(R.id.addFriend);
         addFriend.performClick();
