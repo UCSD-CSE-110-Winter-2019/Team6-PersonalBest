@@ -40,6 +40,29 @@ public class NotifyService extends Service {
     int Your_X_SECS = 5;
     Intent intent;
 
+    final class MyThread implements Runnable {
+        int startid;
+        public MyThread(int startid) {
+            this.startid = startid;
+        }
+
+        @Override
+        public void run() {
+            synchronized (this) {
+                try {
+                    initializeTimerTask();
+                    wait(5000);
+                    startTimer();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                //stopSelf(startid);
+            }
+
+        }
+    }
+
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -52,7 +75,10 @@ public class NotifyService extends Service {
         super.onStartCommand(intent, flags, startId);
         this.intent = intent;
 
-        startTimer();
+        Thread thread = new Thread(new MyThread(startId));
+        thread.start();
+
+
 
         return START_STICKY;
     }
@@ -79,7 +105,7 @@ public class NotifyService extends Service {
         timer = new Timer();
 
         //initialize the TimerTask's job
-        initializeTimerTask();
+        //initializeTimerTask();
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
         timer.schedule(timerTask, 5000, Your_X_SECS * 1000); //
@@ -119,9 +145,18 @@ public class NotifyService extends Service {
 
                         Calendar cal = Calendar.getInstance();
                         //Find the end of the day
-                        long endTime = StepCountActivity.generateEndTime(cal);
+                        cal.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
+                        cal.set(Calendar.HOUR_OF_DAY, 23);
+                        cal.set(Calendar.MINUTE, 59);
+                        cal.set(Calendar.SECOND, 59);
+                        cal.set(Calendar.MILLISECOND, 59);
+                        long endTime = cal.getTimeInMillis();
                         //Find the start of the day
-                        long startTime = StepCountActivity.generateStartTime(cal);
+                        cal.set(Calendar.HOUR_OF_DAY, 0);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        cal.set(Calendar.MILLISECOND, 0);
+                        long startTime = cal.getTimeInMillis();
 
                         DataReadRequest readRequest =
                                 new DataReadRequest.Builder()
@@ -136,7 +171,7 @@ public class NotifyService extends Service {
                                             @Override
                                             public void onSuccess(DataReadResponse dataReadResponse) {
                                                 int steps = GoogleFitAdapter.getSteps(dataReadResponse);
-                                                int goal = sharedPreferences.getInt("goal", -1);
+                                                int goal = sharedPreferences.getInt("goal", 5000);
                                                 boolean bool = sharedPreferences.getBoolean("goalNotification", false);
                                                 Log.i("Notification", "Checking if user has met goal");
                                                 if (steps > goal && !bool) {

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.personalbest.SaveLocal;
 import com.example.personalbest.StepCountActivity;
+import com.example.personalbest.database.FirebaseAdapter;
 import com.example.personalbest.database.FirebaseFactory;
 import com.example.personalbest.database.IFirebase;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -80,8 +81,6 @@ public class GoogleFitAdapter implements FitnessService {
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         ActivityCompat.startActivityForResult(activity,signInIntent,GOOGLE_FIT_PERMISSIONS_REQUEST_CODE,null);
-
-
     }
 
     public String getEmail(){
@@ -95,6 +94,10 @@ public class GoogleFitAdapter implements FitnessService {
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
             return false;
+        }
+        String email = getEmail();
+        if (email != null) {
+            FirebaseFactory.getFirebase().addUser("NAME", getEmail());
         }
 
         Fitness.getRecordingClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
@@ -159,10 +162,19 @@ public class GoogleFitAdapter implements FitnessService {
         //Find the end of the day
         Calendar cal=Calendar.getInstance();
 
-        long endTime = StepCountActivity.generateEndTime(cal);
+        cal.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 59);
+        long endTime = cal.getTimeInMillis();
         //Find the start of the day
 
-        long startTime = StepCountActivity.generateStartTime(cal);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long startTime = cal.getTimeInMillis();
 
         DataReadRequest readRequest =
                 new DataReadRequest.Builder()

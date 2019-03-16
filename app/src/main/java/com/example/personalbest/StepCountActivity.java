@@ -1,8 +1,10 @@
 package com.example.personalbest;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -81,7 +83,7 @@ public class StepCountActivity extends AppCompatActivity{
         String firebaseType = this.getIntent().getStringExtra(FIREBASEKEY);
 
 
-       FirebaseFactory.createFirebase(firebaseType, this);
+        FirebaseFactory.createFirebase(firebaseType, this);
 
         firebaseAdapter = FirebaseFactory.getFirebase();
 
@@ -176,11 +178,25 @@ public class StepCountActivity extends AppCompatActivity{
 
         endDay=new EndDay(saveLocal);
         createNotifactionChannel();
-        NotifyService notifyService = new NotifyService();
-        Intent intent = new Intent();
-        startService(new Intent(this, notifyService.getClass()));
+        if (!isMyServiceRunning(NotifyService.class)) {
+            NotifyService notifyService = new NotifyService();
+            Intent intent = new Intent();
+            startService(new Intent(this, notifyService.getClass()));
+        }
 
     }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     public void createNotifactionChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -387,7 +403,6 @@ public class StepCountActivity extends AppCompatActivity{
             }
             ArrayList<String> arrayList = saveLocal.getFriends();
             if(hour>=20 && arrayList.size() == 0) {
-            //if(hour>=20) {
                 encourage.showEncouragement();
             }
         }
@@ -408,25 +423,6 @@ public class StepCountActivity extends AppCompatActivity{
 
         }
     }
-
-
-    public static long generateStartTime(Calendar cal) {
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTimeInMillis();
-    }
-
-    public static long generateEndTime(Calendar cal) {
-        cal.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 59);
-        return cal.getTimeInMillis();
-    }
-
 
 
 }

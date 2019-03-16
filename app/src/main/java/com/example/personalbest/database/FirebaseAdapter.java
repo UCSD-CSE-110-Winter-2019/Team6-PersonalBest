@@ -325,10 +325,13 @@ public class FirebaseAdapter implements IFirebase {
                     }
                 });
     }
-
+    /*
+    Uploads the given background and exercise steps to the Firebase of the given email account,
+    on the given calendar time.
+     */
     @Override
     public void pushStepStats(Calendar time, int backgroundSteps, int exerciseSteps, String myEmail){
-
+        //Find the 0th second of the given date and assign it to newCal
         Calendar newCal=Calendar.getInstance();
         newCal.setTimeInMillis(time.getTimeInMillis());
         newCal.set(Calendar.HOUR_OF_DAY,0);
@@ -337,10 +340,9 @@ public class FirebaseAdapter implements IFirebase {
         newCal.set(Calendar.MINUTE,0);
         newCal.set(Calendar.SECOND,0);
         newCal.set(Calendar.MILLISECOND,0);
-
+        //Generate the key for the given date
         String dateKey=newCal.get(Calendar.DAY_OF_MONTH)+"-"+((int)newCal.get(Calendar.MONTH)+1)+"-"+newCal.get(Calendar.YEAR);
-
-
+        //Create the hashmap that is going to be uploaded
         Map<String, Integer> steps = new HashMap<>();
         steps.put("Background", backgroundSteps);
         steps.put("Exercise", exerciseSteps);
@@ -359,14 +361,16 @@ public class FirebaseAdapter implements IFirebase {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error set steps", e);
+                        Log.w(TAG, "Error seting steps for Email:" + myEmail+" Date: "+dateKey, e);
                     }
                 });
     }
-
-
+    /*
+    Gets the step data for an email on the firebase. This task is going to be listened to
+    update the graphs.
+     */
     public Task<QuerySnapshot> saveFriendStepLocal(String friendEmail){
-        Log.d("Query Results", "Went into method");
+        Log.d("Query Results", "Went into saveFriendStepLocal method");
         Task<QuerySnapshot> task= db.collection("users")
                 .document(friendEmail)
                 .collection("steps")
@@ -374,8 +378,11 @@ public class FirebaseAdapter implements IFirebase {
 
                return task;
     }
-
+    /*
+    Pushes a new goal change to the Firebase for the current accoun.
+     */
     public void pushNewGoal(Calendar time, int goal){
+        //Find the 0th second of the given date and assign it to newCal
         Calendar newCal=Calendar.getInstance();
         newCal.setTimeInMillis(time.getTimeInMillis());
         newCal.set(Calendar.HOUR_OF_DAY,0);
@@ -387,8 +394,9 @@ public class FirebaseAdapter implements IFirebase {
 
         Date newGoalDate= new Date();
         newGoalDate.setTime(newCal.getTimeInMillis());
+        //Generate the date key for the firebase
         String dateKey=newCal.get(Calendar.DAY_OF_MONTH)+"-"+(newCal.get(Calendar.MONTH)+1)+"-"+newCal.get(Calendar.YEAR);
-
+        //Gets the DocumentReference from the firebase
         DocumentReference goalsDocument=db.collection("users")
                 .document(saveLocal.getEmail())
                 .collection("New Goals")
@@ -399,26 +407,34 @@ public class FirebaseAdapter implements IFirebase {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-
+                    Log.d(TAG, "PushNewGoal got DocumentSnapshot data: " + document.getData());
+                    //Get the current map, if it does not exist create a new one
                     Map<String, Object> map=document.getData();
                     if(map==null){
                         map=new HashMap<>();
                     }
+                    //Create a new goal and push it to the firebase
                     Goal newGoal=new Goal(newGoalDate,goal);
                     map.put(dateKey,newGoal);
                     goalsDocument.set(map);
-                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    Log.d(TAG, "Pushed the goal to firebase");
+
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    Log.d(TAG, "PushNewGoal get failed with ", task.getException());
                 }
             }
         });
     }
+    /*
+    Gets the goal changes of the given email account from the firebase and saves it locally.
+    This methods task returned is listened by the graphs to update correctly.
+     */
     public Task<DocumentSnapshot> saveNewGoalsLocal(String email) {
         DocumentReference goalsDocument = db.collection("users")
                 .document(email)
                 .collection("New Goals")
                 .document("Goals");
+        //Create an arraylist to hold all the goals
         ArrayList<Goal> newGoals = new ArrayList<>();
 
         Task<DocumentSnapshot> task = goalsDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -427,7 +443,10 @@ public class FirebaseAdapter implements IFirebase {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+
                         Map<String, Object> map = document.getData();
+                        //Loops through the data returned and converts them ato Goal objects and
+                        //Stores them in the arraylist created
                         for (Object o : map.values()) {
                             HashMap<String, Object> returnedGoal = (HashMap<String, Object>) o;
                             Timestamp newTimestamp = (Timestamp) returnedGoal.get("date");

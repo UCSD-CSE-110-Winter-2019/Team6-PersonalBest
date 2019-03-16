@@ -7,11 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,8 +29,9 @@ public class MessageActivity extends AppCompatActivity {
     String FROM_KEY = "from";
     String TEXT_KEY = "text";
     String TIMESTAMP_KEY = "timestamp";
+    public Boolean TEST = false;
 
-    ChatMessageService chat;
+    public ChatMessageService chat;
     SaveLocal saveLocal;
     String friendEmail;
     String myEmail;
@@ -46,27 +44,29 @@ public class MessageActivity extends AppCompatActivity {
         //FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_message);
         SharedPreferences sharedpreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-        this.saveLocal=new SaveLocal(this);
-        friendEmail=saveLocal.getLastCLickedFriend();
-        Intent intent = getIntent();
-        DOCUMENT_KEY = intent.getStringExtra("DOCUMENT_KEY");
-        myEmail = saveLocal.getEmail();
-        if (DOCUMENT_KEY == null) {
 
+        this.saveLocal = new SaveLocal(this);
+        friendEmail = saveLocal.getLastCLickedFriend();
+        myEmail = saveLocal.getEmail();
+
+        if(friendEmail == null){
+            DOCUMENT_KEY = null;
+        }
+        else {
             if (myEmail.compareTo(friendEmail) > 0) {
                 DOCUMENT_KEY = myEmail + friendEmail;
             } else {
                 DOCUMENT_KEY = friendEmail + myEmail;
             }
+
             String NEW_KEY = "";
             String array1[] = DOCUMENT_KEY.split("@");
             for (String s : array1) {
                 NEW_KEY += s;
             }
             DOCUMENT_KEY = NEW_KEY;
+            chat = FirebaseFirestoreAdapter.getInstance(DOCUMENT_KEY);
         }
-
-        chat = FirebaseFirestoreAdapter.getInstance(DOCUMENT_KEY);
 
         String intentExtra = getIntent().getStringExtra("DOCUMENT_KEY");
         if(intentExtra != null){
@@ -74,20 +74,9 @@ public class MessageActivity extends AppCompatActivity {
         }
 
         initMessageUpdateListener();
-
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
-
         TextView nameView = findViewById((R.id.user_name));
-
         nameView.setText(saveLocal.getEmail());
-
-
-        //DELETE
-        ArrayList<Goal> goals=saveLocal.getNewGoals(friendEmail);
-
-
-
-
     }
 
     private void sendMessage() {
@@ -103,14 +92,22 @@ public class MessageActivity extends AppCompatActivity {
         newMessage.put(TIMESTAMP_KEY, String.valueOf(new Date().getTime()));
         newMessage.put(TEXT_KEY, messageView.getText().toString());
 
-        chat.addMessage(newMessage).addOnSuccessListener(result -> {
-            messageView.setText("");
-        }).addOnFailureListener(error -> {
-            Log.e(TAG, error.getLocalizedMessage());
-        });
+        if(TEST != true) {
+            chat.addMessage(newMessage).addOnSuccessListener(result -> {
+                messageView.setText("");
+            }).addOnFailureListener(error -> {
+                Log.e(TAG, error.getLocalizedMessage());
+            });
+        }
+        else{
+            chat.addMessage(newMessage);
+        }
     }
 
     private void initMessageUpdateListener() {
+        if(chat == null){
+            return;
+        }
         TextView chatView = findViewById(R.id.chat);
         chat.addOrderedMessagesListener(
                 chatMessagesList -> {
@@ -121,14 +118,6 @@ public class MessageActivity extends AppCompatActivity {
                             setSenderAndMsg(chatMessage.getFrom(), chatMessage.getText());
                         }
                     });
-                    /*createNotificationChannel();
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.channel_id))
-                            .setContentTitle(lastSender)
-                            .setContentText(lastMsg)
-                            .setSmallIcon(R.drawable.ic_launcher_background)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-                    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-                    notificationManagerCompat.notify(3, builder.build());*/
                 });
     }
 

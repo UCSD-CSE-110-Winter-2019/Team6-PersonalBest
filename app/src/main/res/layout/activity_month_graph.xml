@@ -10,8 +10,8 @@
 
     <com.github.mikephil.charting.charts.CombinedChart
         android:id="@+id/monthChart"
-        android:layout_width="400dp"
-        android:layout_height="380dp"
+        android:layout_width="372dp"
+        android:layout_height="266dp"
         android:layout_marginTop="16dp" />
 
     <TextView
