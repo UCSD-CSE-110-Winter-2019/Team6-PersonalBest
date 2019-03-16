@@ -64,6 +64,9 @@ public class MonthGraph extends AppCompatActivity {
 
         saveLocal = new SaveLocal(this);
         email = getIntent().getStringExtra("email");
+        if(email == null){
+            email = saveLocal.getEmail();
+        }
         daysToShow = getIntent().getIntExtra("days", 28);
         if(daysToShow == 28){
             View btnMonth = findViewById(R.id.daysDisplayed);
@@ -81,7 +84,7 @@ public class MonthGraph extends AppCompatActivity {
             NEW_KEY += s;
         }
         DOCUMENT_KEY = NEW_KEY;
-        chat = FirebaseFirestoreAdapter.getInstance(DOCUMENT_KEY);
+
 
         combinedChart = findViewById(R.id.monthChart);
         combinedChart.setVisibility(View.GONE);
@@ -122,8 +125,8 @@ public class MonthGraph extends AppCompatActivity {
                     waitText.setVisibility(View.GONE);
                     combinedChart.setVisibility(View.VISIBLE);
 
-                    int[] backgroundSteps = getBackgroundSteps(email, saveLocal);
-                    int[] workoutSteps = getWorkoutSteps(email, saveLocal);
+                    int[] backgroundSteps = getBackgroundSteps(email, saveLocal, daysToShow);
+                    int[] workoutSteps = getWorkoutSteps(email, saveLocal, daysToShow);
 
                     addBar(workoutSteps, backgroundSteps);
                 });
@@ -142,7 +145,7 @@ public class MonthGraph extends AppCompatActivity {
                 waitText.setVisibility(View.GONE);
                 combinedChart.setVisibility(View.VISIBLE);
 
-                int[] goals = getGoals(email, saveLocal);
+                int[] goals = getGoals(email, saveLocal, daysToShow);
                 addLine(goals);
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -223,7 +226,11 @@ public class MonthGraph extends AppCompatActivity {
     }
 
     public void sendMessage(View view){
+        chat = FirebaseFirestoreAdapter.getInstance(DOCUMENT_KEY);
+        sendMessage(chat);
+    }
 
+    public void sendMessage(ChatMessageService chat){
         EditText messageView = findViewById(R.id.messageGraph);
 
         Map<String, String> newMessage = new HashMap<>();
@@ -238,7 +245,7 @@ public class MonthGraph extends AppCompatActivity {
         });
     }
 
-    public int[] getBackgroundSteps(String email, SaveLocal saveLocal){
+    public int[] getBackgroundSteps(String email, SaveLocal saveLocal, int daysToShow){
         int[] steps = new int[daysToShow];
         Calendar calendar = Calendar.getInstance();
         steps[daysToShow - 1] = saveLocal.getAccountBackgroundStep(email, calendar);
@@ -249,7 +256,7 @@ public class MonthGraph extends AppCompatActivity {
         return steps;
     }
 
-    public int[] getWorkoutSteps(String email, SaveLocal saveLocal){
+    public int[] getWorkoutSteps(String email, SaveLocal saveLocal, int daysToShow){
         int[] steps = new int[daysToShow];
         Calendar calendar = Calendar.getInstance();
         steps[daysToShow - 1] = saveLocal.getAccountExerciseStep(email, calendar);
@@ -260,7 +267,7 @@ public class MonthGraph extends AppCompatActivity {
         return steps;
     }
 
-    public int[] getGoals(String email, SaveLocal saveLocal){
+    public int[] getGoals(String email, SaveLocal saveLocal, int daysToShow){
         int[] goals = new int[daysToShow];
         ArrayList<Goal> arrayListGoals = saveLocal.getNewGoals(email);
 
