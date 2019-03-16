@@ -48,18 +48,23 @@ public class MessageActivity extends AppCompatActivity {
         SharedPreferences sharedpreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         this.saveLocal=new SaveLocal(this);
         friendEmail=saveLocal.getLastCLickedFriend();
-        myEmail=saveLocal.getEmail();
-        if(myEmail.compareTo(friendEmail)>0){
-            DOCUMENT_KEY=myEmail+friendEmail;
-        }else{
-            DOCUMENT_KEY=friendEmail+myEmail;
+        Intent intent = getIntent();
+        DOCUMENT_KEY = intent.getStringExtra("DOCUMENT_KEY");
+        myEmail = saveLocal.getEmail();
+        if (DOCUMENT_KEY == null) {
+
+            if (myEmail.compareTo(friendEmail) > 0) {
+                DOCUMENT_KEY = myEmail + friendEmail;
+            } else {
+                DOCUMENT_KEY = friendEmail + myEmail;
+            }
+            String NEW_KEY = "";
+            String array1[] = DOCUMENT_KEY.split("@");
+            for (String s : array1) {
+                NEW_KEY += s;
+            }
+            DOCUMENT_KEY = NEW_KEY;
         }
-        String NEW_KEY="";
-        String array1[] = DOCUMENT_KEY.split("@");
-        for(String s : array1){
-            NEW_KEY += s;
-        }
-        DOCUMENT_KEY = NEW_KEY;
 
         chat = FirebaseFirestoreAdapter.getInstance(DOCUMENT_KEY);
 
