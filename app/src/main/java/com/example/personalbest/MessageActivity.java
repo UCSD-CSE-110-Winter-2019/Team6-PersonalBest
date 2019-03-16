@@ -52,7 +52,6 @@ public class MessageActivity extends AppCompatActivity {
         DOCUMENT_KEY = intent.getStringExtra("DOCUMENT_KEY");
         myEmail = saveLocal.getEmail();
         if (DOCUMENT_KEY == null) {
-
             if (myEmail.compareTo(friendEmail) > 0) {
                 DOCUMENT_KEY = myEmail + friendEmail;
             } else {
