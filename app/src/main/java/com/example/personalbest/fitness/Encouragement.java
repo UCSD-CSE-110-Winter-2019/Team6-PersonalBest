@@ -27,10 +27,13 @@ public class Encouragement {
         if(numSteps>=currSubGoal) {
             act.runOnUiThread(() -> {
                 int goalMet = ((int) numSteps / 500) * 500;
+                System.out.println("GOAL MET: "+goalMet);
                 int oldSubGoal = saveLocal.getOldSubGoal();
+                System.out.println("OLDSUBGOAL: "+oldSubGoal);
                 saveLocal.setOldSubGoal(goalMet);
                 saveLocal.setCurrSubGoal((int)act.numSteps+500);
                 int stepsIncreased = goalMet-oldSubGoal;
+                System.out.println("STEPS INCREASED: "+stepsIncreased);
                 Toast t = Toast.makeText(act, "You've increased your daily steps by over "
                         +stepsIncreased+ " steps. Keep up the good work!", Toast.LENGTH_LONG);
                 t.show();
