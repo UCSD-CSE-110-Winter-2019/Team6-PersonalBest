@@ -1,10 +1,15 @@
 package com.example.personalbest;
 
+import android.content.Intent;
+
+import com.example.personalbest.database.FirebaseFactory;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,7 +25,9 @@ public class MonthGraphTest {
 
     @Before
     public void init(){
-        monthGraph = Robolectric.setupActivity(MonthGraph.class);
+        Intent intent = new Intent(RuntimeEnvironment.application, StepCountActivity.class);
+        intent.putExtra(StepCountActivity.FIREBASEKEY, "MockFirebase");
+        monthGraph = Robolectric.buildActivity(MonthGraph.class, intent).create().start().resume().get();
         saveLocal = new MockSaveLocal();
     }
 

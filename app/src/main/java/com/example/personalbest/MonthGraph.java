@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.personalbest.database.FirebaseAdapter;
+import com.example.personalbest.database.FirebaseFactory;
+import com.example.personalbest.database.IFirebase;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -39,11 +41,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.example.personalbest.StepCountActivity.FIREBASEKEY;
+
 public class MonthGraph extends AppCompatActivity {
 
     private String email;
     private SaveLocal saveLocal;
-    private FirebaseAdapter firebaseAdapter;
+    private IFirebase firebaseAdapter;
     private CombinedChart combinedChart;
     private CombinedData combinedData;
     private TextView waitText;
@@ -103,8 +107,9 @@ public class MonthGraph extends AppCompatActivity {
             View msg = findViewById(R.id.messageGraph);
             msg.setVisibility(View.GONE);
         }
-
-        firebaseAdapter = new FirebaseAdapter(this);
+        String firebaseType = this.getIntent().getStringExtra(FIREBASEKEY);
+        FirebaseFactory.createFirebase("MockFirebase", this);
+        firebaseAdapter = FirebaseFactory.getFirebase();
         Task<QuerySnapshot> task = firebaseAdapter.saveFriendStepLocal(email);
         task.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override

@@ -81,7 +81,7 @@ public class StepCountActivity extends AppCompatActivity{
         String firebaseType = this.getIntent().getStringExtra(FIREBASEKEY);
 
 
-       FirebaseFactory.createFirebase(firebaseType, this);
+        FirebaseFactory.createFirebase(firebaseType, this);
 
         firebaseAdapter = FirebaseFactory.getFirebase();
 
