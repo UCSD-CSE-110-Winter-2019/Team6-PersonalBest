@@ -4,25 +4,38 @@ import android.app.Activity;
 import android.support.v4.content.res.FontResourcesParserCompat;
 import android.util.Log;
 
+import com.example.personalbest.ChatMessage;
 import com.example.personalbest.SaveLocal;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static android.content.ContentValues.TAG;
 
 public class MockFirebaseAdapter implements IFirebase {
     SaveLocal saveLocal;
     final String FRIENDS_LIST = "friendsList";
     final String PENDING_LIST = "pendingList";
-
     public HashMap<String, HashMap<String, ArrayList<String>>> db;
+
     MockFirebaseAdapter(Activity a){
         saveLocal = new SaveLocal(a);
         db = new HashMap<>();
     }
+
     @Override
     public void addUser(String userName, String email) {
         HashMap<String, ArrayList<String>> hash = new HashMap<>();
